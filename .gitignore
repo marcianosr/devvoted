@@ -11,3 +11,7 @@
 
 #!.yarn/cache
 .pnp.*
+
+.nx/cache
+node_modules
+storybook-static
