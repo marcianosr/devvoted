@@ -9,7 +9,7 @@ A fresh 🆕 poll app will come here, keep an eye on this repo as code will appe
 1. Install [asdf](https://asdf-vm.com/): `brew install asdf`
 2. Install the _nodejs_ plugin: `asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git`
 3. Check project version of node: `cat .tool-versions`
-4. Install [nodejs](https://nodejs.org/en): `asdf nodejs install <version>`
+4. Install [nodejs](https://nodejs.org/en): `asdf install nodejs <version>`
 
 ### Setup Yarn (package manager)
 
