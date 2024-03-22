@@ -4,6 +4,7 @@
   "workspaces": [
     "packages/*"
   ],
+  "private": true,
   "devDependencies": {
     "@nx/js": "18.1.2",
     "@nx/storybook": "18.1.2",
