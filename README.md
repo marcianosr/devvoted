@@ -26,6 +26,12 @@ asdf reshim nodejs
 yarn install
 ```
 
+## Running application (for development)
+
+```sh
+yarn dev
+```
+
 ## Viewing components
 
 You can view the styled components through storybook:
