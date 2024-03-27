@@ -18,6 +18,7 @@
     "typescript": "^5.4.3"
   },
   "scripts": {
-    "build": "parcel build"
+    "build": "parcel build",
+    "watch": "parcel watch"
   }
 }
