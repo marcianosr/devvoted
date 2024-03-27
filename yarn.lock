@@ -1632,6 +1632,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@devvoted/components@workspace:packages/components":
+  version: 0.0.0-use.local
+  resolution: "@devvoted/components@workspace:packages/components"
+  dependencies:
+    "@storybook/addon-postcss": "npm:^2.0.0"
+    "@storybook/addon-themes": "npm:^7.6.17"
+    autoprefixer: "npm:^10.4.19"
+    parcel: "npm:^2.12.0"
+    postcss: "npm:^8.4.38"
+    primereact: "npm:^10.5.3"
+    tailwindcss: "npm:^3.4.1"
+    typescript: "npm:^5.4.3"
+  languageName: unknown
+  linkType: soft
+
 "@discoveryjs/json-ext@npm:^0.5.3":
   version: 0.5.7
   resolution: "@discoveryjs/json-ext@npm:0.5.7"
@@ -8520,21 +8535,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"components@workspace:packages/components":
-  version: 0.0.0-use.local
-  resolution: "components@workspace:packages/components"
-  dependencies:
-    "@storybook/addon-postcss": "npm:^2.0.0"
-    "@storybook/addon-themes": "npm:^7.6.17"
-    autoprefixer: "npm:^10.4.19"
-    parcel: "npm:^2.12.0"
-    postcss: "npm:^8.4.38"
-    primereact: "npm:^10.5.3"
-    tailwindcss: "npm:^3.4.1"
-    typescript: "npm:^5.4.3"
-  languageName: unknown
-  linkType: soft
-
 "compressible@npm:~2.0.16":
   version: 2.0.18
   resolution: "compressible@npm:2.0.18"
@@ -9421,6 +9421,7 @@ __metadata:
     next: "npm:14.0.4"
     nx: "npm:18.1.2"
     prettier: "npm:^2.6.2"
+    primereact: "npm:^10.5.3"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     storybook: "npm:7.6.17"

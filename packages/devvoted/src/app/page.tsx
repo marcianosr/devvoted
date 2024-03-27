@@ -1,4 +1,6 @@
 import styles from "./page.module.css";
+import { Button } from "primereact/button";
+import { useTestContext } from "../components/TestContext";
 
 export default function Index() {
   /*
@@ -6,6 +8,8 @@ export default function Index() {
    *
    * Note: The corresponding styles are in the ./index.css file.
    */
+
+  const value = useTestContext();
   return (
     <div className={styles.page}>
       <div className="wrapper">
@@ -13,7 +17,7 @@ export default function Index() {
           <div id="welcome">
             <h1>
               <span> Hello there, </span>
-              Welcome devvoted 👋
+              Welcome devvoted 👋 {value}
             </h1>
           </div>
 
@@ -356,6 +360,7 @@ export default function Index() {
           <div id="commands" className="rounded shadow">
             <h2>Next steps</h2>
             <p>Here are some things you can do with Nx:</p>
+            <Button label="Hallo daar" />
             <details>
               <summary>
                 <svg
