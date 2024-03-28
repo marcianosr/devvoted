@@ -2,7 +2,7 @@
 
 import { PropsWithChildren } from "react";
 import { PrimeReactProvider } from "primereact/api";
-import { devvotedTheme } from "@devvoted/components";
+import { devvotedTheme } from "@devvoted/ui";
 
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (

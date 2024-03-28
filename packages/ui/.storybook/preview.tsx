@@ -17,11 +17,7 @@ const preview: Preview = {
       attributeName: "data-mode",
     }),
     (Story) => (
-      <PrimeReactProvider
-        value={{
-          pt: devvotedTheme,
-        }}
-      >
+      <PrimeReactProvider value={{ pt: devvotedTheme }}>
         <Story />
       </PrimeReactProvider>
     ),
