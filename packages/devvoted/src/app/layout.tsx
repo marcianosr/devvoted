@@ -1,4 +1,6 @@
+import "primereact/resources/themes/md-light-indigo/theme.css";
 import "./global.css";
+import { Providers } from "./providers";
 
 export const metadata = {
   title: "Welcome to devvoted",
@@ -12,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
