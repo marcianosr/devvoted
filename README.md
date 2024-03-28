@@ -37,5 +37,5 @@ yarn dev
 You can view the styled components through storybook:
 
 ```sh
-yarn storybook
+yarn storybook:ui
 ```
