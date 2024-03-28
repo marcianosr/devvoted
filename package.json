@@ -63,6 +63,7 @@
   },
   "scripts": {
     "storybook": "nx run components:storybook dev -p 9009",
-    "dev": "nx dev devvoted"
+    "dev": "nx dev devvoted",
+    "dev:components": "nx run @devvoted/components:watch"
   }
 }

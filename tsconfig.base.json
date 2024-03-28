@@ -14,9 +14,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {
-      "@devvoted/components": ["packages/components/dist/index.js"]
-    }
+    "paths": {}
   },
   "exclude": ["node_modules", "tmp"]
 }
