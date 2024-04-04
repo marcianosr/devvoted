@@ -78,7 +78,7 @@
   },
   "scripts": {
     "dev": "nx dev devvoted",
-    "build": "nx build devvoted",
+    "build": "nx build devvoted --prod",
     "dev:components": "nx run @devvoted/components:watch",
     "storybook:ui": "nx run ui:storybook dev -p 9009"
   }
