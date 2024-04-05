@@ -94,3 +94,23 @@ So you could have:
 The order in which these mutations are applied matters, and should be maintained in some admin.
 
 A DSL to specify all these things would be nice, but does not necessary be an online DSL. It can also be a TS regulated small content files in the codebase, that can be configured in an admin. (plugin model)
+
+# 6. Items
+
+Items can be earned or bought. Items can be used for:
+
+- Extra currency: When answering a poll you get currency. Double the currency for instance
+- Extra time: When answering a poll you get a time limit. Double the time limit for instance
+- Hints: When answering a poll you get hints
+- Stay unscathed when answering a question wrong (joker card)
+- Double or Nothing Dice: Gambling before answering a question, players can choose to roll the dice to potentially double their earnings for that question or, if unlucky, earn the default amount of currency.
+  Twist: Include a rare triple or nothing variant, but with a higher risk of losing the wagered earnings.
+
+To thwart others:
+
+- Limit the time of another player
+- Limit score gain
+- Invert answer options
+- Make sure someone has to answer an 'out of comfort zone' question
+- Fake coins for everyone: Thwart all players by make them not earn any coins for a question
+- Add a fake answer to a poll question. If someone picks this answer, they lose points or currencies.
