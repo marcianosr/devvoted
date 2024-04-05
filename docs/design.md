@@ -47,8 +47,50 @@ or: 'Out your comfort zone day!'
 
 ## 4. Scoring for questions
 
+Since everyone gets a different (more tailored to their interests) question, it would not be fair if some people get questions that only awards 3 points, and others get questions awarding them 10 points.
+
+To make things more equal, we can make every question just score 100%, and having items wrong or to many answers ticked till lower this percentage.
+
+This percentage then gets multiplied with a score based on a difficulty level.
+
 (Points, coins, stats, etc)
 
 ## 5. Seasons and team play
 
 (themes, seasons, extra ranking systems, team selections, etc)
+
+# A DSL For questions and results?
+
+We want a lot of freedom in selecting a question
+
+We also want freedom in the scoring mechanic
+
+- sometimes scoring in a team
+- scoring for a season (group bucket)
+- inverting scores
+- modify based on past 'streak'
+- modify based on time taken to answer
+
+this logic we would like to have differently based on time
+
+so that means:
+
+Scheduling rules. The most specific schedule wins.
+
+- A non-repeating schedule wins over a repeating schedule
+
+By having the scheduling of question selected and scheduling of scoring separated,
+We can more easily having a 'Double points week!' without changing question selection.
+
+Even more, scoring we probably want as separate modifiers that act on the outcome of earlier modifiers, in a chain, and committing the final outcome in the end.
+
+So you could have:
+
+1. Base score calculation
+2. Double points week! (modifier over base score)
+3. Eurovision Season (does some team scoring as well)
+4. Apply user effects
+
+The order in which these mutations are applied matters, and should be maintained in some admin.
+
+A DSL to specify all these things would be nice, but does not necessary be an online DSL. It can also be a TS regulated small content files in the codebase, that can be configured in an admin. (plugin model)
