@@ -4,7 +4,8 @@ const SubmitPage: React.FC = () => {
   return (
     <>
       <h1>Hello there!</h1>
-      <p>Let's submit!</p>
+      {/* If in edit modus, render form with values */}
+      <p>Let's submit a poll!</p>
       <Button label="Submit" />
     </>
   );
