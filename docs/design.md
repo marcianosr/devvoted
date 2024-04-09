@@ -45,6 +45,13 @@ or: 'Out your comfort zone day!'
 - Question does not match interest of player
 - Question is a poll question
 
+### Answering a poll
+
+Answering a poll will be stored with a date id:
+This means the same polls can reused over time but with different settings (read: modifiers)
+
+An example url for a poll could be: polls/{date-id}/votes where date-id has a different value but could refer to the same poll.
+
 ## 4. Scoring for questions
 
 Since everyone gets a different (more tailored to their interests) question, it would not be fair if some people get questions that only awards 3 points, and others get questions awarding them 10 points.
