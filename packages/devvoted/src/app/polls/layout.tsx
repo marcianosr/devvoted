@@ -39,7 +39,7 @@ const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
           <div className="flex flex-col gap-2">
             {rankings.map(({ category, name, pid }) => (
-              <ButtonGroup>
+              <ButtonGroup key={category}>
                 <Link
                   href={`/polls/ranking/${category}`}
                   className="p-button p-component rounded-l-full p-button-sm w-2/5"
