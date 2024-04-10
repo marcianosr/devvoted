@@ -3,6 +3,7 @@ import { PropsWithChildren } from "react";
 import { ButtonGroup } from "primereact/buttongroup";
 import { Button } from "primereact/button";
 import { Badge } from "primereact/badge";
+import { redirect } from "next/navigation";
 
 const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const rankings: { category: string; name: string; pid: string }[] = [
@@ -14,9 +15,25 @@ const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <section className="flex flex-col container mx-auto">
-      <header className="h-10">
-        <div />
-        <p>My Name</p>
+      <header className="h-20">
+        <div className="shadow flex flex-row gap-4 p-1">
+          <div className="w-10 h-10 p-2 shadow-sm text-center bg-slate-200 text-2xl">
+            🤪
+          </div>
+          <p>My Name</p>
+          <p>Score: 1337</p>
+          <p>Rating: 85%</p>
+          <div className="flex-1"></div>
+          <form
+            action={async () => {
+              "use server";
+
+              redirect("/");
+            }}
+          >
+            <Button label="Logout" size="small"></Button>
+          </form>
+        </div>
       </header>
       <div className="flex flex-row gap-4">
         <aside className="w-60">

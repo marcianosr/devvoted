@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { Button } from "primereact/button";
 
 const VotePage: React.FC = () => {
@@ -5,7 +6,15 @@ const VotePage: React.FC = () => {
     <>
       <h1>Your voting on poll id #2</h1>
       <p>Let's vote!</p>
-      <Button label="Vote" />
+      <form
+        action={async () => {
+          "use server";
+
+          redirect("/polls/vote/2");
+        }}
+      >
+        <Button label="Vote" />
+      </form>
     </>
   );
 };
