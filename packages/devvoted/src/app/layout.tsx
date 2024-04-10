@@ -1,5 +1,5 @@
-import "primereact/resources/themes/md-light-indigo/theme.css";
 import "./global.css";
+import "primereact/resources/themes/md-light-indigo/theme.css";
 import { Providers } from "./providers";
 
 export const metadata = {

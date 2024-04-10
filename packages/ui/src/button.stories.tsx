@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "primereact/button";
+import { ButtonGroup } from "primereact/buttongroup";
 
 const meta: Meta<typeof Button> = {
   component: Button,
@@ -15,4 +16,13 @@ type Story = StoryObj<typeof Button>;
  */
 export const Primary: Story = {
   render: () => <Button label="Button" />,
+};
+
+export const Group: Story = {
+  render: () => (
+    <ButtonGroup>
+      <Button label="Button" />
+      <Button label="Button" outlined />
+    </ButtonGroup>
+  ),
 };

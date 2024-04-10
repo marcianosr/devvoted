@@ -21,7 +21,7 @@ export default function Index() {
             <Button
               label="login"
               onClick={() => {
-                router.push("/vote");
+                router.push("/polls/vote");
               }}
             />{" "}
             to continue!
