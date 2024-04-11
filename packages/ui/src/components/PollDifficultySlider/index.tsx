@@ -22,7 +22,7 @@ export const PollDifficultySlider = () => {
         <Slider
           value={value}
           className="flex-grow"
-          onChange={(e: SliderChangeEvent) => setValue(e.value)}
+          onChange={(e: SliderChangeEvent) => setValue(e.value as number)}
           step={20}
         />
       </div>
