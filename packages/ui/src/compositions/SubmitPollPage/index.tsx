@@ -8,7 +8,7 @@ import { Divider } from "primereact/divider";
 import { InputTextarea } from "primereact/inputtextarea";
 import { PollQuestion } from "../../components/PollQuestion";
 
-const PageLayout = ({ children }) => {
+const PageLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="bg-stone-100 dark:bg-stone-600 lg:p-16">{children}</div>
   );
