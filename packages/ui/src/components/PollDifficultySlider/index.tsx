@@ -17,7 +17,7 @@ export const PollDifficultySlider = () => {
     <section>
       <h2 className="text-3xl font-bold">Difficulty</h2>
       <div className="flex gap-4 items-center">
-        <h3>{valueMapping[value]}</h3>
+        <h3>{valueMapping[value as keyof typeof valueMapping]}</h3>
 
         <Slider
           value={value}
