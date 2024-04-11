@@ -35,7 +35,7 @@ const Layout: React.FC<PropsWithChildren> = ({ children }) => {
           </form>
         </div>
       </header>
-      <div className="flex flex-row gap-4">
+      <div className="flex flex-row gap-4 flex-wrap">
         <aside className="w-60">
           <nav>
             <ul className="flex flex-col gap-2">
@@ -73,7 +73,14 @@ const Layout: React.FC<PropsWithChildren> = ({ children }) => {
             ))}
           </div>
         </aside>
-        <main>{children}</main>
+        <main
+          className="
+          flex-1
+          md:flex-column
+        "
+        >
+          {children}
+        </main>
       </div>
     </section>
   );

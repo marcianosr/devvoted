@@ -15,14 +15,13 @@ export const PollDifficultySlider = () => {
 
   return (
     <section>
-      <h2 className="text-3xl font-bold dark:text-white">Difficulty</h2>
-
-      <div className="card flex justify-content-center items-center gap-8">
-        <span className="w-1/12">{valueMapping[value]}</span>
+      <h2 className="text-3xl font-bold">Difficulty</h2>
+      <div className="flex gap-4 items-center">
+        <h3>{valueMapping[value]}</h3>
 
         <Slider
           value={value}
-          className="w-6/12 md:w-14rem"
+          className="flex-grow"
           onChange={(e: SliderChangeEvent) => setValue(e.value)}
           step={20}
         />
