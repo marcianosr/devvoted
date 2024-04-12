@@ -1,11 +1,10 @@
+import { SubmitVotePage } from "@devvoted/ui";
 import { redirect } from "next/navigation";
 import { Button } from "primereact/button";
 
 const VotePage: React.FC = () => {
   return (
     <>
-      <h1>Your voting on poll id #2</h1>
-      <p>Let's vote!</p>
       <form
         action={async () => {
           "use server";
@@ -13,6 +12,7 @@ const VotePage: React.FC = () => {
           redirect("/polls/vote/2");
         }}
       >
+        <SubmitVotePage />
         <Button label="Vote" />
       </form>
     </>

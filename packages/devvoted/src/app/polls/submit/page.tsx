@@ -14,6 +14,7 @@ const SubmitPage: React.FC = () => {
         }}
       >
         <SubmitPollPage />
+        <Button label="Create Poll" />
       </form>
     </>
   );

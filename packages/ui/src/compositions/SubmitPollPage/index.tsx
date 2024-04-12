@@ -7,12 +7,7 @@ import { PollDifficultySlider } from "../../components/PollDifficultySlider";
 import { Divider } from "primereact/divider";
 import { InputTextarea } from "primereact/inputtextarea";
 import { PollQuestion } from "../../components/PollQuestion";
-
-const PageLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="bg-stone-100 dark:bg-stone-600 lg:p-16">{children}</div>
-  );
-};
+import { PageLayout } from "../../components/PageLayout";
 
 export const SubmitPollPage = () => {
   return (
@@ -74,8 +69,6 @@ export const SubmitPollPage = () => {
           <InputTextarea placeholder="Code example" rows={10} cols={30} />
         </section>
       </section>
-
-      <Button label="Create Poll" />
     </PageLayout>
   );
 };
