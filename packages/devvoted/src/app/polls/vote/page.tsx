@@ -1,6 +1,5 @@
 import { SubmitVotePage } from "@devvoted/ui";
 import { redirect } from "next/navigation";
-import { Button } from "primereact/button";
 
 const VotePage: React.FC = () => {
   return (
@@ -13,7 +12,6 @@ const VotePage: React.FC = () => {
         }}
       >
         <SubmitVotePage />
-        <Button label="Vote" />
       </form>
     </>
   );

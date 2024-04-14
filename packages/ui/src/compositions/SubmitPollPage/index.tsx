@@ -12,15 +12,13 @@ import { PageLayout } from "../../components/PageLayout";
 export const SubmitPollPage = () => {
   return (
     <PageLayout>
-      <h1 className="text-5xl font-bold dark:text-white">Create poll</h1>
+      <h1 className="text-2xl font-bold">Create poll</h1>
 
       <PollDropdown />
 
       {/* Dynamic PageLayout rendering based on selected poll type*/}
       <section className="mt-10">
-        <h2 className="text-3xl font-bold dark:text-white">
-          Regular question settings
-        </h2>
+        <h2 className="text-3xl font-bold">Regular question settings</h2>
         <article className="flex flex-col gap-2">
           <div className="flex flex-col gap-2">
             <PollQuestion />
@@ -60,7 +58,7 @@ export const SubmitPollPage = () => {
       <Divider />
 
       <section>
-        <h2 className="text-3xl font-bold dark:text-white">Extra settings</h2>
+        <h2 className="text-3xl font-bold">Extra settings</h2>
 
         <section className="flex flex-col gap-2 mb-2">
           <label htmlFor="sandbox-url">Sandbox URL</label>
@@ -69,6 +67,7 @@ export const SubmitPollPage = () => {
           <InputTextarea placeholder="Code example" rows={10} cols={30} />
         </section>
       </section>
+      <Button label="Create poll" />
     </PageLayout>
   );
 };
