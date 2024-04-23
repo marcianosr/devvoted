@@ -12,7 +12,7 @@ export const PollDropdown = () => {
 
   return (
     <>
-      <h2 className="text-3xl font-bold dark:text-white">Poll type</h2>
+      <h2 className="text-3xl font-bold">Poll type</h2>
       <small>Choose the type of poll format you have in mind</small>
       <Dropdown
         value={selectedPollType}

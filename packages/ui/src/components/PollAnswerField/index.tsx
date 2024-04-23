@@ -14,21 +14,22 @@ export const PollAnswerField = () => {
 
       <div className="flex flex-col gap-2">
         {answers.map((answer, index) => (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" key={index}>
             <span>{index + 1}</span>
             <InputText
               type="text"
               placeholder={`Answer #${index + 1}`}
               className="flex-1"
             />
-            <Button label="✅" />
-            <Button label="Add explanation" />
+            <Button label="✅" type="button" />
+            <Button label="Add explanation" type="button" />
           </div>
         ))}
       </div>
       <div className="flex justify-end mt-4">
         <Button
           label="Add answer"
+          type="button"
           onClick={() => setAnswers([...answers, ""])}
         />
       </div>
