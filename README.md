@@ -26,7 +26,17 @@ asdf reshim nodejs
 yarn install
 ```
 
+### Configure .env file
+
+Copy the `.env.example` to `.env` and fill in the blanks
+
 ## Running application (for development)
+
+use 2 terminals:
+
+```sh
+yarn emulate:firestore
+```
 
 ```sh
 yarn dev

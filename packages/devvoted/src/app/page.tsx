@@ -1,30 +1,19 @@
 "use client";
-import { Button } from "primereact/button";
 import styles from "./page.module.css";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Index() {
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./index.css file.
-   */
-  const router = useRouter();
-
   return (
     <div className={styles.page}>
       <div className="wrapper">
         <div className="container">
-          <h1>Welcome to devvoted!</h1>
+          <h1 className="text-center text-4xl uppercase font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
+            Welcome to Devvoted
+          </h1>
           <p>
-            Please{" "}
-            <Button
-              label="login"
-              onClick={() => {
-                router.push("/polls/vote");
-              }}
-            />{" "}
-            to continue!
+            <Link className="p-button inline-block" href="/polls/vote">
+              Vote!
+            </Link>
           </p>
         </div>
       </div>
