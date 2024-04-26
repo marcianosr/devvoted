@@ -11041,7 +11041,6 @@ __metadata:
     eslint-plugin-react-hooks: "npm:4.6.0"
     firebase: "npm:^10.11.0"
     firebase-admin: "npm:^12.1.0"
-    firestore: "npm:^1.1.6"
     jest: "npm:^29.4.1"
     jest-environment-jsdom: "npm:^29.4.1"
     jsdom: "npm:~22.1.0"
@@ -12708,7 +12707,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"faye-websocket@npm:0.11.4, faye-websocket@npm:>=0.6.0, faye-websocket@npm:^0.11.3":
+"faye-websocket@npm:0.11.4, faye-websocket@npm:^0.11.3":
   version: 0.11.4
   resolution: "faye-websocket@npm:0.11.4"
   dependencies:
@@ -12938,13 +12937,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase-token-generator@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "firebase-token-generator@npm:2.0.0"
-  checksum: 10c0/71ef8423fcfa918d10419bd56ddd9a8e63c4ed8348cb01f5bcff96cc2eaf4b041e3a672c8f2b5d0afe8eff048bf8a9e7db0dc7556006193e4ece0b176c14c6e9
-  languageName: node
-  linkType: hard
-
 "firebase@npm:^10.11.0":
   version: 10.11.0
   resolution: "firebase@npm:10.11.0"
@@ -12976,26 +12968,6 @@ __metadata:
     "@firebase/storage-compat": "npm:0.3.7"
     "@firebase/util": "npm:1.9.5"
   checksum: 10c0/2d9312cd1008c8bcf0802ed155ee70e435c559ecb6dd2fd4bf7ac8c1598c1e4b8b135fd65ecd52a79e19945400ced33a35f67ea1e8b7f7cc726a9c3c4b746816
-  languageName: node
-  linkType: hard
-
-"firebase@npm:^2.1.2":
-  version: 2.4.2
-  resolution: "firebase@npm:2.4.2"
-  dependencies:
-    faye-websocket: "npm:>=0.6.0"
-  checksum: 10c0/7343123317bb9e9259df7d9b49e13857c68ca2e2450afcafe3b49cb0ac5122cfbfd46c8cb484bcf87b07e63b8780e298a18e5d771b52cd70704b4ea44f6acb90
-  languageName: node
-  linkType: hard
-
-"firestore@npm:^1.1.6":
-  version: 1.1.6
-  resolution: "firestore@npm:1.1.6"
-  dependencies:
-    firebase: "npm:^2.1.2"
-    firebase-token-generator: "npm:^2.0.0"
-    lodash: "npm:^3.1.0"
-  checksum: 10c0/653565beff6c3ca577dc8cae66577f623e6b5fbf975cceb9c267adbcd9f495cb89520098a0b31bb946f1935e9fa1c143ba5039dfc3a6c61930adc3cc0a3f7827
   languageName: node
   linkType: hard
 
@@ -16661,13 +16633,6 @@ __metadata:
   version: 4.5.0
   resolution: "lodash.uniq@npm:4.5.0"
   checksum: 10c0/262d400bb0952f112162a320cc4a75dea4f66078b9e7e3075ffbc9c6aa30b3e9df3cf20e7da7d566105e1ccf7804e4fbd7d804eee0b53de05d83f16ffbf41c5e
-  languageName: node
-  linkType: hard
-
-"lodash@npm:^3.1.0":
-  version: 3.10.1
-  resolution: "lodash@npm:3.10.1"
-  checksum: 10c0/f5f6d3d87503c3f1db27d49b30a00bb38dc1bd9de716c5febe8970259cc7b447149a0e320452ccaf5996a7a4abd63d94df341bb91bd8d336584ad518d8eab144
   languageName: node
   linkType: hard
 
