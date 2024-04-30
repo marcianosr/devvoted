@@ -35,9 +35,10 @@ export const SubmitPollPage = () => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="poll-question-descriptipn">Tags</label>
+            <label htmlFor="poll-question-description">Tags</label>
             <small>Select tags to assign categories to this poll</small>
             <PollTagsField
+              key={"poll-tags"}
               suggestions={[
                 { id: "react", name: "React" },
                 { id: "html", name: "HTML" },

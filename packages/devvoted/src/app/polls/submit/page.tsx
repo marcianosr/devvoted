@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { SubmitPollPage } from "@devvoted/ui";
 import { fetchUserDetails } from "@/app/lib/user";
 import { createPoll } from "@/app/lib/poll";
+import { Poll } from "@/app/lib/types";
 
 const SubmitPage: React.FC = () => {
   const handleSubmit = async (data: FormData) => {
@@ -9,8 +10,12 @@ const SubmitPage: React.FC = () => {
 
     const userId = (await fetchUserDetails()).profileId;
     const formData = {
+      pollType: data.get("poll-type"),
       pollQuestion: data.get("poll-question"),
       pollQuestionDescription: data.get("poll-question-description"),
+      pollTags: data.getAll("poll-tags"),
+      pollAnswers: data.getAll("poll-answers"),
+      pollDifficulty: data.get("poll-difficulty"),
       userId,
     };
 

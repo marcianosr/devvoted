@@ -7,12 +7,24 @@ type User = {
   emailVerified: boolean | null;
 };
 
-type Poll = {
+export type Poll = {
   userId: string;
+  pollType: string;
+  pollTags: string[];
+  pollAnswers: string[];
+  pollDifficulty: (typeof POLL_DIFFICULTIES)[number];
   pollQuestion: string;
   pollQuestionDescription: string;
 };
 
-type CreatePollResult = {
+export const POLL_DIFFICULTIES = [
+  "very easy",
+  "easy",
+  "medium",
+  "hard",
+  "insane",
+] as const;
+
+export type CreatePollResult = {
   id: string;
 };

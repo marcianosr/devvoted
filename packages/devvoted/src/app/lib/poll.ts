@@ -1,4 +1,5 @@
 import { firestore } from "./firestore";
+import { CreatePollResult, Poll } from "./types";
 
 export const createPoll = async (data: Poll): Promise<CreatePollResult> => {
   const { userId, pollQuestion, pollQuestionDescription } = data;
