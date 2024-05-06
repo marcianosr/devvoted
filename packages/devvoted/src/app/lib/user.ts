@@ -22,7 +22,7 @@ export const fetchUserDetails = async (): Promise<UserDetails> => {
     .where("email", "==", session?.user?.email)
     .limit(1)
     .get();
-  const profileId = users.docs[0].id;
+  const profileId = users.docs[0]?.id;
   const profilePicture = session?.user?.image ?? undefined;
   const profileName = session?.user?.name ?? "Unknown user";
 

@@ -1,16 +1,37 @@
 import type { NextAuthConfig } from "next-auth";
-import { Provider } from "next-auth/providers";
+import { Provider, ProviderType } from "next-auth/providers";
 import Github from "next-auth/providers/github";
+import Resend from "next-auth/providers/resend";
 
-const providers: Provider[] = [Github];
-
+const providers: Provider[] = [];
+if (process.env.AUTH_GITHUB_ID) {
+  providers.push(Github);
+}
+if (process.env.AUTH_RESEND_KEY) {
+  /**
+   * Disabled for now, until https://github.com/nextauthjs/next-auth/issues/10632 is resolved.
+   */
+  // providers.push(
+  //   Resend({
+  //     from: "no-reply@pollapp.echtmaatwerk.nl",
+  //   })
+  // );
+}
 // based on: https://authjs.dev/guides/pages/signin
-export const providerMap = providers.map((provider) => {
+export const providerMap = providers.map<{
+  id: string;
+  name: string;
+  type: ProviderType;
+}>((provider) => {
   if (typeof provider === "function") {
     const providerData = provider();
-    return { id: providerData.id, name: providerData.name };
+    return {
+      id: providerData.id,
+      name: providerData.name,
+      type: providerData.type,
+    };
   } else {
-    return { id: provider.id, name: provider.name };
+    return { id: provider.id, name: provider.name, type: provider.type };
   }
 });
 
