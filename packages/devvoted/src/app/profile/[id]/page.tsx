@@ -1,4 +1,5 @@
 import { firestore } from "@/app/lib/firestore";
+import { User } from "@/app/lib/types";
 import Image from "next/image";
 
 const ProfileIdPage: React.FC<{

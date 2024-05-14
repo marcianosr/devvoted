@@ -7,6 +7,7 @@ export const PollQuestion = () => {
       <InputText
         type="text"
         id="poll-question"
+        name="poll-question"
         aria-describedby="aria-poll-question"
         placeholder="A question you can provide any time, kudo’s if you can do it in rhyme!"
       />

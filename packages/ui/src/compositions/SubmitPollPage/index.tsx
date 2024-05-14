@@ -28,26 +28,28 @@ export const SubmitPollPage = () => {
             <InputText
               type="text"
               id="poll-question-description"
+              name="poll-question-description"
               aria-describedby="aria-poll-question-description"
               placeholder="A short description to elaborate if needed"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="poll-question-descriptipn">Tags</label>
+            <label htmlFor="poll-question-description">Tags</label>
             <small>Select tags to assign categories to this poll</small>
             <PollTagsField
+              key={"poll-tags"}
               suggestions={[
-                { name: "React" },
-                { name: "HTML" },
-                { name: "CSS" },
-                { name: "JavaScript" },
-                { name: "Python" },
-                { name: "Java" },
-                { name: "TypeScript" },
-                { name: "Git" },
-                { name: "Django" },
-                { name: "General Frontend" },
+                { id: "react", name: "React" },
+                { id: "html", name: "HTML" },
+                { id: "css", name: "CSS" },
+                { id: "js", name: "JavaScript" },
+                { id: "python", name: "Python" },
+                { id: "java", name: "Java" },
+                { id: "ts", name: "TypeScript" },
+                { id: "git", name: "Git" },
+                { id: "django", name: "Django" },
+                { id: "gf", name: "General Frontend" },
               ]}
             />
           </div>

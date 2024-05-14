@@ -6,6 +6,7 @@ import {
 
 type PollTagsFieldProps = {
   suggestions: {
+    id: string;
     name: string;
   }[];
 };

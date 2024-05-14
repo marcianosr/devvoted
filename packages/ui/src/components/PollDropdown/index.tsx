@@ -21,6 +21,7 @@ export const PollDropdown = () => {
         optionLabel="name"
         placeholder="Select a poll type"
         className="w-full md:w-14rem"
+        name="poll-type"
       />
     </>
   );
