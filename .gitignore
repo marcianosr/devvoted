@@ -18,7 +18,10 @@ node_modules
 storybook-static
 
 packages/*/dist
+local-data/**
+*.log
 
 # Next.js
 .next
 out
+.env

@@ -71,16 +71,22 @@
     "vitest": "^1.3.1"
   },
   "dependencies": {
+    "@auth/firebase-adapter": "^2.0.0",
     "clsx": "2.1.0",
+    "firebase": "^10.11.0",
+    "firebase-admin": "^12.1.0",
     "next": "14.0.4",
+    "next-auth": "^5.0.0-beta.16",
     "primereact": "^10.6.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zod": "^3.23.4"
   },
   "scripts": {
     "dev": "nx dev devvoted",
     "build": "npx nx build devvoted --prod",
     "dev:components": "nx run @devvoted/components:watch",
-    "storybook:ui": "nx run ui:storybook dev -p 9009"
+    "storybook:ui": "nx run ui:storybook dev -p 9009",
+    "emulate:firestore": "firebase emulators:start --import=./local-data --export-on-exit --project poll-dev-e7fed"
   }
 }

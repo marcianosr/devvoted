@@ -16,10 +16,12 @@
         "name": "next"
       }
     ],
-    "types": [
-      "jest",
-      "node"
-    ]
+    "types": ["jest", "node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@devvoted/ui": ["../../packages/ui/src/index.tsx"]
+    }
   },
   "include": [
     "**/*.ts",
@@ -32,10 +34,5 @@
     ".next/types/**/*.ts",
     "../../dist/apps/devvoted/.next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "jest.config.ts",
-    "**/*.spec.ts",
-    "**/*.test.ts"
-  ]
+  "exclude": ["node_modules", "jest.config.ts", "**/*.spec.ts", "**/*.test.ts"]
 }
