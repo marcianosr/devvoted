@@ -1,24 +1,27 @@
 import type { NextPage } from "next";
+import { useAuth } from "../context/AuthContext";
 import GoogleSignIn from "../components/GoogleSignIn";
 
-const Test: NextPage = () => {
+const Home: NextPage = () => {
+	const { user, loading } = useAuth();
+
+	console.log(user);
+
+	if (loading) {
+		return <div>Loading...</div>;
+	}
+
 	return (
-		<div className="min-h-screen bg-gray-50">
-			<main className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-				<div className="text-center">
-					<h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
-						Welcome to Devvoted
-					</h1>
-					<p className="mt-3 text-xl text-gray-500">
-						Please sign in to continue
-					</p>
-					<div className="mt-10">
-						<GoogleSignIn />
-					</div>
-				</div>
-			</main>
+		<div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+			<h1 className="text-4xl font-bold mb-8">Devvoted</h1>
+			<GoogleSignIn />
+			{user && (
+				<p className="mt-4 text-green-600">
+					Successfully signed in as {user.email}
+				</p>
+			)}
 		</div>
 	);
 };
 
-export default Test;
+export default Home;

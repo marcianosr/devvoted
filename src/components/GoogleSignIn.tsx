@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { signInWithGoogle } from "../../lib/firebase";
-import { User } from "firebase/auth";
+import { useAuth } from "../context/AuthContext";
 
 export default function GoogleSignIn() {
-	const [user, setUser] = useState<User | null>(null);
+	const { user } = useAuth();
 	const [error, setError] = useState<string>("");
 	const [loading, setLoading] = useState(false);
 
@@ -11,8 +11,7 @@ export default function GoogleSignIn() {
 		try {
 			setLoading(true);
 			setError("");
-			const signedInUser = await signInWithGoogle();
-			setUser(signedInUser);
+			await signInWithGoogle();
 		} catch (err) {
 			setError("Failed to sign in with Google");
 			console.error(err);
