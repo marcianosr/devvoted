@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import GoogleSignIn from "../components/GoogleSignIn";
 
 const Home: NextPage = () => {
-	const { user, loading } = useAuth();
+	const { user, loading, logout } = useAuth();
 
 	console.log(user);
 
@@ -16,9 +16,12 @@ const Home: NextPage = () => {
 			<h1 className="text-4xl font-bold mb-8">Devvoted</h1>
 			<GoogleSignIn />
 			{user && (
-				<p className="mt-4 text-green-600">
-					Successfully signed in as {user.email}
-				</p>
+				<>
+					<p className="mt-4 text-green-600">
+						Successfully signed in as {user.email}
+					</p>
+					<button onClick={logout}>Signout</button>
+				</>
 			)}
 		</div>
 	);
