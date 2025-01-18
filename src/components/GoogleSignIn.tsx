@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function GoogleSignIn() {
 	const { user } = useAuth();
-	const [error, setError] = useState<string>("");
+	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 
 	const handleSignIn = async () => {
