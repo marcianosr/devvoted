@@ -1,5 +1,20 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithPopup,
+  connectAuthEmulator 
+} from "firebase/auth";
+import { 
+  getFirestore, 
+  connectFirestoreEmulator 
+} from "firebase/firestore";
+import { 
+  useEmulator, 
+  emulatorHost, 
+  authEmulatorPort, 
+  firestoreEmulatorPort 
+} from "./firebase-config";
 
 const firebaseConfig = {
 	apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,10 +26,20 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app =
-	getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+
+// Initialize Auth
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
+
+// Initialize Firestore
+const db = getFirestore(app);
+
+// Connect to emulators in development
+if (useEmulator) {
+  connectAuthEmulator(auth, `http://${emulatorHost}:${authEmulatorPort}`);
+  connectFirestoreEmulator(db, emulatorHost, firestoreEmulatorPort);
+}
 
 export const signInWithGoogle = async () => {
 	try {
@@ -41,4 +66,4 @@ export const signInWithGoogle = async () => {
 	}
 };
 
-export { auth };
+export { auth, db };

@@ -10,7 +10,8 @@
 		"lint": "next lint",
 		"test": "vitest",
 		"test:coverage": "vitest run --coverage",
-		"test:watch": "vitest watch"
+		"test:watch": "vitest watch",
+		"emulate": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true firebase emulators:start"
 	},
 	"dependencies": {
 		"firebase": "^11.2.0",
