@@ -14,10 +14,10 @@ const Home: NextPage = () => {
 		<div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
 			<h1 className="text-4xl font-bold mb-8">Devvoted</h1>
 
-			<GoogleSignIn />
+			{!user && <GoogleSignIn />}
 			{user && (
 				<>
-					<UserProfile user={user} />;
+					<UserProfile user={user} />
 					<button onClick={logout}>Signout</button>
 				</>
 			)}
