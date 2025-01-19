@@ -40,3 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /config/polls-d8b3d-fa6512eea816.json
+
+# firebase
+firebase-debug.log
+firestore-debug.log
