@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { verifyGoogleToken } from "../../../../lib/firebase-admin";
-
+import { verifyGoogleToken } from "@/lib/firebase-admin";
 export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse

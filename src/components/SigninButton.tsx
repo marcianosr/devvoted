@@ -9,12 +9,9 @@ const SignInButton = ({ onSignIn, loading, error }: SignInButtonProps) => (
 		<button
 			onClick={onSignIn}
 			disabled={loading}
-			className={`flex items-center space-x-2 px-6 py-2 border rounded-lg shadow-sm
-                ${
-					loading
-						? "bg-gray-100 cursor-not-allowed"
-						: "bg-white hover:bg-gray-50"
-				}`}
+			className={
+				"flex items-center space-x-2 px-6 py-2 border rounded-lg shadow-sm"
+			}
 		>
 			<img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
 			<span>{loading ? "Signing in..." : "Sign in with Google"}</span>

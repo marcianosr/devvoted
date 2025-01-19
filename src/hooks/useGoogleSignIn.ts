@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { signInWithGoogle } from "../../lib/firebase";
+import { signInWithGoogle } from "../lib/firebase";
 
 export const useGoogleSignIn = () => {
 	const [error, setError] = useState("");
