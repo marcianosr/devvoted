@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { Button } from "@/components/ui/Button";
+import Button from "@/components/ui/Button";
 
 export default function PollPage() {
 	const { user, loading } = useAuth();

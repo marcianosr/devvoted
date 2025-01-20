@@ -30,19 +30,17 @@ const Button = ({
 	size = "default",
 	children,
 	...props
-}: ButtonProps) => {
-	return (
-		<button
-			className={classNames(
-				buttonVariants.base,
-				buttonVariants.variant[variant],
-				buttonVariants.size[size]
-			)}
-			{...props}
-		>
-			{children}
-		</button>
-	);
-};
+}: ButtonProps) => (
+	<button
+		className={classNames(
+			buttonVariants.base,
+			buttonVariants.variant[variant],
+			buttonVariants.size[size]
+		)}
+		{...props}
+	>
+		{children}
+	</button>
+);
 
 export default Button;
