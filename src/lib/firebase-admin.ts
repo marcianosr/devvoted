@@ -1,10 +1,15 @@
-import { initializeApp, getApps, cert } from "firebase-admin/app";
+import {
+	initializeApp,
+	getApps,
+	cert,
+	ServiceAccount,
+} from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import serviceAccount from "../../config/polls-d8b3d-fa6512eea816.json";
 
 if (!getApps().length) {
 	initializeApp({
-		credential: cert(serviceAccount as any),
+		credential: cert(serviceAccount as ServiceAccount),
 	});
 }
 
@@ -19,6 +24,7 @@ export async function verifyGoogleToken(idToken: string) {
 		try {
 			userRecord = await adminAuth.getUser(decodedToken.uid);
 		} catch (error) {
+			console.error("Error getting user:", error);
 			// If user doesn't exist, create a new one
 			userRecord = await adminAuth.createUser({
 				uid: decodedToken.uid,
@@ -35,6 +41,7 @@ export async function verifyGoogleToken(idToken: string) {
 			token: decodedToken,
 		};
 	} catch (error) {
+		console.error("Error verifying token:", error);
 		throw new Error("Invalid ID token");
 	}
 }

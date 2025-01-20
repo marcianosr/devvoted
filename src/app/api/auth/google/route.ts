@@ -6,7 +6,7 @@ export async function POST(request: Request) {
 		const { idToken } = await request.json();
 
 		// Verify the ID token using our existing function
-		const { user, token } = await verifyGoogleToken(idToken);
+		const { user } = await verifyGoogleToken(idToken);
 
 		return NextResponse.json({
 			status: "success",

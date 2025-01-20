@@ -1656,7 +1656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/eslint-plugin-next@npm:15.1.5":
+"@next/eslint-plugin-next@npm:15.1.5, @next/eslint-plugin-next@npm:^15.1.5":
   version: 15.1.5
   resolution: "@next/eslint-plugin-next@npm:15.1.5"
   dependencies:
@@ -2333,7 +2333,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0":
+"@typescript-eslint/eslint-plugin@npm:^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0, @typescript-eslint/eslint-plugin@npm:^8.20.0":
   version: 8.20.0
   resolution: "@typescript-eslint/eslint-plugin@npm:8.20.0"
   dependencies:
@@ -2354,7 +2354,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0":
+"@typescript-eslint/parser@npm:^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0, @typescript-eslint/parser@npm:^8.20.0":
   version: 8.20.0
   resolution: "@typescript-eslint/parser@npm:8.20.0"
   dependencies:
@@ -3365,6 +3365,7 @@ __metadata:
   resolution: "devvoted@workspace:."
   dependencies:
     "@eslint/eslintrc": "npm:^3"
+    "@next/eslint-plugin-next": "npm:^15.1.5"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
@@ -3372,10 +3373,13 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
+    "@typescript-eslint/eslint-plugin": "npm:^8.20.0"
+    "@typescript-eslint/parser": "npm:^8.20.0"
     "@vitejs/plugin-react": "npm:^4.3.4"
     classnames: "npm:^2.5.1"
     eslint: "npm:^9"
     eslint-config-next: "npm:15.1.5"
+    eslint-plugin-react-hooks: "npm:^5.1.0"
     firebase: "npm:^11.2.0"
     firebase-admin: "npm:^13.0.2"
     google-auth-library: "npm:^9.15.0"
@@ -3992,7 +3996,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react-hooks@npm:^5.0.0":
+"eslint-plugin-react-hooks@npm:^5.0.0, eslint-plugin-react-hooks@npm:^5.1.0":
   version: 5.1.0
   resolution: "eslint-plugin-react-hooks@npm:5.1.0"
   peerDependencies:

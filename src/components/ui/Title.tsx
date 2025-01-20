@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
-import classNames from "classnames";
 
-type TitleLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+type TitleLevel = "h1" | "h2" | "h3";
 
 type TitleProps = {
 	children: ReactNode;
@@ -17,13 +16,6 @@ const levelStyles: Record<TitleLevel, string> = {
 	h6: "text-base font-medium text-white",
 } as const;
 
-export default function Title({
-	children,
-	as: Component = "h1",
-}: TitleProps) {
-	return (
-		<Component className={levelStyles[Component]}>
-			{children}
-		</Component>
-	);
+export default function Title({ children, as: Component = "h1" }: TitleProps) {
+	return <Component className={levelStyles[Component]}>{children}</Component>;
 }

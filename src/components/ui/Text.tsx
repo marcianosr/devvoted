@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import classNames from "classnames";
 
 type TextProps = {
 	children: ReactNode;
