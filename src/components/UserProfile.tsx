@@ -1,11 +1,12 @@
 import { User } from "firebase/auth";
+import Text, { SmallText } from "@/components/ui/Text";
 
 type UserProfileProps = {
 	user: User;
 };
 
 const UserProfile = ({ user }: UserProfileProps) => (
-	<div className="flex items-center space-x-4 p-4">
+	<div className="flex items-center gap-4">
 		{user.photoURL && (
 			<img
 				src={user.photoURL}
@@ -13,9 +14,9 @@ const UserProfile = ({ user }: UserProfileProps) => (
 				className="w-10 h-10 rounded-full"
 			/>
 		)}
-		<div>
-			<p className="font-medium">{user.displayName}</p>
-			<p className="text-sm text-gray-500">{user.email}</p>
+		<div className="flex-col flex">
+			<Text as="span">{user.displayName}</Text>
+			<SmallText>{user.email}</SmallText>
 		</div>
 	</div>
 );
