@@ -3,86 +3,88 @@
 import { useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/ui/Button";
+import Text, { SmallText } from "@/components/ui/Text";
+import Title from "@/components/ui/Title";
 import { useEffect, useState } from "react";
 import { getPoll } from "@/services/polls";
 import type { Poll } from "@/types/database";
 
 export default function PollPage() {
-  const { user, loading: authLoading } = useAuth();
-  const params = useParams();
-  const pollId = params.id as string;
-  
-  const [poll, setPoll] = useState<Poll | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+	const { user, loading: authLoading } = useAuth();
+	const params = useParams();
+	const pollId = params.id as string;
 
-  useEffect(() => {
-    async function loadPoll() {
-      try {
-        console.log("Loading poll:", pollId);
-        const pollData = await getPoll(pollId);
-        console.log("Loaded poll data:", pollData);
-        setPoll(pollData);
-      } catch (err) {
-        console.error("Error loading poll:", err);
-        setError(err instanceof Error ? err.message : "Failed to load poll");
-      } finally {
-        setLoading(false);
-      }
-    }
+	const [poll, setPoll] = useState<Poll | null>(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
-    loadPoll();
-  }, [pollId]);
+	useEffect(() => {
+		async function loadPoll() {
+			try {
+				console.log("Loading poll:", pollId);
+				const pollData = await getPoll(pollId);
+				console.log("Loaded poll data:", pollData);
+				setPoll(pollData);
+			} catch (err) {
+				console.error("Error loading poll:", err);
+				setError(err instanceof Error ? err.message : "Failed to load poll");
+			} finally {
+				setLoading(false);
+			}
+		}
 
-  if (authLoading || loading) {
-    return <div>Loading...</div>;
-  }
+		loadPoll();
+	}, [pollId]);
 
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <h2 className="text-red-800 font-semibold">Error</h2>
-          <p className="text-red-600">{error}</p>
-        </div>
-      </div>
-    );
-  }
+	if (authLoading || loading) {
+		return <div>Loading...</div>;
+	}
 
-  if (!poll) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h2 className="text-yellow-800 font-semibold">Poll Not Found</h2>
-          <p className="text-yellow-600">The requested poll could not be found.</p>
-        </div>
-      </div>
-    );
-  }
+	if (error) {
+		return (
+			<div className="container mx-auto px-4 py-8">
+				<div className="bg-red-50 border border-red-200 rounded-lg p-4">
+					<Title as="h2">Error</Title>
+					<Text>{error}</Text>
+				</div>
+			</div>
+		);
+	}
 
-  return (
-    <section className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">{poll.question}</h1>
-      
-      <div className="space-y-4 mb-8">
-        {poll.options.map((option) => (
-          <button
-            key={option.id}
-            className="w-full p-4 text-left border rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            {option.text}
-          </button>
-        ))}
-      </div>
+	if (!poll) {
+		return (
+			<div className="container mx-auto px-4 py-8">
+				<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+					<Title as="h2">Poll Not Found</Title>
+					<Text>
+						The requested poll could not be found.
+					</Text>
+				</div>
+			</div>
+		);
+	}
 
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-500">
-          Total responses: {poll.totalResponses}
-        </span>
-        <Button disabled={!user} variant="primary">
-          Submit
-        </Button>
-      </div>
-    </section>
-  );
+	return (
+		<section className="container mx-auto px-4 py-8 space-y-8">
+			<Title as="h1">{poll.question}</Title>
+
+			<div className="space-y-4">
+				{poll.options.map((option) => (
+					<button
+						key={option.id}
+						className="w-full p-4 text-left border rounded-lg hover:bg-gray-50 transition-colors"
+					>
+						<Text as="span">{option.text}</Text>
+					</button>
+				))}
+			</div>
+
+			<div className="flex items-center justify-between">
+				<SmallText>Total responses: {poll.totalResponses}</SmallText>
+				<Button disabled={!user} variant="primary">
+					Submit
+				</Button>
+			</div>
+		</section>
+	);
 }
