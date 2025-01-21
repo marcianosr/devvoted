@@ -4,17 +4,18 @@ A web development-themed poll app with a fun, competitive twist! Answer daily po
 
 ## Tech Stack
 
--   Next.js 14
+-   Next.js 15
 -   TypeScript
 -   Firebase (Auth & Firestore)
 -   Tailwind CSS
 -   Vitest & React Testing Library
 -   Playwright for E2E tests
+-   Yarn PnP
 
 ## Prerequisites
 
 -   Node.js 20.x or higher
--   Yarn (we use Yarn PnP)
+-   Yarn (PnP)
 -   Firebase CLI (`npm install -g firebase-tools`)
 
 ## Getting Started
@@ -52,7 +53,7 @@ A web development-themed poll app with a fun, competitive twist! Answer daily po
     firebase emulators:start
     ```
 
-5. Seed the database:
+5. Seed the database (see firebase emulators for setup):
 
     ```bash
     yarn seed
@@ -74,9 +75,9 @@ A web development-themed poll app with a fun, competitive twist! Answer daily po
 
 The app uses Firebase emulators in development. Make sure to:
 
+-   Obtain the firebase.local file
 -   Run `firebase emulators:start` before starting development
 -   Access the Firestore Emulator UI at [http://localhost:4000](http://localhost:4000)
--   The emulator uses the project ID "demo-devvoted" locally
 
 ### Testing
 
@@ -84,24 +85,11 @@ The app uses Firebase emulators in development. Make sure to:
 
 ### Project Structure
 
-```
-src/
-├── app/              # Next.js app router pages
-├── components/       # React components
-├── context/         # React context providers
-├── database/        # Database utilities and seed data
-├── lib/            # Shared utilities
-├── services/       # API services
-└── types/          # TypeScript types
-```
+...
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
+...
 
 ## License
 
