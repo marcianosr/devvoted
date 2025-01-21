@@ -11,7 +11,10 @@
 		"test": "vitest",
 		"test:coverage": "vitest run --coverage",
 		"test:watch": "vitest watch",
-		"emulate": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true firebase emulators:start"
+		"emulate": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true firebase emulators:start",
+		"create-user": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true tsx src/database/create-user.ts",
+		"create-polls": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true tsx src/database/create-polls.ts",
+		"seed": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true yarn create-user && yarn create-polls"
 	},
 	"dependencies": {
 		"classnames": "^2.5.1",

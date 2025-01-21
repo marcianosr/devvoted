@@ -47,3 +47,5 @@ firestore-debug.log
 
 # windsurf rules
 .windsurfrules
+
+/src/lib/firebase-config.local.ts

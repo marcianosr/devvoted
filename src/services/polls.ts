@@ -68,11 +68,6 @@ export const submitPollResponse = async (
 				throw new Error("Invalid option selected");
 			}
 
-			// Update poll document
-			transaction.update(pollRef, {
-				totalResponses: increment(1),
-			});
-
 			// Update user document
 			transaction.update(userRef, {
 				responses: arrayUnion(pollId),

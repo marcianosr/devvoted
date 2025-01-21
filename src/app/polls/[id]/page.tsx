@@ -30,7 +30,9 @@ export default function PollPage() {
 				setPoll(pollData);
 			} catch (err) {
 				console.error("Error loading poll:", err);
-				setError(err instanceof Error ? err.message : "Failed to load poll");
+				setError(
+					err instanceof Error ? err.message : "Failed to load poll"
+				);
 			} finally {
 				setLoading(false);
 			}
@@ -41,7 +43,7 @@ export default function PollPage() {
 
 	const handleOptionClick = (optionId: string) => {
 		if (!user || poll?.status !== "open") return;
-		
+
 		setSelectedOptions((prev) => {
 			// For now, only allow single selection
 			return [optionId];
@@ -63,7 +65,9 @@ export default function PollPage() {
 			setSelectedOptions([]);
 		} catch (err) {
 			console.error("Error submitting response:", err);
-			setSubmitError(err instanceof Error ? err.message : "Failed to submit response");
+			setSubmitError(
+				err instanceof Error ? err.message : "Failed to submit response"
+			);
 		} finally {
 			setSubmitting(false);
 		}
@@ -96,7 +100,8 @@ export default function PollPage() {
 	}
 
 	const isPollClosed = poll.status !== "open";
-	const isOptionSelected = (optionId: string) => selectedOptions.includes(optionId);
+	const isOptionSelected = (optionId: string) =>
+		selectedOptions.includes(optionId);
 
 	return (
 		<section className="container mx-auto px-4 py-8 space-y-8">
@@ -118,7 +123,11 @@ export default function PollPage() {
 							isOptionSelected(option.id)
 								? "bg-blue-50 border-blue-200"
 								: "hover:bg-gray-50"
-						} ${isPollClosed || !user ? "opacity-75 cursor-not-allowed" : ""}`}
+						} ${
+							isPollClosed || !user
+								? "opacity-75 cursor-not-allowed"
+								: ""
+						}`}
 					>
 						<Text as="span">{option.text}</Text>
 					</button>
@@ -132,10 +141,15 @@ export default function PollPage() {
 			)}
 
 			<div className="flex items-center justify-between">
-				<SmallText>Total responses: {poll.totalResponses}</SmallText>
+				<SmallText>Total responses: {poll.responses.length}</SmallText>
 				<Button
 					onClick={handleSubmit}
-					disabled={!user || isPollClosed || selectedOptions.length === 0 || submitting}
+					disabled={
+						!user ||
+						isPollClosed ||
+						selectedOptions.length === 0 ||
+						submitting
+					}
 					variant="primary"
 				>
 					{submitting ? "Submitting..." : "Submit"}
