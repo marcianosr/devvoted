@@ -1,5 +1,5 @@
 import { firebaseConfigLocal } from "@/lib/firebase-config.local";
-import { Poll } from "@/types/database";
+import { RawPoll } from "@/types/database";
 import { initializeApp } from "firebase/app";
 import {
 	getFirestore,
@@ -9,7 +9,7 @@ import {
 	Timestamp,
 } from "firebase/firestore";
 
-const seedData: Record<string, Record<string, Poll>> = {
+const seedData: Record<string, Record<string, RawPoll>> = {
 	polls: {
 		poll1: {
 			id: "poll1",
