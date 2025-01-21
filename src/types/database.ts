@@ -14,10 +14,10 @@ export type Response = {
 	submittedAt: Timestamp;
 };
 
-export type Poll = {
+export type RawPoll = {
 	id: string;
 	pollNumber: number;
-	categories: string[]; // Should be hardcoded? 
+	categories: string[]; // Should be hardcoded?
 	question: string;
 	options: PollOption[];
 	status: PollStatus;
@@ -26,9 +26,14 @@ export type Poll = {
 	responses: Response[];
 };
 
+export type Poll = Omit<RawPoll, "openingTime" | "closingTime"> & {
+	openingTime: string;
+	closingTime: string;
+};
+
 export type UserRole = "user" | "admin";
 
-export type User = {
+export type ClientUser = {
 	id: string;
 	displayName: string;
 	email: string;
