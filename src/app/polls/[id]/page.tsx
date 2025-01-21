@@ -4,7 +4,7 @@ import Title from "@/components/ui/Title";
 import { Metadata } from "next";
 import { PollSubmissionForm } from "@/components/PollSubmissionForm";
 import { getPoll } from "@/services/polls";
-
+import PollQuestion from "@/components/PollQuestion";
 type Props = {
 	params: { id: string };
 };
@@ -33,14 +33,7 @@ export default async function PollPage({ params }: Props) {
 
 	return (
 		<section className="container mx-auto px-4 py-8 space-y-8">
-			<div className="space-y-4">
-				<Title>{poll.question}</Title>
-				<SmallText>
-					Status:{" "}
-					{poll.status.charAt(0).toUpperCase() + poll.status.slice(1)}
-				</SmallText>
-			</div>
-
+			<PollQuestion poll={poll} />
 			<PollSubmissionForm poll={poll} />
 
 			<div className="mt-4">
