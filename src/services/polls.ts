@@ -72,18 +72,14 @@ export const submitPollResponse = async (
 			throw new Error("Invalid option selected");
 		}
 
-		// Update user document
-		transaction.update(userRef, {
-			responses: arrayUnion(pollId),
+		// Update poll document responses
+		transaction.update(pollRef, {
+			responses: {
+				userId,
+				selectedOptions: selectedOptions.map((optId) => optId),
+				submittedAt: new Date(),
+			},
 			totalPollsSubmitted: increment(1),
-		});
-
-		// Create response document
-		const responseRef = doc(db, "polls", pollId, "responses", userId);
-		transaction.set(responseRef, {
-			userId,
-			selectedOptions,
-			submittedAt: new Date(),
 		});
 
 		return { success: true };

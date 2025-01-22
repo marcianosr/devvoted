@@ -28,7 +28,6 @@ const seedData: Record<string, Record<string, RawPoll>> = {
 			closingTime: Timestamp.fromDate(
 				new Date(Date.now() + 24 * 60 * 60 * 1000)
 			),
-			responses: [],
 		},
 		poll2: {
 			id: "poll2",
@@ -46,7 +45,6 @@ const seedData: Record<string, Record<string, RawPoll>> = {
 			closingTime: Timestamp.fromDate(
 				new Date(Date.now() + 24 * 60 * 60 * 1000)
 			),
-			responses: [],
 		},
 	},
 };
