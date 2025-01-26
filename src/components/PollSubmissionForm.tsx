@@ -22,7 +22,6 @@ export function PollSubmissionForm({ poll }: Props) {
 		if (!user || poll.status !== "open") return;
 
 		setSelectedOptions((prev) => {
-			console.log(prev);
 			// For now, only allow single selection
 			return [optionId];
 		});
