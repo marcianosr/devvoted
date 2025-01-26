@@ -14,8 +14,6 @@ export const getPoll = async (pollId: string): Promise<Poll | null> => {
 		const pollRef = doc(db, "polls", pollId);
 		const pollSnap = await getDoc(pollRef);
 
-		console.log("Poll data:", pollSnap.data());
-
 		if (!pollSnap.exists()) {
 			return null;
 		}
