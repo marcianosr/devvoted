@@ -62,6 +62,7 @@ export function PollSubmissionForm({ poll }: Props) {
 		);
 	}
 
+	// should be server component
 	if (!user) {
 		return (
 			<div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
