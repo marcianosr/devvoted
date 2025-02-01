@@ -10,13 +10,21 @@
 		"lint": "next lint",
 		"test": "vitest",
 		"test:coverage": "vitest run --coverage",
-		"test:watch": "vitest watch"
+		"test:watch": "vitest watch",
+		"db:seed": "tsx src/index.ts",
+		"db:reset": "tsx src/database/reset.ts",
+		"db:push": "npx drizzle-kit push",
+		"db:generate": "npx drizzle-kit generate",
+		"db:migrate": "npx drizzle-kit migrate"
 	},
 	"dependencies": {
 		"@supabase/ssr": "^0.5.2",
 		"@supabase/supabase-js": "^2.48.1",
 		"classnames": "^2.5.1",
+		"dotenv": "^16.4.7",
+		"drizzle-orm": "^0.39.1",
 		"next": "15.1.5",
+		"postgres": "^3.4.5",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0"
 	},
@@ -33,6 +41,7 @@
 		"@typescript-eslint/eslint-plugin": "^8.20.0",
 		"@typescript-eslint/parser": "^8.20.0",
 		"@vitejs/plugin-react": "^4.3.4",
+		"drizzle-kit": "^0.30.4",
 		"eslint": "^9",
 		"eslint-config-next": "15.1.5",
 		"eslint-plugin-react-hooks": "^5.1.0",
