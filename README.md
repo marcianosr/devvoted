@@ -56,7 +56,10 @@ A web development-themed poll app with a fun, competitive twist! Answer daily po
 
     Stop Supabase with `supabase stop`
 
-4. Seeding
+4. Seeding:
+
+    - Run `yarn db:push` to push the database schema to Supabase
+    - Run `yarn db:seed` to run the seed script
 
 5. Run the development server:
 
