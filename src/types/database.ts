@@ -1,5 +1,3 @@
-import type { Timestamp } from "firebase/firestore";
-
 export type PollOption = {
 	id: string;
 	text: string;
@@ -10,7 +8,7 @@ export type PollStatus = "open" | "closed" | "needs-revision";
 export type Response = {
 	userId: string;
 	selectedOptions: PollOption[];
-	submittedAt: Timestamp;
+	submittedAt: any; // supabase timestamp
 };
 
 export type RawPoll = {
@@ -20,8 +18,8 @@ export type RawPoll = {
 	question: string;
 	options: PollOption[];
 	status: PollStatus;
-	openingTime: Timestamp;
-	closingTime: Timestamp;
+	openingTime: any; // supabase timestamp
+	closingTime: any; // supabase timestamp
 };
 
 export type Poll = Omit<RawPoll, "openingTime" | "closingTime"> & {

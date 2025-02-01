@@ -31,9 +31,7 @@ export default async function PollPage({ params }: Props) {
 		);
 	}
 
-	const hasResponded = poll.responses.some(
-		(response) => response.userId === "1"
-	);
+	const hasResponded = true
 
 	if (hasResponded) {
 		return (
@@ -50,7 +48,7 @@ export default async function PollPage({ params }: Props) {
 			<PollSubmissionForm poll={poll} />
 
 			<div className="mt-4">
-				<SmallText>Total responses: {poll.responses.length}</SmallText>
+				{/* <SmallText>Total responses: {poll.responses.length}</SmallText> */}
 			</div>
 		</section>
 	);
