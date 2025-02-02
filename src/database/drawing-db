@@ -1,0 +1,17 @@
+┌───────────────┐         ┌──────────────┐         ┌───────────────┐
+│   usersTable  │         │  pollsTable  │         │ pollOptionsTable │
+├───────────────┤         ├──────────────┤         ├───────────────┤
+│ id (PK)       │         │ id (PK)      │         │ id (PK)       │
+│ display_name  │         │ question     │         │ poll_id (FK)  │◄──┐
+│ email         │         │ status       │         │ option        │   │
+└───────────────┘         │ created_by (FK) │      └───────────────┘   │
+                          └──────────────┘                              │
+                                                                         │
+┌────────────────┐          ┌──────────────────────┐         ┌──────────────────────┐
+│ pollResponsesTable │       │ pollResponseOptionsTable │      │ pollCategoriesTable │
+├──────────────────┤       ├──────────────────────┤      ├──────────────────────┤
+│ response_id (PK) │◄─────▶│ response_id (FK)     │      │ poll_id (FK)          │
+│ poll_id (FK)     │       │ option_id (FK)       │      │ category              │
+│ user_id (FK)     │       └──────────────────────┘      └──────────────────────┘
+└──────────────────┘       
+

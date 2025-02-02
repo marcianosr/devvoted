@@ -1,28 +1,52 @@
-import { pgTable, serial, text, varchar, integer } from "drizzle-orm/pg-core";
+import {
+	pgTable,
+	serial,
+	text,
+	varchar,
+	integer,
+	pgEnum,
+	timestamp,
+	boolean,
+} from "drizzle-orm/pg-core";
 
 console.log("🌱 Loading schema...");
+
+export const userRoles = pgEnum("roles", ["user", "admin"] as const);
+export const status = pgEnum("status", [
+	"draft", // Not yet published.
+	"pending-review", // Waiting for approval before opening.
+	"needs-revision", // Reviewed but requires changes.
+	"open", // Accepting responses.
+	"closed", // No longer accepting responses.
+] as const);
 export const usersTable = pgTable("users", {
 	id: serial("id").primaryKey(),
 	display_name: varchar("display_name", { length: 256 }).notNull(),
 	email: varchar("email", { length: 256 }).notNull(),
 	photo_url: text("photo_url"),
-	roles: text("roles").notNull().default("[]"),
-	total_polls_submitted: integer("total_polls_submitted").notNull().default(0),
+	roles: userRoles("roles").notNull().default("user"),
+	total_polls_submitted: integer("total_polls_submitted")
+		.notNull()
+		.default(0),
 });
 
 export const pollsTable = pgTable("polls", {
 	id: serial("id").primaryKey(),
-	title: varchar("title", { length: 256 }).notNull(),
 	question: text("question").notNull(),
-	status: varchar("status", { length: 256 }).notNull().default("open"),
+	status: status("status").notNull().default("draft"),
 	responses: text("responses").notNull().default("[]"),
+	opening_time: timestamp("opening_time").notNull(),
+	closing_time: timestamp("closing_time").notNull(),
+	created_by: integer("created_by").notNull(),
+	created_at: timestamp("created_at").notNull(),
+	updated_at: timestamp("updated_at").notNull(),
 });
 
 export const pollOptionsTable = pgTable("polls_options", {
 	id: serial("id").primaryKey(),
 	poll_id: integer("poll_id").notNull(),
 	option: text("option").notNull(),
-	votes: integer("votes").notNull().default(0),
+	is_correct: boolean("is_correct").notNull().default(false),
 });
 
 export const pollCategoriesTable = pgTable("polls_categories", {

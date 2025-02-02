@@ -15,6 +15,13 @@
       "when": 1738438282959,
       "tag": "0001_gigantic_speed",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1738489283526,
+      "tag": "0002_good_klaw",
+      "breakpoints": true
     }
   ]
 }
