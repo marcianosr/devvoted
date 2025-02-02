@@ -7,15 +7,15 @@ A web development-themed poll app with a fun, competitive twist! Answer daily po
 -   Next.js 15
 -   TypeScript
 -   Supabase + Postgres
--   Tailwind CSS
+-   Tailwind CSS + CSS Modules
 -   Vitest & React Testing Library
 -   Playwright for E2E tests
--   Yarn PnP
+-   Yarn (NodeLinker) enabled, because of incompatibilities with PnP
 
 ## Prerequisites
 
 -   Node.js 20.x or higher
--   Yarn (PnP)
+-   Yarn
 -   Supabase CLI
 -   Docker (for running the Supabase Emulators)
 
@@ -28,25 +28,20 @@ A web development-themed poll app with a fun, competitive twist! Answer daily po
     cd devvoted
     ```
 
-2. Install dependencies:
-
-    ```bash
-    yarn install
-    ```
-
+2. Install dependencies: `yarn install`
 3. Set up Supabase locally:
 
     - Go to [Supabase: Installing CLI](https://supabase.com/docs/guides/local-development/cli/getting-started?queryGroups=platform&platform=macos) and follow the steps
     - If successfull, the given urls should be printed in the terminal, and you can navigate to the studio at http://127.0.0.1:54323
 
     ```
-         API URL: http://127.0.0.1:54321
-     GraphQL URL: http://127.0.0.1:54321/graphql/v1
-    S3 Storage URL: http://127.0.0.1:54321/storage/v1/s3
-          DB URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
-      Studio URL: http://127.0.0.1:54323
-    Inbucket URL: http://127.0.0.1:54324
-      JWT secret: super-secret-jwt-token-with-at-least-32-characters-long
+        API URL: http://127.0.0.1:54321
+        GraphQL URL: http://127.0.0.1:54321/graphql/v1
+        S3 Storage URL: http://127.0.0.1:54321/storage/v1/s3
+        DB URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+        Studio URL: http://127.0.0.1:54323
+        Inbucket URL: http://127.0.0.1:54324
+        JWT secret: super-secret-jwt-token-with-at-least-32-characters-long
         anon key: xxxx
         service_role key: xxxx
         S3 Access Key: xxx
@@ -61,12 +56,7 @@ A web development-themed poll app with a fun, competitive twist! Answer daily po
     - Run `yarn db:push` to push the database schema to Supabase
     - Run `yarn db:seed` to run the seed script
 
-5. Run the development server:
-
-    ```bash
-    yarn dev
-    ```
-
+5. Run the development server: `yarn dev`
 6. Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 ## Development
