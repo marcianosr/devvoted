@@ -5,6 +5,7 @@ export async function middleware(request: NextRequest) {
 	return await updateSession(request);
 }
 
+console.log("🦋 Middleware loaded!");
 export const config = {
 	matcher: [
 		/*
