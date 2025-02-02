@@ -9,5 +9,9 @@ export default async function Home() {
 		.select("*")
 		.returns<PollWithDetails[]>();
 
-	return <pre className="flex font-black">{JSON.stringify(polls)}</pre>;
+	return (
+		<>
+			<pre className="flex font-black">{JSON.stringify(polls)}</pre>
+		</>
+	);
 }
