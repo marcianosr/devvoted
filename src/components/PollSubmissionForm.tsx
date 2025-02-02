@@ -22,7 +22,6 @@ export function PollSubmissionForm({ poll }: Props) {
 		if (!user || poll.status !== "open") return;
 
 		setSelectedOptions((prev) => {
-			console.log(prev);
 			// For now, only allow single selection
 			return [optionId];
 		});
@@ -62,6 +61,7 @@ export function PollSubmissionForm({ poll }: Props) {
 		);
 	}
 
+	// should be server component
 	if (!user) {
 		return (
 			<div className="bg-blue-50 border border-blue-200 rounded-lg p-4">

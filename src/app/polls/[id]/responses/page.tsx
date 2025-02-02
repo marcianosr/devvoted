@@ -36,11 +36,11 @@ export default async function PollResponsesPage({ params }: Props) {
 			<Title as="h2">Poll Responses</Title>
 
 			<section className="space-y-4">
-				{poll.responses.map((response) => (
+				{/* {poll.responses.map((response) => (
 					<div key={response.id}>
 						<Text>{response.selectedOptions.join(", ")}</Text>
 					</div>
-				))}
+				))} */}
 			</section>
 		</section>
 	);

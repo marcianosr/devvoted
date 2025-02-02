@@ -1,14 +1,10 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/ui/Button";
 import Link from "@/components/ui/Link";
 import UserProfile from "@/components/UserProfile";
-import GoogleSignIn from "@/components/GoogleSignIn";
 
 const Navbar = () => {
-	const { user, logout } = useAuth();
-
 	return (
 		<header className="w-full">
 			<nav
@@ -29,23 +25,7 @@ const Navbar = () => {
 						className="flex items-center space-x-4"
 						role="group"
 						aria-label="User actions"
-					>
-						{user ? (
-							<>
-								<UserProfile user={user} />
-								<Button
-									variant="secondary"
-									size="sm"
-									onClick={logout}
-									aria-label="Sign out of your account"
-								>
-									Sign out
-								</Button>
-							</>
-						) : (
-							<GoogleSignIn />
-						)}
-					</div>
+					></div>
 				</div>
 			</nav>
 		</header>

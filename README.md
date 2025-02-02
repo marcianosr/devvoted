@@ -6,7 +6,7 @@ A web development-themed poll app with a fun, competitive twist! Answer daily po
 
 -   Next.js 15
 -   TypeScript
--   Firebase (Auth & Firestore)
+-   Supabase + Postgres
 -   Tailwind CSS
 -   Vitest & React Testing Library
 -   Playwright for E2E tests
@@ -16,7 +16,8 @@ A web development-themed poll app with a fun, competitive twist! Answer daily po
 
 -   Node.js 20.x or higher
 -   Yarn (PnP)
--   Firebase CLI (`npm install -g firebase-tools`)
+-   Supabase CLI
+-   Docker (for running the Supabase Emulators)
 
 ## Getting Started
 
@@ -33,51 +34,42 @@ A web development-themed poll app with a fun, competitive twist! Answer daily po
     yarn install
     ```
 
-3. Set up Firebase:
+3. Set up Supabase locally:
 
-    - Create a new Firebase project at [Firebase Console](https://console.firebase.google.com)
-    - Enable Authentication (Google provider) and Firestore
-    - Create a `.env.local` file with your Firebase config:
-        ```env
-        NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-        NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-        NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-        NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-        NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-        ```
+    - Go to [Supabase: Installing CLI](https://supabase.com/docs/guides/local-development/cli/getting-started?queryGroups=platform&platform=macos) and follow the steps
+    - If successfull, the given urls should be printed in the terminal, and you can navigate to the studio at http://127.0.0.1:54323
 
-4. Start Firebase Emulators:
-
-    ```bash
-    firebase emulators:start
+    ```
+         API URL: http://127.0.0.1:54321
+     GraphQL URL: http://127.0.0.1:54321/graphql/v1
+    S3 Storage URL: http://127.0.0.1:54321/storage/v1/s3
+          DB URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      Studio URL: http://127.0.0.1:54323
+    Inbucket URL: http://127.0.0.1:54324
+      JWT secret: super-secret-jwt-token-with-at-least-32-characters-long
+        anon key: xxxx
+        service_role key: xxxx
+        S3 Access Key: xxx
+        S3 Secret Key: xxx
+        S3 Region: local
     ```
 
-5. Seed the database (see firebase emulators for setup):
+    Stop Supabase with `supabase stop`
 
-    ```bash
-    yarn seed
-    ```
+4. Seeding:
 
-    This will populate your local Firestore emulator with sample polls and users.
+    - Run `yarn db:push` to push the database schema to Supabase
+    - Run `yarn db:seed` to run the seed script
 
-6. Run the development server:
+5. Run the development server:
 
     ```bash
     yarn dev
     ```
 
-7. Open [http://localhost:3000](http://localhost:3000) to view the app.
+6. Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 ## Development
-
-### Firebase Emulators
-
-The app uses Firebase emulators in development. Make sure to:
-
--   Obtain the firebase.local file
--   Run `firebase emulators:start` before starting development
--   Access the Firestore Emulator UI at [http://localhost:4000](http://localhost:4000)
 
 ### Testing
 

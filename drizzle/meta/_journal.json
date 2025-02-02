@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1738438246117,
+      "tag": "0000_woozy_grey_gargoyle",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1738438282959,
+      "tag": "0001_gigantic_speed",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,4 +1,3 @@
-import type { User } from "firebase/auth";
 import { vi } from "vitest";
 
 export const mockUser = {
@@ -22,7 +21,7 @@ export const mockUser = {
 	phoneNumber: null,
 	photoURL: "https://api.dicebear.com/7.x/pixel-art/svg?seed=mario",
 	providerId: "google",
-} as User;
+};
 
 export const mockAuthContext = {
 	user: mockUser,
