@@ -22,6 +22,13 @@
       "when": 1738489283526,
       "tag": "0002_good_klaw",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1738701473005,
+      "tag": "0003_wealthy_blindfold",
+      "breakpoints": true
     }
   ]
 }

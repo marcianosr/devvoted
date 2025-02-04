@@ -2,7 +2,7 @@ import Text from "@/components/ui/Text";
 import { SmallText } from "@/components/ui/Text";
 import Title from "@/components/ui/Title";
 import { Metadata } from "next";
-import { PollSubmissionForm } from "@/components/PollSubmissionForm";
+// import { PollSubmissionForm } from "@/components/PollSubmissionForm";
 import { getPoll } from "@/services/polls";
 import PollQuestion from "@/components/PollQuestion";
 type Props = {
@@ -31,7 +31,7 @@ export default async function PollPage({ params }: Props) {
 		);
 	}
 
-	const hasResponded = true
+	const hasResponded = true;
 
 	if (hasResponded) {
 		return (
@@ -45,7 +45,7 @@ export default async function PollPage({ params }: Props) {
 	return (
 		<section className="container mx-auto px-4 py-8 space-y-8">
 			<PollQuestion poll={poll} />
-			<PollSubmissionForm poll={poll} />
+			{/* <PollSubmissionForm poll={poll} /> */}
 
 			<div className="mt-4">
 				{/* <SmallText>Total responses: {poll.responses.length}</SmallText> */}
