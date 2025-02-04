@@ -23,6 +23,7 @@ export default function EmailPasswordAuth() {
 				password: DEV_PASSWORD,
 			});
 
+			console.log(data, error);
 			if (error) throw error;
 
 			if (data.user) {

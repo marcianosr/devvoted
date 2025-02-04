@@ -1,8 +1,8 @@
 "use client";
 
-import Button from "@/components/ui/Button";
 import Link from "@/components/ui/Link";
 import UserProfile from "@/components/UserProfile";
+import Auth from "@/components/Auth";
 
 const Navbar = () => {
 	return (
@@ -20,12 +20,13 @@ const Navbar = () => {
 					>
 						Devvoted
 					</Link>
-
 					<div
 						className="flex items-center space-x-4"
 						role="group"
 						aria-label="User actions"
-					></div>
+					>
+						{/* <Auth /> */}
+					</div>
 				</div>
 			</nav>
 		</header>
