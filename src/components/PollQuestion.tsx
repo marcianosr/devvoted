@@ -1,4 +1,4 @@
-import { Poll } from "@/types/database";
+import { Poll } from "@/types/db";
 import { SmallText } from "@/components/ui/Text";
 import Title from "@/components/ui/Title";
 

@@ -1,8 +1,5 @@
-"use client";
-
 import Link from "@/components/ui/Link";
 import UserProfile from "@/components/UserProfile";
-import Auth from "@/components/Auth";
 
 const Navbar = () => {
 	return (
@@ -25,7 +22,7 @@ const Navbar = () => {
 						role="group"
 						aria-label="User actions"
 					>
-						{/* <Auth /> */}
+						<UserProfile />
 					</div>
 				</div>
 			</nav>
