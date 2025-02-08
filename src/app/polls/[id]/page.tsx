@@ -9,8 +9,15 @@ type Props = {
 	params: { id: string };
 };
 
+const getPollById = async (params: { id: string }) => {
+	const { id } = await params;
+
+	const poll = await getPoll(id);
+	return poll;
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-	const poll = await getPoll(params.id);
+	const poll = await getPollById(params);
 	return {
 		title: poll?.question || "Poll Not Found",
 		description: `Vote on the poll: ${poll?.question}`,
@@ -18,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PollPage({ params }: Props) {
-	const poll = await getPoll(params.id);
+	const poll = await getPollById(params);
 
 	if (!poll) {
 		return (
@@ -31,7 +38,7 @@ export default async function PollPage({ params }: Props) {
 		);
 	}
 
-	const hasResponded = true;
+	const hasResponded = false;
 
 	if (hasResponded) {
 		return (
@@ -48,7 +55,7 @@ export default async function PollPage({ params }: Props) {
 			{/* <PollSubmissionForm poll={poll} /> */}
 
 			<div className="mt-4">
-				{/* <SmallText>Total responses: {poll.responses.length}</SmallText> */}
+				<SmallText>Total responses: {poll.responses.length}</SmallText>
 			</div>
 		</section>
 	);

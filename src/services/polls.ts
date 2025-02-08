@@ -1,21 +1,19 @@
-import type { Poll, RawPoll } from "@/types/database";
+import { createClient } from "@/app/supabase/server";
+import { Poll } from "@/types/db";
 
-export const getPoll = async (pollId: string): Promise<Poll | null> => {};
+export const getPoll = async (pollId: string): Promise<Poll | null> => {
+	const supabase = createClient();
 
-const serializeTimestamps = (poll: RawPoll): Poll => {
-	return {
-		...poll,
-		openingTime: poll.openingTime.toDate().toISOString(),
-		closingTime: poll.closingTime.toDate().toISOString(),
-	};
-};
+	const { data, error } = await (await supabase)
+		.from("polls")
+		.select("*")
+		.eq("id", pollId)
+		.single();
 
-export const submitPollResponse = async (
-	pollId: string,
-	userId: string,
-	selectedOptions: string[]
-) => {
-	return {
-		success: true,
-	};
+	if (error) {
+		console.error(error);
+		return null;
+	}
+
+	return data;
 };
