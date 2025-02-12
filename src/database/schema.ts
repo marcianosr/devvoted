@@ -34,7 +34,6 @@ export const pollsTable = pgTable("polls", {
 	id: serial("id").primaryKey(),
 	question: text("question").notNull(),
 	status: status("status").notNull().default("draft"),
-	responses: text("responses").notNull().default("[]"),
 	opening_time: timestamp("opening_time").notNull(),
 	closing_time: timestamp("closing_time").notNull(),
 	created_by: integer("created_by").notNull(),
@@ -44,7 +43,9 @@ export const pollsTable = pgTable("polls", {
 
 export const pollOptionsTable = pgTable("polls_options", {
 	id: serial("id").primaryKey(),
-	poll_id: integer("poll_id").notNull(),
+	poll_id: integer("poll_id")
+		.references(() => pollsTable.id)
+		.notNull(),
 	option: text("option").notNull(),
 	is_correct: boolean("is_correct").notNull().default(false),
 });

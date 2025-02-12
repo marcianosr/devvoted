@@ -1,7 +1,11 @@
 // import { eq } from "drizzle-orm";
-import { pollsTable } from "@/database/schema";
+import {
+	pollOptionsTable,
+	pollResponsesTable,
+	pollsTable,
+} from "@/database/schema";
 import { db } from "@/database/db";
-import { Poll } from "@/types/db";
+import { Poll, PollOption, PollResponse } from "@/types/db";
 
 const polls: Poll[] = [
 	{
@@ -14,7 +18,6 @@ const polls: Poll[] = [
 		created_at: new Date(),
 		opening_time: new Date(),
 		closing_time: new Date(),
-		responses: "[]",
 	},
 	{
 		id: 2,
@@ -26,7 +29,59 @@ const polls: Poll[] = [
 		created_at: new Date(),
 		opening_time: new Date(),
 		closing_time: new Date(),
-		responses: "[]",
+	},
+];
+
+const pollOptions: PollOption[] = [
+	{
+		id: 1,
+		poll_id: 1,
+		option: "Option 1",
+		is_correct: false,
+	},
+	{
+		id: 2,
+		poll_id: 1,
+		option: "Option 2",
+		is_correct: false,
+	},
+	{
+		id: 3,
+		poll_id: 1,
+		option: "Option 3",
+		is_correct: false,
+	},
+	{
+		id: 4,
+		poll_id: 2,
+		option: "Option 1",
+		is_correct: false,
+	},
+	{
+		id: 5,
+		poll_id: 2,
+		option: "Option 2",
+		is_correct: false,
+	},
+	{
+		id: 6,
+		poll_id: 2,
+		option: "Option 3",
+		is_correct: true,
+	},
+	{
+		id: 7,
+		poll_id: 2,
+		option: "Option 4",
+		is_correct: false,
+	},
+];
+
+const responses: PollResponse[] = [
+	{
+		poll_id: 1,
+		user_id: 1,
+		response_id: 1,
 	},
 ];
 
@@ -40,6 +95,16 @@ async function main() {
 			.insert(pollsTable)
 			.values(polls)
 			.returning({ id: pollsTable.id });
+
+		await db
+			.insert(pollOptionsTable)
+			.values(pollOptions)
+			.returning({ id: pollOptionsTable.id });
+
+		await db
+			.insert(pollResponsesTable)
+			.values(responses)
+			.returning({ id: pollResponsesTable.poll_id });
 
 		console.log("🌱 Seeding complete!");
 

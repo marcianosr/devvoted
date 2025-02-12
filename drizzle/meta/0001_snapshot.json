@@ -1,6 +1,6 @@
 {
-  "id": "e88c36b0-dc0b-4eb6-b8e8-6766b5e90a3d",
-  "prevId": "9265ebda-f2ea-448f-b390-19df0e722637",
+  "id": "097fc1e0-764b-4bf3-94ab-997749690d51",
+  "prevId": "d830d338-0317-425f-bedd-3fef0520cd43",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -51,16 +51,30 @@
           "primaryKey": false,
           "notNull": true
         },
-        "votes": {
-          "name": "votes",
-          "type": "integer",
+        "is_correct": {
+          "name": "is_correct",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": true,
-          "default": 0
+          "default": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "polls_options_poll_id_polls_id_fk": {
+          "name": "polls_options_poll_id_polls_id_fk",
+          "tableFrom": "polls_options",
+          "tableTo": "polls",
+          "columnsFrom": [
+            "poll_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -133,12 +147,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "title": {
-          "name": "title",
-          "type": "varchar(256)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "question": {
           "name": "question",
           "type": "text",
@@ -147,17 +155,41 @@
         },
         "status": {
           "name": "status",
-          "type": "varchar(256)",
+          "type": "status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
-          "default": "'open'"
+          "default": "'draft'"
         },
-        "responses": {
-          "name": "responses",
-          "type": "text",
+        "opening_time": {
+          "name": "opening_time",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'[]'"
+          "notNull": true
+        },
+        "closing_time": {
+          "name": "closing_time",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -198,10 +230,11 @@
         },
         "roles": {
           "name": "roles",
-          "type": "text",
+          "type": "roles",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
-          "default": "'[]'"
+          "default": "'user'"
         },
         "total_polls_submitted": {
           "name": "total_polls_submitted",
@@ -220,7 +253,27 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.status": {
+      "name": "status",
+      "schema": "public",
+      "values": [
+        "draft",
+        "pending-review",
+        "needs-revision",
+        "open",
+        "closed"
+      ]
+    },
+    "public.roles": {
+      "name": "roles",
+      "schema": "public",
+      "values": [
+        "user",
+        "admin"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},
