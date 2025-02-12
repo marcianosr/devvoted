@@ -2,9 +2,10 @@ import Text from "@/components/ui/Text";
 import { SmallText } from "@/components/ui/Text";
 import Title from "@/components/ui/Title";
 import { Metadata } from "next";
-// import { PollSubmissionForm } from "@/components/PollSubmissionForm";
-import { getPoll } from "@/services/polls";
+import { getPollWithOptions } from "@/services/polls";
 import PollQuestion from "@/components/PollQuestion";
+import { getUser } from "@/services/user";
+import PollSubmission from "@/components/PollSubmission";
 type Props = {
 	params: { id: string };
 };
@@ -12,12 +13,13 @@ type Props = {
 const getPollById = async (params: { id: string }) => {
 	const { id } = await params;
 
-	const poll = await getPoll(id);
-	return poll;
+	const { poll, options } = await getPollWithOptions(id);
+
+	return { poll, options };
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-	const poll = await getPollById(params);
+	const { poll } = await getPollById(params);
 	return {
 		title: poll?.question || "Poll Not Found",
 		description: `Vote on the poll: ${poll?.question}`,
@@ -25,7 +27,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PollPage({ params }: Props) {
-	const poll = await getPollById(params);
+	const { poll, options } = await getPollById(params);
+	const user = await getUser();
 
 	if (!poll) {
 		return (
@@ -52,10 +55,10 @@ export default async function PollPage({ params }: Props) {
 	return (
 		<section className="container mx-auto px-4 py-8 space-y-8">
 			<PollQuestion poll={poll} />
-			{/* <PollSubmissionForm poll={poll} /> */}
+			<PollSubmission poll={poll} options={options} user={user} />
 
 			<div className="mt-4">
-				<SmallText>Total responses: {poll.responses.length}</SmallText>
+				{/* <SmallText>Total responses: {poll.responses.length}</SmallText> */}
 			</div>
 		</section>
 	);

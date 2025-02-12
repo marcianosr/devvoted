@@ -15,6 +15,13 @@
       "when": 1739029124367,
       "tag": "0001_slim_tattoo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1739383359207,
+      "tag": "0002_lucky_professor_monster",
+      "breakpoints": true
     }
   ]
 }

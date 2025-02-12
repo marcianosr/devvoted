@@ -57,13 +57,19 @@ export const pollCategoriesTable = pgTable("polls_categories", {
 
 // Response Options: Implements a many-to-many relationship between responses and poll options.
 export const pollResponseOptionsTable = pgTable("polls_response_options", {
-	response_id: integer("response_id").notNull(),
-	option_id: integer("option_id").notNull(),
+	response_id: integer("response_id")
+		.references(() => pollResponsesTable.response_id)
+		.notNull(),
+	option_id: integer("option_id")
+		.references(() => pollOptionsTable.id)
+		.notNull(),
 });
 
 // Responses: Each response is linked to one poll and one user.
 export const pollResponsesTable = pgTable("polls_responses", {
 	response_id: serial("response_id").primaryKey(),
-	poll_id: integer("poll_id").notNull(),
-	user_id: integer("user_id").notNull(),
+	poll_id: integer("poll_id")
+		.references(() => pollsTable.id)
+		.notNull(),
+	user_id: varchar("user_id", { length: 256 }).notNull(), // Changed to varchar for UUID
 });
