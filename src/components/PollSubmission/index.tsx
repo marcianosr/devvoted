@@ -1,26 +1,16 @@
 "use client";
-
 import { useState } from "react";
-import classNames from "classnames";
-import { Poll, PollOption } from "@/types/db";
-import { User } from "@supabase/supabase-js";
-import Button from "@/components/ui/Button";
-import Text from "@/components/ui/Text";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Text from "@/components/ui/Text";
+import {
+	PollSubmissionProps,
+	SubmitPollResponseParams,
+} from "@/components/PollSubmission/types";
+import { ClosedPollMessage } from "@/components/PollSubmission/ClosedPollMessage";
+import { PollOptions } from "@/components/PollSubmission/PollOptions";
+import { SubmitButton } from "@/components/PollSubmission/SubmitButton";
 
-type Props = {
-	poll: Poll;
-	options: PollOption[];
-	user: User | null;
-};
-
-type SubmitPollResponseParams = {
-	pollId: string;
-	userId: string;
-	selectedOptions: string[];
-};
-
-export default function PollSubmission({ poll, options, user }: Props) {
+const PollSubmission = ({ poll, options, user }: PollSubmissionProps) => {
 	const isPollClosed = poll.status !== "open";
 	const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 	const [error, setError] = useState<string | null>(null);
@@ -56,21 +46,17 @@ export default function PollSubmission({ poll, options, user }: Props) {
 	});
 
 	if (isPollClosed) {
-		return (
-			<div className="border border-yellow-500 rounded-lg p-4">
-				<Text variant="warning">
-					This poll is no longer accepting responses.
-				</Text>
-			</div>
-		);
+		return <ClosedPollMessage />;
 	}
 
 	const handleOptionClick = (optionId: string) => {
 		if (!user || isPollClosed) return;
 
 		setSelectedOptions((prev) => {
-			// For now, only allow single selection
-			return [optionId];
+			const isSelected = prev.includes(optionId);
+			return isSelected
+				? prev.filter((id) => id !== optionId)
+				: [...prev, optionId];
 		});
 		setError(null);
 	};
@@ -82,35 +68,21 @@ export default function PollSubmission({ poll, options, user }: Props) {
 		setError(null);
 
 		submitPoll({
-			pollId: poll.id,
+			pollId: poll.id.toString(),
 			userId: user.id,
 			selectedOptions,
 		});
 	};
 
-	const isOptionSelected = (optionId: string) =>
-		selectedOptions.includes(optionId);
-
 	return (
 		<div className="space-y-6">
 			<div className="space-y-4">
-				{options.map((option) => (
-					<button
-						key={option.id}
-						onClick={() => handleOptionClick(option.id)}
-						className={classNames(
-							"w-full p-4 text-left border rounded-lg transition-colors",
-							{
-								"border-purple-600 bg-purple-600 bg-opacity-20":
-									isOptionSelected(option.id),
-								"bg-white bg-opacity-0 hover:bg-opacity-20":
-									!isOptionSelected(option.id),
-							}
-						)}
-					>
-						<Text as="span">{option.option}</Text>
-					</button>
-				))}
+				<Text className="mb-2">Select one or more options:</Text>
+				<PollOptions
+					options={options}
+					selectedOptions={selectedOptions}
+					onOptionClick={handleOptionClick}
+				/>
 
 				{error && (
 					<div className="border border-red-500 rounded-lg p-4">
@@ -118,20 +90,15 @@ export default function PollSubmission({ poll, options, user }: Props) {
 					</div>
 				)}
 			</div>
-			<div className="flex justify-end">
-				<Button
-					onClick={handleSubmit}
-					disabled={
-						isPollClosed ||
-						!user ||
-						selectedOptions.length === 0 ||
-						isPending
-					}
-					variant="primary"
-				>
-					{isPending ? "Submitting..." : "Submit"}
-				</Button>
-			</div>
+			<SubmitButton
+				isPending={isPending}
+				isPollClosed={isPollClosed}
+				user={user}
+				hasSelectedOptions={selectedOptions.length > 0}
+				onSubmit={handleSubmit}
+			/>
 		</div>
 	);
-}
+};
+
+export default PollSubmission;
