@@ -7,7 +7,7 @@ type SubmitPollResponseParams = {
 export const submitPollResponse = async (
 	data: SubmitPollResponseParams
 ): Promise<void> => {
-	const response = await fetch("/api/polls/submit", {
+	const response = await fetch("/api/polls/submit-response", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
