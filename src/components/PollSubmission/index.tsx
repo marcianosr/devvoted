@@ -1,18 +1,17 @@
 "use client";
+
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Text from "@/components/ui/Text";
-import {
-	PollSubmissionProps,
-	SubmitPollResponseParams,
-} from "@/components/PollSubmission/types";
+import { PollSubmissionProps, SubmitPollResponseParams } from "@/components/PollSubmission/types";
 import { ClosedPollMessage } from "@/components/PollSubmission/ClosedPollMessage";
 import { PollOptions } from "@/components/PollSubmission/PollOptions";
 import { SubmitButton } from "@/components/PollSubmission/SubmitButton";
 
-const PollSubmission = ({ poll, options, user }: PollSubmissionProps) => {
+const PollSubmission = ({ poll, options, user, userSelectedOptions }: PollSubmissionProps) => {
 	const isPollClosed = poll.status !== "open";
-	const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+	const hasResponded = userSelectedOptions.length > 0;
+	const [selectedOptions, setSelectedOptions] = useState<string[]>(userSelectedOptions);
 	const [error, setError] = useState<string | null>(null);
 
 	const queryClient = useQueryClient();
@@ -50,7 +49,7 @@ const PollSubmission = ({ poll, options, user }: PollSubmissionProps) => {
 	}
 
 	const handleOptionClick = (optionId: string) => {
-		if (!user || isPollClosed) return;
+		if (!user || isPollClosed || hasResponded) return;
 
 		setSelectedOptions((prev) => {
 			const isSelected = prev.includes(optionId);
@@ -77,11 +76,16 @@ const PollSubmission = ({ poll, options, user }: PollSubmissionProps) => {
 	return (
 		<div className="space-y-6">
 			<div className="space-y-4">
-				<Text className="mb-2">Select one or more options:</Text>
+				{hasResponded ? (
+					<Text>Your response has been recorded:</Text>
+				) : (
+					<Text>Select one or more options:</Text>
+				)}
 				<PollOptions
 					options={options}
 					selectedOptions={selectedOptions}
 					onOptionClick={handleOptionClick}
+					isReadOnly={hasResponded}
 				/>
 
 				{error && (
@@ -90,13 +94,15 @@ const PollSubmission = ({ poll, options, user }: PollSubmissionProps) => {
 					</div>
 				)}
 			</div>
-			<SubmitButton
-				isPending={isPending}
-				isPollClosed={isPollClosed}
-				user={user}
-				hasSelectedOptions={selectedOptions.length > 0}
-				onSubmit={handleSubmit}
-			/>
+			{!hasResponded && (
+				<SubmitButton
+					isPending={isPending}
+					isPollClosed={isPollClosed}
+					user={user}
+					hasSelectedOptions={selectedOptions.length > 0}
+					onSubmit={handleSubmit}
+				/>
+			)}
 		</div>
 	);
 };

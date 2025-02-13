@@ -1,5 +1,5 @@
 {
-  "id": "d830d338-0317-425f-bedd-3fef0520cd43",
+  "id": "4efee1e1-8046-4a1f-92d0-e29f94b9d52e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -99,7 +99,34 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "polls_response_options_response_id_polls_responses_response_id_fk": {
+          "name": "polls_response_options_response_id_polls_responses_response_id_fk",
+          "tableFrom": "polls_response_options",
+          "tableTo": "polls_responses",
+          "columnsFrom": [
+            "response_id"
+          ],
+          "columnsTo": [
+            "response_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "polls_response_options_option_id_polls_options_id_fk": {
+          "name": "polls_response_options_option_id_polls_options_id_fk",
+          "tableFrom": "polls_response_options",
+          "tableTo": "polls_options",
+          "columnsFrom": [
+            "option_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -124,13 +151,27 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "polls_responses_poll_id_polls_id_fk": {
+          "name": "polls_responses_poll_id_polls_id_fk",
+          "tableFrom": "polls_responses",
+          "tableTo": "polls",
+          "columnsFrom": [
+            "poll_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -160,13 +201,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'draft'"
-        },
-        "responses": {
-          "name": "responses",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'[]'"
         },
         "opening_time": {
           "name": "opening_time",

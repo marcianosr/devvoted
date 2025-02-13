@@ -19,22 +19,45 @@ export const getPoll = async (pollId: string): Promise<Poll | null> => {
 };
 
 export const getPollWithOptions = async (
-	pollId: string
-): Promise<{ poll: Poll | null; options: PollOption[] }> => {
+	pollId: string,
+	userId?: string
+): Promise<{ poll: Poll | null; options: PollOption[]; userSelectedOptions: string[] }> => {
 	const supabase = await createClient();
 
-	console.log("🔥 Getting poll with ID from server:", pollId);
-
-	const { data, error } = await supabase
+	const { data: pollData, error: pollError } = await supabase
 		.from("polls")
 		.select("*, polls_options(*)")
 		.eq("id", pollId)
 		.single();
 
-	if (error) {
-		console.error("Error fetching poll with options:", error);
-		return { poll: null, options: [] };
+	if (pollError) {
+		console.error("Error fetching poll with options:", pollError);
+		return { poll: null, options: [], userSelectedOptions: [] };
 	}
 
-	return { poll: data, options: data.polls_options || [] };
+	if (!userId) {
+		return { poll: pollData, options: pollData.polls_options || [], userSelectedOptions: [] };
+	}
+
+	// Get user's responses
+	const { data: responseData, error: responseError } = await supabase
+		.from("polls_responses")
+		.select("*, polls_response_options(option_id)")
+		.eq("poll_id", pollId)
+		.eq("user_id", userId)
+		.single();
+
+	if (responseError && responseError.code !== "PGRST116") { // PGRST116 is "no rows returned"
+		console.error("Error fetching user responses:", responseError);
+	}
+
+	const userSelectedOptions = responseData?.polls_response_options?.map(
+		(ro: { option_id: number }) => ro.option_id.toString()
+	) || [];
+
+	return {
+		poll: pollData,
+		options: pollData.polls_options || [],
+		userSelectedOptions,
+	};
 };

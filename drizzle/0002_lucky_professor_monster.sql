@@ -1,4 +1,0 @@
-ALTER TABLE "polls_responses" ALTER COLUMN "user_id" SET DATA TYPE varchar(256);--> statement-breakpoint
-ALTER TABLE "polls_response_options" ADD CONSTRAINT "polls_response_options_response_id_polls_responses_response_id_fk" FOREIGN KEY ("response_id") REFERENCES "public"."polls_responses"("response_id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "polls_response_options" ADD CONSTRAINT "polls_response_options_option_id_polls_options_id_fk" FOREIGN KEY ("option_id") REFERENCES "public"."polls_options"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "polls_responses" ADD CONSTRAINT "polls_responses_poll_id_polls_id_fk" FOREIGN KEY ("poll_id") REFERENCES "public"."polls"("id") ON DELETE no action ON UPDATE no action;

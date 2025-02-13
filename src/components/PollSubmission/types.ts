@@ -5,6 +5,7 @@ export type PollSubmissionProps = {
 	poll: Poll;
 	options: PollOption[];
 	user: User | null;
+	userSelectedOptions: string[];
 };
 
 export type SubmitPollResponseParams = {

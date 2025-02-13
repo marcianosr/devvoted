@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1739028736884,
-      "tag": "0000_flat_frog_thor",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1739029124367,
-      "tag": "0001_slim_tattoo",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1739383359207,
-      "tag": "0002_lucky_professor_monster",
+      "when": 1739384818569,
+      "tag": "0000_mean_lila_cheney",
       "breakpoints": true
     }
   ]

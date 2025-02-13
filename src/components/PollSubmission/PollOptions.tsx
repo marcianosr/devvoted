@@ -7,12 +7,14 @@ type Props = {
 	options: PollOptionType[];
 	selectedOptions: string[];
 	onOptionClick: (optionId: string) => void;
+	isReadOnly?: boolean;
 };
 
 export const PollOptions = ({
 	options,
 	selectedOptions,
 	onOptionClick,
+	isReadOnly = false,
 }: Props) => {
 	const isOptionSelected = (optionId: string) =>
 		selectedOptions.includes(optionId);
@@ -25,6 +27,7 @@ export const PollOptions = ({
 					option={option}
 					isSelected={isOptionSelected(option.id.toString())}
 					onOptionClick={onOptionClick}
+					isReadOnly={isReadOnly}
 				/>
 			))}
 		</div>

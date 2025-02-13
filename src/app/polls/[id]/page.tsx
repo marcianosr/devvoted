@@ -6,16 +6,17 @@ import { getPollWithOptions } from "@/services/polls";
 import PollQuestion from "@/components/PollQuestion";
 import { getUser } from "@/services/user";
 import PollSubmission from "@/components/PollSubmission";
+
 type Props = {
 	params: { id: string };
 };
 
-const getPollById = async (params: { id: string }) => {
-	const { id } = await params;
+const getPollById = async (params: { id: string }, userId?: string) => {
+	const { id } = params;
 
-	const { poll, options } = await getPollWithOptions(id);
+	const { poll, options, userSelectedOptions } = await getPollWithOptions(id, userId);
 
-	return { poll, options };
+	return { poll, options, userSelectedOptions };
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -27,8 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PollPage({ params }: Props) {
-	const { poll, options } = await getPollById(params);
 	const user = await getUser();
+	const { poll, options, userSelectedOptions } = await getPollById(params, user?.id);
 
 	if (!poll) {
 		return (
@@ -41,25 +42,15 @@ export default async function PollPage({ params }: Props) {
 		);
 	}
 
-	const hasResponded = false;
-
-	if (hasResponded) {
-		return (
-			<div className="container mx-auto px-4 py-8">
-				<Title>You have already responded to this poll</Title>
-				<Text>You can only submit one response per poll.</Text>
-			</div>
-		);
-	}
-
 	return (
 		<section className="container mx-auto px-4 py-8 space-y-8">
 			<PollQuestion poll={poll} />
-			<PollSubmission poll={poll} options={options} user={user} />
-
-			<div className="mt-4">
-				{/* <SmallText>Total responses: {poll.responses.length}</SmallText> */}
-			</div>
+			<PollSubmission
+				poll={poll}
+				options={options}
+				user={user}
+				userSelectedOptions={userSelectedOptions}
+			/>
 		</section>
 	);
 }
