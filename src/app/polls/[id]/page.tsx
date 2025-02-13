@@ -1,5 +1,4 @@
 import Text from "@/components/ui/Text";
-import { SmallText } from "@/components/ui/Text";
 import Title from "@/components/ui/Title";
 import { Metadata } from "next";
 import { getPollWithOptions } from "@/services/polls";
@@ -11,16 +10,18 @@ type Props = {
 	params: { id: string };
 };
 
-const getPollById = async (params: { id: string }, userId?: string) => {
-	const { id } = params;
-
-	const { poll, options, userSelectedOptions } = await getPollWithOptions(id, userId);
-
+const getPollById = async (id: string, userId?: string) => {
+	const { poll, options, userSelectedOptions } = await getPollWithOptions(
+		id,
+		userId
+	);
 	return { poll, options, userSelectedOptions };
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-	const { poll } = await getPollById(params);
+	const id = await params.id;
+	const { poll } = await getPollById(id);
+
 	return {
 		title: poll?.question || "Poll Not Found",
 		description: `Vote on the poll: ${poll?.question}`,
@@ -28,8 +29,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PollPage({ params }: Props) {
+	const id = await params.id;
 	const user = await getUser();
-	const { poll, options, userSelectedOptions } = await getPollById(params, user?.id);
+	const { poll, options, userSelectedOptions } = await getPollById(
+		id,
+		user?.id
+	);
 
 	if (!poll) {
 		return (
