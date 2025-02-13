@@ -1,8 +1,5 @@
 // import { eq } from "drizzle-orm";
-import {
-	pollOptionsTable,
-	pollsTable,
-} from "@/database/schema";
+import { pollOptionsTable, pollsTable } from "@/database/schema";
 import { db } from "@/database/db";
 import { Poll, PollOption } from "@/types/db";
 
@@ -23,6 +20,27 @@ const polls: Poll[] = [
 		question:
 			"In JS, closures are there, what do you know about it, can you share?",
 		status: "draft",
+		created_by: 1,
+		updated_at: new Date(),
+		created_at: new Date(),
+		opening_time: new Date(),
+		closing_time: new Date(),
+	},
+	{
+		id: 3,
+		question:
+			"What is the best programming language in 2024, can you share?",
+		status: "open",
+		created_by: 1,
+		updated_at: new Date(),
+		created_at: new Date(),
+		opening_time: new Date(),
+		closing_time: new Date(),
+	},
+	{
+		id: 4,
+		question: "What is the best framework for Node.js?",
+		status: "open",
 		created_by: 1,
 		updated_at: new Date(),
 		created_at: new Date(),
@@ -72,6 +90,54 @@ const pollOptions: PollOption[] = [
 		id: 7,
 		poll_id: 2,
 		option: "Option 4",
+		is_correct: false,
+	},
+	{
+		id: 8,
+		poll_id: 3,
+		option: "Option 1",
+		is_correct: false,
+	},
+	{
+		id: 9,
+		poll_id: 3,
+		option: "Option 2",
+		is_correct: false,
+	},
+	{
+		id: 10,
+		poll_id: 3,
+		option: "Option 3",
+		is_correct: true,
+	},
+	{
+		id: 11,
+		poll_id: 4,
+		option: "Option 1",
+		is_correct: false,
+	},
+	{
+		id: 12,
+		poll_id: 4,
+		option: "Option 2",
+		is_correct: false,
+	},
+	{
+		id: 13,
+		poll_id: 4,
+		option: "Option 3",
+		is_correct: false,
+	},
+	{
+		id: 14,
+		poll_id: 4,
+		option: "Option 4",
+		is_correct: true,
+	},
+	{
+		id: 15,
+		poll_id: 4,
+		option: "Option 5",
 		is_correct: false,
 	},
 ];

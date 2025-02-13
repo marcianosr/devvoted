@@ -13,19 +13,24 @@ const PollSubmission = ({
 	poll,
 	options,
 	user,
-	userSelectedOptions,
+	userSelectedOptions: initialUserSelectedOptions,
 }: PollSubmissionProps) => {
 	const isPollClosed = poll.status !== "open";
-	const hasResponded = userSelectedOptions.length > 0;
-	const [selectedOptions, setSelectedOptions] =
-		useState<string[]>(userSelectedOptions);
+	const [userSelectedOptions, setUserSelectedOptions] = useState<string[]>(
+		initialUserSelectedOptions
+	);
+	const [selectedOptions, setSelectedOptions] = useState<string[]>(
+		initialUserSelectedOptions
+	);
 	const [error, setError] = useState<string | null>(null);
 
 	const queryClient = useQueryClient();
 	const { mutate: submitPoll, isPending } = useMutation({
 		mutationFn: submitPollResponse,
 		onSuccess: () => {
-			setSelectedOptions([]);
+			// Update local state to show response immediately
+			setUserSelectedOptions(selectedOptions);
+			// Then invalidate the query to get fresh data
 			queryClient.invalidateQueries({ queryKey: ["polls", poll.id] });
 		},
 		onError: (err: Error) => {
@@ -33,6 +38,8 @@ const PollSubmission = ({
 			console.error("Error submitting poll:", err);
 		},
 	});
+
+	const hasResponded = userSelectedOptions.length > 0;
 
 	if (isPollClosed) {
 		return <ClosedPollMessage />;
