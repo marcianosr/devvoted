@@ -3,37 +3,27 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Text from "@/components/ui/Text";
-import { PollSubmissionProps, SubmitPollResponseParams } from "@/components/PollSubmission/types";
+import { PollSubmissionProps } from "@/components/PollSubmission/types";
 import { ClosedPollMessage } from "@/components/PollSubmission/ClosedPollMessage";
 import { PollOptions } from "@/components/PollSubmission/PollOptions";
 import { SubmitButton } from "@/components/PollSubmission/SubmitButton";
+import { submitPollResponse } from "@/services/api/polls";
 
-const PollSubmission = ({ poll, options, user, userSelectedOptions }: PollSubmissionProps) => {
+const PollSubmission = ({
+	poll,
+	options,
+	user,
+	userSelectedOptions,
+}: PollSubmissionProps) => {
 	const isPollClosed = poll.status !== "open";
 	const hasResponded = userSelectedOptions.length > 0;
-	const [selectedOptions, setSelectedOptions] = useState<string[]>(userSelectedOptions);
+	const [selectedOptions, setSelectedOptions] =
+		useState<string[]>(userSelectedOptions);
 	const [error, setError] = useState<string | null>(null);
 
 	const queryClient = useQueryClient();
 	const { mutate: submitPoll, isPending } = useMutation({
-		mutationFn: async (data: SubmitPollResponseParams) => {
-			const response = await fetch("/api/polls/submit", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(data),
-			});
-
-			if (!response.ok) {
-				const error = await response.json();
-				throw new Error(
-					error.error || "Failed to submit poll response"
-				);
-			}
-
-			return response.json();
-		},
+		mutationFn: submitPollResponse,
 		onSuccess: () => {
 			setSelectedOptions([]);
 			queryClient.invalidateQueries({ queryKey: ["polls", poll.id] });
