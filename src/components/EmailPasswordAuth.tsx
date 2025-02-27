@@ -41,23 +41,19 @@ export default function EmailPasswordAuth() {
 	}
 
 	return (
-		<div className="max-w-sm mx-auto mt-8">
-			<div className=" p-6 rounded-lg shadow-md">
-				<h2 className="text-2xl font-bold mb-4">Development Login</h2>
+		<div>
+			<div>
+				<h2>Development Login</h2>
 				{error && (
-					<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-						{error}
+					<div>
+						<p>{error}</p>
 					</div>
 				)}
-				<div className="mb-4">
-					<p className="text-gray-600">Email: {DEV_EMAIL}</p>
-					<p className="text-gray-600">Password: {DEV_PASSWORD}</p>
+				<div>
+					<p>Email: {DEV_EMAIL}</p>
+					<p>Password: {DEV_PASSWORD}</p>
 				</div>
-				<button
-					onClick={handleDevLogin}
-					disabled={loading}
-					className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:opacity-50"
-				>
+				<button onClick={handleDevLogin} disabled={loading}>
 					{loading ? "Logging in..." : "Development Login"}
 				</button>
 			</div>

@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fira_Code } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import { QueryProvider } from "@/providers/QueryProvider";
 import "./globals.css";
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
+const firaCode = Fira_Code({
+	variable: "--font-fira-sans",
 	subsets: ["latin"],
 });
 
@@ -26,12 +21,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-			>
+			<body className={`${firaCode.className} antialiased`}>
 				<QueryProvider>
 					<Navbar />
-					<main className="min-h-screen">{children}</main>
+					<main>{children}</main>
 				</QueryProvider>
 			</body>
 		</html>

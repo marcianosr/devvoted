@@ -17,19 +17,15 @@ export default async function Home() {
 		.returns<PollWithDetails[]>();
 
 	return (
-		<div className="container mx-auto px-4">
-			<div className="min-h-screen">
+		<div>
+			<div>
 				{session ? (
 					<div>
-						<div className="flex justify-between items-center mb-4">
-							<h1 className="text-2xl font-bold">
-								Welcome back!
-							</h1>
+						<div>
+							<h1>Welcome back!</h1>
 							<LogoutButton />
 						</div>
-						<pre className="p-4 rounded">
-							{JSON.stringify(polls, null, 2)}
-						</pre>
+						<pre>{JSON.stringify(polls, null, 2)}</pre>
 					</div>
 				) : (
 					<Auth />

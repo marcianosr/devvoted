@@ -23,17 +23,16 @@ const UserProfile = () => {
 	const userAvatar = isGoogleUser ? user.user_metadata?.avatar_url : null;
 
 	return (
-		<div className="flex items-center gap-4">
+		<div>
 			{userAvatar && (
 				<Image
 					src={userAvatar}
 					alt={`${userName}'s avatar`}
 					width={32}
 					height={32}
-					className="rounded-full"
 				/>
 			)}
-			<div className="flex-col flex">
+			<div>
 				<Text as="span">{userName}</Text>
 				<SmallText>{userEmail}</SmallText>
 			</div>

@@ -6,18 +6,21 @@ import { useRouter } from "next/navigation";
 export default function LogoutButton() {
   const router = useRouter();
   const supabase = createClient();
+  const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
+    setLoading(true);
     await supabase.auth.signOut();
     router.refresh();
+    setLoading(false);
   };
 
   return (
     <button
       onClick={handleLogout}
-      className="text-red-500 hover:text-red-600"
+      disabled={loading}
     >
-      Sign Out
+      {loading ? "Logging out..." : "Log out"}
     </button>
   );
 }

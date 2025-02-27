@@ -71,8 +71,8 @@ const PollSubmission = ({
 	};
 
 	return (
-		<div className="space-y-6">
-			<div className="space-y-4">
+		<div>
+			<div>
 				{hasResponded ? (
 					<Text>Your response has been recorded:</Text>
 				) : (
@@ -86,7 +86,7 @@ const PollSubmission = ({
 				/>
 
 				{error && (
-					<div className="border border-red-500 rounded-lg p-4">
+					<div>
 						<Text variant="error">{error}</Text>
 					</div>
 				)}

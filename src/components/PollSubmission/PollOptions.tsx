@@ -20,7 +20,7 @@ export const PollOptions = ({
 		selectedOptions.includes(optionId);
 
 	return (
-		<div className="space-y-4">
+		<div>
 			{options.map((option) => (
 				<PollOption
 					key={option.id}
