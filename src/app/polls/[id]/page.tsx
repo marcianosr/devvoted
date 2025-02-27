@@ -10,7 +10,7 @@ type Props = {
 	params: { id: string };
 };
 
-const getPollById = async (id: string, userId?: string) => {
+export const getPollById = async (id: string, userId?: string) => {
 	const { poll, options, userSelectedOptions } = await getPollWithOptions(
 		id,
 		userId

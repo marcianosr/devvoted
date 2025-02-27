@@ -146,7 +146,7 @@ describe(PollSubmission, () => {
 		);
 
 		expect(
-			screen.getByText(/This poll is no longer accepting responses./i)
+			screen.getByText(/This poll is now closed./i)
 		).toBeInTheDocument();
 		expect(
 			screen.queryByRole("button", { name: /submit/i })
