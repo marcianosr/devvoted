@@ -11,6 +11,8 @@ const UserProfile = () => {
 		queryFn: getClientUser,
 	});
 
+	console.log("clientUser", user);
+
 	if (isLoading || !user) {
 		return null;
 	}

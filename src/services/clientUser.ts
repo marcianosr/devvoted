@@ -12,5 +12,19 @@ export const getClientUser = async () => {
 		return null;
 	}
 
-	return session.session.user; // ✅ Fix: Get the user from session
+	const { data: user, error: userError } = await supabase
+		.from("users")
+		.select("*")
+		.eq("id", session.session.user.id)
+		.single();
+
+	if (userError) {
+		console.error("Error fetching client user:", userError);
+		return null;
+	}
+
+	return {
+		devvotedUser: user,
+		...session.session.user,
+	};
 };

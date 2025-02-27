@@ -15,3 +15,15 @@ body {
 	background: var(--background);
 	font-family: Arial, Helvetica, sans-serif;
 }
+
+h1 {
+	font-size: clamp(1.5rem, 1rem + 5vw, 3rem);
+}
+
+h2 {
+	font-size: clamp(1rem, 1rem + 3vw, 2rem);
+}
+
+p {
+	font-size: 1rem;
+}
