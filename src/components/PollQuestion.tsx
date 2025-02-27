@@ -1,6 +1,6 @@
 import { Poll } from "@/types/db";
-import { SmallText } from "@/components/ui/Text";
-import Title from "@/components/ui/Title";
+import { SmallText } from "@/components/ui/Text/Text";
+import Title from "@/components/ui/Title/Title";
 
 const PollQuestion = ({ poll }: { poll: Poll }) => {
 	return (

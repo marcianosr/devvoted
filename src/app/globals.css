@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
 	--background: #ffffff;
 	--foreground: #171717;
@@ -16,14 +18,12 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
-h1 {
-	font-size: clamp(1.5rem, 1rem + 5vw, 3rem);
+button,
+a {
+	color: var(--foreground);
 }
 
-h2 {
-	font-size: clamp(1rem, 1rem + 3vw, 2rem);
-}
-
-p {
-	font-size: 1rem;
+.config-selector {
+	border: 1px solid var(--foreground);
+	padding: 1rem;
 }

@@ -1,0 +1,11 @@
+.primary {
+	font-size: clamp(1.25rem, 1rem + 4vw, 2.5rem);
+}
+
+.secondary {
+	font-size: clamp(1.25rem, 1rem + 4vw, 2.5rem);
+}
+
+.tertiary {
+	font-size: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+}

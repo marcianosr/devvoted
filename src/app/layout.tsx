@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 	description: "A platform for developers",
 };
 
+const layoutStyles = "container mx-auto px-4 py-8";
 export default function RootLayout({
 	children,
 }: Readonly<{
@@ -21,7 +22,11 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`${firaCode.className} antialiased`}>
+			<body
+				className={
+					`${firaCode.className} antialiased` + " " + layoutStyles
+				}
+			>
 				<QueryProvider>
 					<Navbar />
 					<main>{children}</main>

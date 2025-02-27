@@ -1,0 +1,35 @@
+.buttonLink {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	font-size: 1em;
+	padding: 0.5em 1.5em;
+	background: none;
+	color: var(--foreground);
+	cursor: pointer;
+	line-height: 1;
+}
+
+.buttonLink::before,
+.buttonLink::after {
+	content: "";
+	position: absolute;
+	width: 0.4em;
+	height: 100%;
+	border: 2px solid var(--foreground);
+}
+
+.buttonLink::before {
+	left: 0;
+	border-right: none;
+}
+
+.buttonLink::after {
+	right: 0;
+	border-left: none;
+}
+
+.buttonLink:hover {
+	text-decoration: underline;
+}

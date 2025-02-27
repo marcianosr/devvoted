@@ -1,24 +1,22 @@
 import type { ReactNode } from "react";
-
+import styles from "./Text.module.css";
+import classNames from "classnames";
 type TextProps = {
 	children: ReactNode;
 	variant?: "default" | "small" | "error" | "warning";
 	as?: "p" | "span";
 };
 
-const variantStyles = {
-	default: "text-white",
-	small: "text-sm text-gray-500",
-	error: "text-red-500",
-	warning: "text-yellow-500",
-} as const;
-
 export default function Text({
 	children,
 	variant = "default",
 	as: Component = "p",
 }: TextProps) {
-	return <Component className={variantStyles[variant]}>{children}</Component>;
+	return (
+		<Component className={classNames(styles.paragraph, styles[variant])}>
+			{children}
+		</Component>
+	);
 }
 
 // Named exports for specific variants

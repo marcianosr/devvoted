@@ -1,5 +1,5 @@
-import Text from "@/components/ui/Text";
-import Title from "@/components/ui/Title";
+import Text from "@/components/ui/Text/Text";
+import Title from "@/components/ui/Title/Title";
 import { Metadata } from "next";
 import { getPollWithOptions } from "@/services/polls";
 import PollQuestion from "@/components/PollQuestion";

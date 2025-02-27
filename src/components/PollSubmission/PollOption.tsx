@@ -1,7 +1,7 @@
 "use client";
 
 import classNames from "classnames";
-import Text from "@/components/ui/Text";
+import Text from "@/components/ui/Text/Text";
 import { PollOption as PollOptionType } from "@/types/db";
 
 type Props = {
@@ -23,7 +23,8 @@ export const PollOption = ({
 			"w-full p-4 text-left border rounded-lg transition-colors",
 			{
 				"border-purple-600 bg-purple-600 bg-opacity-20": isSelected,
-				"bg-white bg-opacity-0 hover:bg-opacity-20": !isSelected && !isReadOnly,
+				"bg-white bg-opacity-0 hover:bg-opacity-20":
+					!isSelected && !isReadOnly,
 				"cursor-default": isReadOnly,
 			}
 		)}

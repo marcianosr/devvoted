@@ -1,4 +1,4 @@
-import Text from "@/components/ui/Text";
+import Text from "@/components/ui/Text/Text";
 
 export const ClosedPollMessage = () => (
 	<div>

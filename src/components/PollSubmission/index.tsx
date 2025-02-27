@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Text from "@/components/ui/Text";
+import Text from "@/components/ui/Text/Text";
 import { PollSubmissionProps } from "@/components/PollSubmission/types";
 import { ClosedPollMessage } from "@/components/PollSubmission/ClosedPollMessage";
 import { PollOptions } from "@/components/PollSubmission/PollOptions";
