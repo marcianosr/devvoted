@@ -15,10 +15,10 @@ console.log("🌱 Loading schema...");
 export const userRoles = pgEnum("roles", ["user", "admin"] as const);
 export const status = pgEnum("status", [
 	"draft", // Not yet published.
-	"pending-review", // Waiting for approval before opening.
 	"needs-revision", // Reviewed but requires changes.
 	"open", // Accepting responses.
 	"closed", // No longer accepting responses.
+	"archived", // Archived because it's no longer relevant.
 ] as const);
 
 export type User = {
@@ -39,7 +39,9 @@ export const usersTable = pgTable("users", {
 	total_polls_submitted: integer("total_polls_submitted")
 		.notNull()
 		.default(0),
-	active_config: varchar("active_config", { length: 50 }).default("vanilla-config"),
+	active_config: varchar("active_config", { length: 50 }).default(
+		"vanilla-config"
+	),
 });
 
 export const pollsTable = pgTable("polls", {
