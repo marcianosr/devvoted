@@ -1,6 +1,8 @@
 import { createClient } from "@/app/supabase/server";
+import { redirect } from "next/navigation";
+import { AuthenticatedUser } from "@/services/clientUser";
 
-export const getUser = async () => {
+export const getUser = async (): Promise<AuthenticatedUser | null> => {
 	const supabase = createClient();
 
 	const {
@@ -13,5 +15,31 @@ export const getUser = async () => {
 		return null;
 	}
 
-	return user;
+	if (!user) {
+		console.error("User not found:", user);
+		return redirect("/login");
+	}
+
+	const { data: userTableData, error: userTableError } = await (
+		await supabase
+	)
+		.from("users")
+		.select("*")
+		.eq("id", user?.id)
+		.single();
+
+	if (userTableError) {
+		console.error("Error fetching user:", userTableError);
+		return null;
+	}
+
+	if (!userTableData) {
+		console.error("User not found in table:", userTableError);
+		return null;
+	}
+
+	return {
+		...user,
+		devvotedUser: userTableData,
+	};
 };

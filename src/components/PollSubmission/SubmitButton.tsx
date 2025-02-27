@@ -1,5 +1,5 @@
-import Button from "@/components/ui/Button";
 import { User } from "@supabase/supabase-js";
+import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
 
 type Props = {
 	isPending: boolean;
@@ -17,12 +17,11 @@ export const SubmitButton = ({
 	onSubmit,
 }: Props) => (
 	<div className="flex justify-end">
-		<Button
+		<ButtonLink
 			onClick={onSubmit}
 			disabled={isPollClosed || !user || !hasSelectedOptions || isPending}
-			variant="primary"
 		>
 			{isPending ? "Submitting..." : "Submit"}
-		</Button>
+		</ButtonLink>
 	</div>
 );

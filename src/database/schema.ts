@@ -39,6 +39,7 @@ export const usersTable = pgTable("users", {
 	total_polls_submitted: integer("total_polls_submitted")
 		.notNull()
 		.default(0),
+	active_config: varchar("active_config", { length: 50 }).default("vanilla-config"),
 });
 
 export const pollsTable = pgTable("polls", {

@@ -1,11 +1,22 @@
 "use client";
 
 import { createClient } from "@/app/supabase/client";
+import { User } from "@supabase/supabase-js";
 
-export const getClientUser = async () => {
+type DevvotedUser = {
+	id: string;
+	active_config: string | null;
+	created_at: string;
+};
+
+export type AuthenticatedUser = User & {
+	devvotedUser: DevvotedUser;
+};
+
+export const getClientUser = async (): Promise<AuthenticatedUser | null> => {
 	const supabase = createClient();
 
-	const { data: session, error } = await supabase.auth.getSession(); // ✅ Correct way to get client session
+	const { data: session, error } = await supabase.auth.getSession();
 
 	if (error || !session?.session) {
 		console.error("Error fetching client user:", error);

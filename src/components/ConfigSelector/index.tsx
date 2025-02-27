@@ -1,17 +1,79 @@
-import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
-import Text from "@/components/ui/Text/Text";
+"use client";
 
-const ConfigSelector = () => (
-	<section className="container mx-auto px-4 py-8 w-1/2 space-y-2">
-		<Text as="p">🔥 Select your config to begin your next run:</Text>
-		<div className="config-selector">
-			<Text as="p">[Vanilla Config]</Text>
-			<Text as="p">Default config with no options</Text>
-		</div>
-		<div className="flex justify-end">
-			<ButtonLink href="/polls/1">Start Run ▶️</ButtonLink>
-		</div>
-	</section>
-);
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { updateUserConfig } from "@/services/config";
+import { getClientUser } from "@/services/clientUser";
+import Text from "@/components/ui/Text/Text";
+import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
+
+type Config = {
+	name: string;
+	description: string;
+	id: string;
+};
+
+type ConfigSelectorProps = {
+	configs: Config[];
+};
+
+const ConfigSelector = ({ configs }: ConfigSelectorProps) => {
+	const [selectedConfig, setSelectedConfig] = useState(configs[0].id);
+	const [error, setError] = useState<string | null>(null);
+	const router = useRouter();
+
+	const { mutate: updateConfig, isPending } = useMutation({
+		mutationFn: async () => {
+			const user = await getClientUser();
+
+			console.log(user);
+			if (!user) {
+				throw new Error("You must be logged in to start a run");
+			}
+			return updateUserConfig(user.id, selectedConfig);
+		},
+		onSuccess: () => {
+			router.push("/polls/1");
+		},
+		onError: (error) => {
+			setError(
+				error instanceof Error ? error.message : "Failed to start run"
+			);
+		},
+	});
+
+	return (
+		<section className="container mx-auto px-4 py-8 w-1/2 space-y-4">
+			<Text>🔥 Select your config to begin your next run:</Text>
+
+			<div className="space-y-4">
+				{configs.map((config) => (
+					<div
+						key={config.id}
+						className="config-selector"
+						onClick={() => setSelectedConfig(config.id)}
+						onKeyDown={(e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								setSelectedConfig(config.id);
+							}
+						}}
+					>
+						<Text>[{config.name}]</Text>
+						<Text>{config.description}</Text>
+					</div>
+				))}
+			</div>
+
+			{error && <Text>{error}</Text>}
+
+			<div className="flex justify-end">
+				<ButtonLink onClick={() => updateConfig()} disabled={isPending}>
+					{isPending ? "Starting Run..." : "Start Run ▶️"}
+				</ButtonLink>
+			</div>
+		</section>
+	);
+};
 
 export default ConfigSelector;

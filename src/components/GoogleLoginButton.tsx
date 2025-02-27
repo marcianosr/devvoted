@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/app/supabase/client";
 import { getOrCreateUser } from "@/services/auth";
 import { useState } from "react";
-import Button from "@/components/ui/Button";
 import Image from "next/image";
+import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
 
 const GoogleLoginButton = () => {
 	const [loading, setLoading] = useState(false);
@@ -43,14 +43,14 @@ const GoogleLoginButton = () => {
 
 	return (
 		<div>
-			<Button onClick={handleSignIn} disabled={loading}>
+			<ButtonLink onClick={handleSignIn} disabled={loading}>
 				<div>
 					<Image src="/google-icon.svg" alt="Google" />
 					<span>
 						{loading ? "Signing in..." : "Sign in with Google"}
 					</span>
 				</div>
-			</Button>
+			</ButtonLink>
 			{error && <p>{error}</p>}
 		</div>
 	);
