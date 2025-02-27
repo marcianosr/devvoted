@@ -7,6 +7,7 @@ import {
 	pgEnum,
 	timestamp,
 	boolean,
+	uuid,
 } from "drizzle-orm/pg-core";
 
 console.log("🌱 Loading schema...");
@@ -19,8 +20,18 @@ export const status = pgEnum("status", [
 	"open", // Accepting responses.
 	"closed", // No longer accepting responses.
 ] as const);
+
+export type User = {
+	id: string;
+	display_name: string;
+	email: string;
+	photo_url: string | null;
+	roles: "user" | "admin";
+	total_polls_submitted: number;
+};
+
 export const usersTable = pgTable("users", {
-	id: serial("id").primaryKey(),
+	id: uuid("id").primaryKey(),
 	display_name: varchar("display_name", { length: 256 }).notNull(),
 	email: varchar("email", { length: 256 }).notNull(),
 	photo_url: text("photo_url"),
@@ -36,7 +47,9 @@ export const pollsTable = pgTable("polls", {
 	status: status("status").notNull().default("draft"),
 	opening_time: timestamp("opening_time").notNull(),
 	closing_time: timestamp("closing_time").notNull(),
-	created_by: integer("created_by").notNull(),
+	created_by: uuid("created_by")
+		.references(() => usersTable.id)
+		.notNull(),
 	created_at: timestamp("created_at").notNull(),
 	updated_at: timestamp("updated_at").notNull(),
 });
@@ -71,5 +84,5 @@ export const pollResponsesTable = pgTable("polls_responses", {
 	poll_id: integer("poll_id")
 		.references(() => pollsTable.id)
 		.notNull(),
-	user_id: varchar("user_id", { length: 256 }).notNull(), // Changed to varchar for UUID
+	user_id: uuid("user_id").notNull(), // Changed to uuid for UUID
 });

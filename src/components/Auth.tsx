@@ -1,4 +1,4 @@
-import EmailPasswordAuth from "./EmailPasswordAuth";
+import { EmailPasswordAuth } from "./EmailPasswordAuth";
 import GoogleLoginButton from "./GoogleLoginButton";
 
 const AuthComponent =

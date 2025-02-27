@@ -1,36 +1,40 @@
 "use client";
 
-import { createClient } from "@/app/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/app/supabase/client";
+import { getOrCreateUser } from "@/services/auth";
 
-const DEV_EMAIL = "test@test.nl";
-const DEV_PASSWORD = "test123";
+const DEV_EMAIL = "dev@devvoted.com";
+const DEV_PASSWORD = "devvoted123";
 
-export default function EmailPasswordAuth() {
+export const EmailPasswordAuth = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const router = useRouter();
 	const supabase = createClient();
 
 	const handleDevLogin = async () => {
-		setLoading(true);
-		setError(null);
-
 		try {
+			setLoading(true);
+			setError(null);
+
 			const { data, error } = await supabase.auth.signInWithPassword({
 				email: DEV_EMAIL,
 				password: DEV_PASSWORD,
 			});
 
-			console.log(data, error);
 			if (error) throw error;
 
 			if (data.user) {
-				router.refresh(); // Refresh the page to update session state
+				await getOrCreateUser(data.user);
+				router.refresh();
 			}
-		} catch (err: any) {
-			setError(err.message);
+		} catch (error) {
+			console.error("Error signing in:", error);
+			setError(
+				error instanceof Error ? error.message : "Failed to sign in"
+			);
 		} finally {
 			setLoading(false);
 		}
@@ -54,9 +58,9 @@ export default function EmailPasswordAuth() {
 					<p>Password: {DEV_PASSWORD}</p>
 				</div>
 				<button onClick={handleDevLogin} disabled={loading}>
-					{loading ? "Logging in..." : "Development Login"}
+					{loading ? "Signing in..." : "Development Login"}
 				</button>
 			</div>
 		</div>
 	);
-}
+};

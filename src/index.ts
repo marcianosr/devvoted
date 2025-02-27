@@ -3,13 +3,15 @@ import { pollOptionsTable, pollsTable } from "@/database/schema";
 import { db } from "@/database/db";
 import { Poll, PollOption } from "@/types/db";
 
+const DEV_UID = "f40d940b-9d3b-47f3-a73a-4dfba18b20c2";
+
 const polls: Poll[] = [
 	{
 		id: 1,
 		question:
 			"In CSS, the “*” selector does exist, what effects of this selector can you list?",
 		status: "open",
-		created_by: 1,
+		created_by: DEV_UID,
 		updated_at: new Date(),
 		created_at: new Date(),
 		opening_time: new Date(),
@@ -20,7 +22,7 @@ const polls: Poll[] = [
 		question:
 			"In JS, closures are there, what do you know about it, can you share?",
 		status: "draft",
-		created_by: 1,
+		created_by: DEV_UID,
 		updated_at: new Date(),
 		created_at: new Date(),
 		opening_time: new Date(),
@@ -31,7 +33,7 @@ const polls: Poll[] = [
 		question:
 			"What is the best programming language in 2024, can you share?",
 		status: "open",
-		created_by: 1,
+		created_by: DEV_UID,
 		updated_at: new Date(),
 		created_at: new Date(),
 		opening_time: new Date(),
@@ -41,7 +43,7 @@ const polls: Poll[] = [
 		id: 4,
 		question: "What is the best framework for Node.js?",
 		status: "open",
-		created_by: 1,
+		created_by: DEV_UID,
 		updated_at: new Date(),
 		created_at: new Date(),
 		opening_time: new Date(),

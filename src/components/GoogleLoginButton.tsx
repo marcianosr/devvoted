@@ -1,44 +1,58 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { createClient } from "@/app/supabase/client";
+import { getOrCreateUser } from "@/services/auth";
 import { useState } from "react";
 import Button from "@/components/ui/Button";
+import Image from "next/image";
 
 const GoogleLoginButton = () => {
-	const [isLoading, setIsLoading] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const router = useRouter();
 	const supabase = createClient();
 
-	const handleLogin = async () => {
-		setIsLoading(true);
-
+	const handleSignIn = async () => {
 		try {
+			setLoading(true);
+			setError(null);
+
 			const { data, error } = await supabase.auth.signInWithOAuth({
 				provider: "google",
 				options: {
 					redirectTo: process.env.NEXT_PUBLIC_REDIRECT_URI,
-					queryParams: {
-						access_type: "offline",
-						prompt: "consent",
-					},
 				},
 			});
 
 			if (error) throw error;
 
-			if (data?.url) {
-				window.location.href = data.url;
+			const session = await supabase.auth.getSession();
+
+			if (session.data.session?.user) {
+				await getOrCreateUser(session.data.session.user);
+				router.refresh();
 			}
 		} catch (error) {
-			console.error("❌ Google Login Error:", error);
+			console.error("Error signing in:", error);
+			setError("Failed to sign in with Google");
 		} finally {
-			setIsLoading(false);
+			setLoading(false);
 		}
 	};
 
 	return (
-		<Button onClick={handleLogin} disabled={isLoading}>
-			{isLoading ? "Signing in..." : "Sign in with Google"}
-		</Button>
+		<div>
+			<Button onClick={handleSignIn} disabled={loading}>
+				<div>
+					<Image src="/google-icon.svg" alt="Google" />
+					<span>
+						{loading ? "Signing in..." : "Sign in with Google"}
+					</span>
+				</div>
+			</Button>
+			{error && <p>{error}</p>}
+		</div>
 	);
 };
 

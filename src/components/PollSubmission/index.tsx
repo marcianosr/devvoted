@@ -8,6 +8,7 @@ import { ClosedPollMessage } from "@/components/PollSubmission/ClosedPollMessage
 import { PollOptions } from "@/components/PollSubmission/PollOptions";
 import { SubmitButton } from "@/components/PollSubmission/SubmitButton";
 import { submitPollResponse } from "@/services/api/polls";
+import { getClientUser } from "@/services/clientUser";
 
 const PollSubmission = ({
 	poll,
@@ -15,6 +16,10 @@ const PollSubmission = ({
 	user,
 	userSelectedOptions: initialUserSelectedOptions,
 }: PollSubmissionProps) => {
+	const clientUser = getClientUser().then((user) => {
+		console.log("clientUser", user);
+	});
+
 	const isPollClosed = poll.status !== "open";
 	const [userSelectedOptions, setUserSelectedOptions] = useState<string[]>(
 		initialUserSelectedOptions
