@@ -1,7 +1,10 @@
-type SubmitPollResponseParams = {
-	pollId: string;
+import { Poll } from "@/types/db";
+
+export type SubmitPollResponseParams = {
+	poll: Poll;
 	userId: string;
 	selectedOptions: string[];
+	selectedBet: number;
 };
 
 export const submitPollResponse = async (

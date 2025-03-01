@@ -5,6 +5,7 @@ import { getPollWithOptions } from "@/services/polls";
 import PollQuestion from "@/components/PollQuestion";
 import { getUser } from "@/services/user";
 import PollSubmission from "@/components/PollSubmission";
+import { getActiveRun } from "@/services/activeRun";
 
 type Props = {
 	params: { id: string };
@@ -35,8 +36,8 @@ export default async function PollPage({ params }: Props) {
 		id,
 		user?.id
 	);
-
-	console.log(poll);
+	const activeRun = await getActiveRun(user?.id ?? "");
+	console.log(activeRun);
 
 	if (!poll) {
 		return (
@@ -58,10 +59,11 @@ export default async function PollPage({ params }: Props) {
 					{poll.status.charAt(0).toUpperCase() + poll.status.slice(1)}
 				</Text>
 				<Text>
-					💰 Available to bet: ??? from {poll.category_code} XP pool
+					💰 Available to bet: ??? from {activeRun?.category_code} XP
+					pool
 				</Text>
 				<Text>
-					🎯 Multiplier: <b>0.3×</b>
+					🎯 Multiplier: <b>{activeRun?.streak_multiplier}×</b>
 				</Text>
 				<Text>🔥 Current streak</Text>
 			</section>

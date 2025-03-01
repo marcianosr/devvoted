@@ -5,6 +5,7 @@ import {
 	pollResponseOptionsTable,
 	pollResponsesTable,
 	usersTable,
+	activeRunTable,
 } from "@/database/schema";
 import { InferInsertModel, InferSelectModel } from "drizzle-orm/table";
 
@@ -49,6 +50,18 @@ export type Category = {
 	id?: number;
 	code: string;
 	name: string;
+};
+
+export type ActiveRun = {
+	id: string;
+	user_id: string;
+	category_code: string;
+	temporary_xp: number;
+	current_streak: number;
+	streak_multiplier: number;
+	started_at: Date;
+	last_poll_at: Date;
+	locked_in_at: Date | null;
 };
 
 export type PollCategory = InferSelectModel<typeof pollCategoriesTable>;

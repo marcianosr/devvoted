@@ -60,15 +60,21 @@ const PollSubmission = ({
 	};
 
 	const handleSubmit = () => {
-		if (!user || poll.status !== "open" || selectedOptions.length === 0)
+		if (
+			!user ||
+			poll.status !== "open" ||
+			selectedOptions.length === 0 ||
+			!selectedBet
+		)
 			return;
 
 		setError(null);
 
 		submitPoll({
-			pollId: poll.id.toString(),
+			poll,
 			userId: user.id,
 			selectedOptions,
+			selectedBet,
 		});
 	};
 

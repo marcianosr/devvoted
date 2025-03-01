@@ -7,9 +7,3 @@ export type PollSubmissionProps = {
 	user: User | null;
 	userSelectedOptions: string[];
 };
-
-export type SubmitPollResponseParams = {
-	pollId: string;
-	userId: string;
-	selectedOptions: string[];
-};
