@@ -5,12 +5,12 @@ import {
 	usersTable,
 } from "@/database/schema";
 import { db } from "@/database/db";
-import { Poll, PollOption, Category } from "@/types/db";
+import { Poll, PollOption, PollCategory, User } from "@/types/db";
 
 const DEV_UID = "f40d940b-9d3b-47f3-a73a-4dfba18b20c2";
 
 // Define user with all required fields from the schema
-const user = {
+const user: User = {
 	id: DEV_UID,
 	display_name: "Devvoted",
 	email: "devvoted@devvoted.com",
@@ -20,7 +20,7 @@ const user = {
 	active_config: null,
 } as const;
 
-const categories: Category[] = [
+const categories: Omit<PollCategory, "id">[] = [
 	{ code: "css", name: "CSS" },
 	{ code: "js", name: "JavaScript" },
 	{ code: "react", name: "React" },
