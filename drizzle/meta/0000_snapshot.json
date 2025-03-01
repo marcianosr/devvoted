@@ -1,5 +1,5 @@
 {
-  "id": "4efee1e1-8046-4a1f-92d0-e29f94b9d52e",
+  "id": "5c5a64ac-e85e-46ae-98d3-d92fc6f1e983",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,14 +8,20 @@
       "name": "polls_categories",
       "schema": "",
       "columns": {
-        "poll_id": {
-          "name": "poll_id",
-          "type": "integer",
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
-        "category": {
-          "name": "category",
+        "code": {
+          "name": "code",
           "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
@@ -24,7 +30,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "polls_categories_code_unique": {
+          "name": "polls_categories_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "code"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -71,7 +85,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -110,7 +124,7 @@
           "columnsTo": [
             "response_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "polls_response_options_option_id_polls_options_id_fk": {
@@ -123,7 +137,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -151,9 +165,23 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "varchar(256)",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -168,7 +196,20 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "polls_responses_user_id_users_id_fk": {
+          "name": "polls_responses_user_id_users_id_fk",
+          "tableFrom": "polls_responses",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },
@@ -202,6 +243,14 @@
           "notNull": true,
           "default": "'draft'"
         },
+        "answer_type": {
+          "name": "answer_type",
+          "type": "answer_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'single'"
+        },
         "opening_time": {
           "name": "opening_time",
           "type": "timestamp",
@@ -216,7 +265,7 @@
         },
         "created_by": {
           "name": "created_by",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -230,11 +279,45 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "category_code": {
+          "name": "category_code",
+          "type": "varchar(50)",
+          "primaryKey": false,
           "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "polls_created_by_users_id_fk": {
+          "name": "polls_created_by_users_id_fk",
+          "tableFrom": "polls",
+          "tableTo": "users",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "polls_category_code_polls_categories_code_fk": {
+          "name": "polls_category_code_polls_categories_code_fk",
+          "tableFrom": "polls",
+          "tableTo": "polls_categories",
+          "columnsFrom": [
+            "category_code"
+          ],
+          "columnsTo": [
+            "code"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -247,7 +330,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -283,6 +366,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": 0
+        },
+        "active_config": {
+          "name": "active_config",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -295,15 +384,23 @@
     }
   },
   "enums": {
+    "public.answer_type": {
+      "name": "answer_type",
+      "schema": "public",
+      "values": [
+        "single",
+        "multiple"
+      ]
+    },
     "public.status": {
       "name": "status",
       "schema": "public",
       "values": [
         "draft",
-        "pending-review",
         "needs-revision",
         "open",
-        "closed"
+        "closed",
+        "archived"
       ]
     },
     "public.roles": {

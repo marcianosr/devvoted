@@ -20,7 +20,7 @@ export const PollOptions = ({
 		selectedOptions.includes(optionId);
 
 	return (
-		<div>
+		<ul>
 			{options.map((option) => (
 				<PollOption
 					key={option.id}
@@ -30,6 +30,6 @@ export const PollOptions = ({
 					isReadOnly={isReadOnly}
 				/>
 			))}
-		</div>
+		</ul>
 	);
 };

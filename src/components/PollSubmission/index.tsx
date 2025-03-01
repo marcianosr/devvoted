@@ -7,6 +7,7 @@ import { PollSubmissionProps } from "@/components/PollSubmission/types";
 import { ClosedPollMessage } from "@/components/PollSubmission/ClosedPollMessage";
 import { PollOptions } from "@/components/PollSubmission/PollOptions";
 import { SubmitButton } from "@/components/PollSubmission/SubmitButton";
+import { BettingOptions } from "./BettingOptions";
 import { submitPollResponse } from "@/services/api/polls";
 
 const PollSubmission = ({
@@ -22,6 +23,7 @@ const PollSubmission = ({
 	const [selectedOptions, setSelectedOptions] = useState<string[]>(
 		initialUserSelectedOptions
 	);
+	const [selectedBet, setSelectedBet] = useState<number>();
 	const [error, setError] = useState<string | null>(null);
 
 	const queryClient = useQueryClient();
@@ -58,20 +60,32 @@ const PollSubmission = ({
 	};
 
 	const handleSubmit = () => {
-		if (!user || poll.status !== "open" || selectedOptions.length === 0)
+		if (
+			!user ||
+			poll.status !== "open" ||
+			selectedOptions.length === 0 ||
+			!selectedBet
+		)
 			return;
 
 		setError(null);
 
 		submitPoll({
-			pollId: poll.id.toString(),
+			poll,
 			userId: user.id,
 			selectedOptions,
+			selectedBet,
 		});
 	};
 
 	return (
-		<div>
+		<div className="space-y-8">
+			{!hasResponded && (
+				<BettingOptions
+					onBetSelect={setSelectedBet}
+					selectedBet={selectedBet}
+				/>
+			)}
 			<div>
 				{hasResponded ? (
 					<Text>Your response has been recorded:</Text>
@@ -91,6 +105,7 @@ const PollSubmission = ({
 					</div>
 				)}
 			</div>
+
 			{!hasResponded && (
 				<SubmitButton
 					isPending={isPending}

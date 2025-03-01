@@ -1,0 +1,4 @@
+.configSelector {
+	border: 1px solid var(--foreground);
+	padding: 1rem;
+}

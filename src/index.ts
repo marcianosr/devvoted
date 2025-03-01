@@ -1,23 +1,37 @@
-// import { eq } from "drizzle-orm";
-import { pollOptionsTable, pollsTable, usersTable } from "@/database/schema";
+import {
+	pollCategoriesTable,
+	pollOptionsTable,
+	pollsTable,
+	usersTable,
+} from "@/database/schema";
 import { db } from "@/database/db";
-import { Poll, PollOption, User } from "@/types/db";
+import { Poll, PollOption, Category } from "@/types/db";
 
 const DEV_UID = "f40d940b-9d3b-47f3-a73a-4dfba18b20c2";
 
+// Define user with all required fields from the schema
 const user = {
 	id: DEV_UID,
 	display_name: "Devvoted",
 	email: "devvoted@devvoted.com",
 	photo_url: null,
-	roles: "admin" as const,
+	role: "admin" as const,
 	total_polls_submitted: 0,
 	active_config: null,
-} satisfies Partial<User>;
+} as const;
 
-const polls: Poll[] = [
+const categories: Category[] = [
+	{ code: "css", name: "CSS" },
+	{ code: "js", name: "JavaScript" },
+	{ code: "react", name: "React" },
+	{ code: "general-frontend", name: "General Frontend" },
+	{ code: "typescript", name: "TypeScript" },
+	{ code: "general-backend", name: "General Backend" },
+	{ code: "html", name: "HTML" },
+];
+
+const polls: Omit<Poll, "id">[] = [
 	{
-		id: 1,
 		question:
 			"In CSS, the “*” selector does exist, what effects of this selector can you list?",
 		status: "open",
@@ -26,9 +40,10 @@ const polls: Poll[] = [
 		created_at: new Date(),
 		opening_time: new Date(),
 		closing_time: new Date(),
+		category_code: "css",
+		answer_type: "single",
 	},
 	{
-		id: 2,
 		question:
 			"In JS, closures are there, what do you know about it, can you share?",
 		status: "draft",
@@ -37,121 +52,51 @@ const polls: Poll[] = [
 		created_at: new Date(),
 		opening_time: new Date(),
 		closing_time: new Date(),
+		category_code: "js",
+		answer_type: "multiple",
 	},
 	{
-		id: 3,
 		question:
-			"What is the best programming language in 2024, can you share?",
+			"In React, development goes rapid, synthetic events are built-in, do you know why they are added?",
 		status: "open",
 		created_by: user.id,
 		updated_at: new Date(),
 		created_at: new Date(),
 		opening_time: new Date(),
 		closing_time: new Date(),
+		category_code: "react",
+		answer_type: "multiple",
 	},
 	{
-		id: 4,
-		question: "What is the best framework for Node.js?",
+		question:
+			"In Frontend, content-theft is real, what approach can be used to prevent visitors to steal?",
 		status: "open",
 		created_by: user.id,
 		updated_at: new Date(),
 		created_at: new Date(),
 		opening_time: new Date(),
 		closing_time: new Date(),
+		category_code: "general-frontend",
+		answer_type: "single",
 	},
 ];
 
-const pollOptions: PollOption[] = [
-	{
-		id: 1,
-		poll_id: 1,
-		option: "Option 1",
-		is_correct: false,
-	},
-	{
-		id: 2,
-		poll_id: 1,
-		option: "Option 2",
-		is_correct: false,
-	},
-	{
-		id: 3,
-		poll_id: 1,
-		option: "Option 3",
-		is_correct: false,
-	},
-	{
-		id: 4,
-		poll_id: 2,
-		option: "Option 1",
-		is_correct: false,
-	},
-	{
-		id: 5,
-		poll_id: 2,
-		option: "Option 2",
-		is_correct: false,
-	},
-	{
-		id: 6,
-		poll_id: 2,
-		option: "Option 3",
-		is_correct: true,
-	},
-	{
-		id: 7,
-		poll_id: 2,
-		option: "Option 4",
-		is_correct: false,
-	},
-	{
-		id: 8,
-		poll_id: 3,
-		option: "Option 1",
-		is_correct: false,
-	},
-	{
-		id: 9,
-		poll_id: 3,
-		option: "Option 2",
-		is_correct: false,
-	},
-	{
-		id: 10,
-		poll_id: 3,
-		option: "Option 3",
-		is_correct: true,
-	},
-	{
-		id: 11,
-		poll_id: 4,
-		option: "Option 1",
-		is_correct: false,
-	},
-	{
-		id: 12,
-		poll_id: 4,
-		option: "Option 2",
-		is_correct: false,
-	},
-	{
-		id: 13,
-		poll_id: 4,
-		option: "Option 3",
-		is_correct: false,
-	},
-	{
-		id: 14,
-		poll_id: 4,
-		option: "Option 4",
-		is_correct: true,
-	},
-	{
-		id: 15,
-		poll_id: 4,
-		option: "Option 5",
-		is_correct: false,
-	},
+const pollOptionsData = [
+	["Option 1", false],
+	["Option 2", false],
+	["Option 3", false],
+	["Option 1", false],
+	["Option 2", false],
+	["Option 3", true],
+	["Option 4", false],
+	["Option 1", false],
+	["Option 2", false],
+	["Option 3", true],
+	["Option 1", false],
+	["Option 2", false],
+	["Option 3", false],
+	["Option 4", true],
+	["Option 5", false],
 ];
 
 async function main() {
@@ -165,24 +110,34 @@ async function main() {
 			.values(user)
 			.returning({ id: usersTable.id });
 
+		console.log("🌱 Creating categories...");
+		await db.insert(pollCategoriesTable).values(categories);
+
 		console.log("🌱 Creating polls...");
 
-		await db
+		const insertedPolls = await db
 			.insert(pollsTable)
 			.values(polls)
 			.returning({ id: pollsTable.id });
 
-		await db
-			.insert(pollOptionsTable)
-			.values(pollOptions)
-			.returning({ id: pollOptionsTable.id });
+		console.log("🌱 Creating poll options...");
+
+		const pollOptions: Omit<PollOption, "id">[] = pollOptionsData.map(
+			([option, is_correct], index) => {
+				const poll_id = insertedPolls[Math.floor(index / 4)].id; // 4 options per poll (except last one has 5)
+				return {
+					poll_id,
+					option: option as string,
+					is_correct: is_correct as boolean,
+				};
+			}
+		);
+
+		await db.insert(pollOptionsTable).values(pollOptions);
 
 		console.log("🌱 Seeding complete!");
-
-		process.exit(0);
 	} catch (error) {
-		console.error("Error during seeding:", error);
-		process.exit(1);
+		console.error("🌱 Error seeding database:", error);
 	}
 }
 
