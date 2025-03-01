@@ -1,5 +1,6 @@
 import {
 	boolean,
+	decimal,
 	integer,
 	pgEnum,
 	pgTable,
@@ -171,3 +172,49 @@ export const pollResponsesTable = pgTable("polls_responses", {
 		.defaultNow()
 		.$onUpdate(() => new Date()),
 });
+
+/**
+ * User Category XP Table
+ * Tracks permanent XP per category after locking in
+ */
+export const userCategoryXPTable = pgTable("user_category_xp", {
+	id: serial("id").primaryKey(),
+	user_id: uuid("user_id")
+		.references(() => usersTable.id, { onDelete: "cascade" })
+		.notNull(),
+	category_code: varchar("category_code", { length: 50 })
+		.references(() => pollCategoriesTable.code)
+		.notNull(),
+	permanent_xp: integer("permanent_xp").notNull().default(0),
+	created_at: timestamp("created_at").defaultNow(),
+	updated_at: timestamp("updated_at")
+		.defaultNow()
+		.$onUpdate(() => new Date()),
+});
+
+/**
+ * Active Run Table
+ * Tracks current run state and temporary XP
+ * - Stores XP that hasn't been locked in yet
+ * - Manages streak information
+ * - Gets cleared or converted to permanent XP when locked in
+ */
+export const activeRunTable = pgTable("active_runs", {
+	id: serial("id").primaryKey(),
+	user_id: uuid("user_id")
+		.references(() => usersTable.id, { onDelete: "cascade" })
+		.notNull(),
+	category_code: varchar("category_code", { length: 50 })
+		.references(() => pollCategoriesTable.code)
+		.notNull(),
+	temporary_xp: integer("temporary_xp").notNull().default(0),
+	current_streak: integer("current_streak").notNull().default(0),
+	streak_multiplier: decimal("streak_multiplier").notNull().default("0.0"),
+	started_at: timestamp("started_at").defaultNow(),
+	last_poll_at: timestamp("last_poll_at").defaultNow(),
+	locked_in_at: timestamp("locked_in_at"),
+});
+
+// === TYPE EXPORTS ===
+
+// Export inferred types from the schema
