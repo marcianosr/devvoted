@@ -1,19 +1,34 @@
-// import { eq } from "drizzle-orm";
-import { pollOptionsTable, pollsTable, usersTable } from "@/database/schema";
+import {
+	pollCategoriesTable,
+	pollOptionsTable,
+	pollsTable,
+	usersTable,
+} from "@/database/schema";
 import { db } from "@/database/db";
-import { Poll, PollOption, User } from "@/types/db";
+import { Poll, PollOption, Category } from "@/types/db";
 
 const DEV_UID = "f40d940b-9d3b-47f3-a73a-4dfba18b20c2";
 
+// Define user with all required fields from the schema
 const user = {
 	id: DEV_UID,
 	display_name: "Devvoted",
 	email: "devvoted@devvoted.com",
 	photo_url: null,
-	roles: "admin" as const,
+	role: "admin" as const,
 	total_polls_submitted: 0,
 	active_config: null,
-} satisfies Partial<User>;
+} as const;
+
+const categories: Category[] = [
+	{ code: "css", name: "CSS" },
+	{ code: "js", name: "JavaScript" },
+	{ code: "react", name: "React" },
+	{ code: "general-frontend", name: "General Frontend" },
+	{ code: "typescript", name: "TypeScript" },
+	{ code: "general-backend", name: "General Backend" },
+	{ code: "html", name: "HTML" },
+];
 
 const polls: Omit<Poll, "id">[] = [
 	{
@@ -26,6 +41,7 @@ const polls: Omit<Poll, "id">[] = [
 		opening_time: new Date(),
 		closing_time: new Date(),
 		category_code: "css",
+		answer_type: "single",
 	},
 	{
 		question:
@@ -37,6 +53,7 @@ const polls: Omit<Poll, "id">[] = [
 		opening_time: new Date(),
 		closing_time: new Date(),
 		category_code: "js",
+		answer_type: "multiple",
 	},
 	{
 		question:
@@ -48,6 +65,7 @@ const polls: Omit<Poll, "id">[] = [
 		opening_time: new Date(),
 		closing_time: new Date(),
 		category_code: "react",
+		answer_type: "multiple",
 	},
 	{
 		question:
@@ -59,6 +77,7 @@ const polls: Omit<Poll, "id">[] = [
 		opening_time: new Date(),
 		closing_time: new Date(),
 		category_code: "general-frontend",
+		answer_type: "single",
 	},
 ];
 
@@ -90,6 +109,9 @@ async function main() {
 			.insert(usersTable)
 			.values(user)
 			.returning({ id: usersTable.id });
+
+		console.log("🌱 Creating categories...");
+		await db.insert(pollCategoriesTable).values(categories);
 
 		console.log("🌱 Creating polls...");
 

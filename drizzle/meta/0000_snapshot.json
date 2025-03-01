@@ -1,11 +1,11 @@
 {
-  "id": "81ffa0d1-1078-4a61-ad83-2e6b8c03dbda",
+  "id": "5c5a64ac-e85e-46ae-98d3-d92fc6f1e983",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.categories": {
-      "name": "categories",
+    "public.polls_categories": {
+      "name": "polls_categories",
       "schema": "",
       "columns": {
         "id": {
@@ -31,39 +31,14 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "categories_code_unique": {
-          "name": "categories_code_unique",
+        "polls_categories_code_unique": {
+          "name": "polls_categories_code_unique",
           "nullsNotDistinct": false,
           "columns": [
             "code"
           ]
         }
       },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.polls_categories": {
-      "name": "polls_categories",
-      "schema": "",
-      "columns": {
-        "poll_id": {
-          "name": "poll_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "category": {
-          "name": "category",
-          "type": "varchar(256)",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -110,7 +85,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -149,7 +124,7 @@
           "columnsTo": [
             "response_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "polls_response_options_option_id_polls_options_id_fk": {
@@ -162,7 +137,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -192,7 +167,21 @@
           "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -207,7 +196,20 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "polls_responses_user_id_users_id_fk": {
+          "name": "polls_responses_user_id_users_id_fk",
+          "tableFrom": "polls_responses",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },
@@ -241,6 +243,14 @@
           "notNull": true,
           "default": "'draft'"
         },
+        "answer_type": {
+          "name": "answer_type",
+          "type": "answer_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'single'"
+        },
         "opening_time": {
           "name": "opening_time",
           "type": "timestamp",
@@ -269,7 +279,8 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "now()"
         },
         "category_code": {
           "name": "category_code",
@@ -290,13 +301,13 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "set null",
           "onUpdate": "no action"
         },
-        "polls_category_code_categories_code_fk": {
-          "name": "polls_category_code_categories_code_fk",
+        "polls_category_code_polls_categories_code_fk": {
+          "name": "polls_category_code_polls_categories_code_fk",
           "tableFrom": "polls",
-          "tableTo": "categories",
+          "tableTo": "polls_categories",
           "columnsFrom": [
             "category_code"
           ],
@@ -358,7 +369,7 @@
         },
         "active_config": {
           "name": "active_config",
-          "type": "varchar(50)",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": false
         }
@@ -373,6 +384,14 @@
     }
   },
   "enums": {
+    "public.answer_type": {
+      "name": "answer_type",
+      "schema": "public",
+      "values": [
+        "single",
+        "multiple"
+      ]
+    },
     "public.status": {
       "name": "status",
       "schema": "public",
