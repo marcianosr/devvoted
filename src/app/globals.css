@@ -3,7 +3,7 @@
 :root {
 	--background: #ffffff;
 	--foreground: #171717;
-	--body-text-size: 1rem;
+	--body-text-size: 1.125rem;
 }
 
 @media (prefers-color-scheme: dark) {

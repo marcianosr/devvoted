@@ -91,6 +91,40 @@ const PollSubmission = ({
 					</div>
 				)}
 			</div>
+			<section>
+				<Text>🎲 Please select your bet</Text>
+				<ul>
+					<li>
+						<input type="radio" name="pollOption" id="" />
+						<label htmlFor="">Pass ⏩ (1% XP)</label>
+					</li>
+
+					<li>
+						<input type="radio" name="pollOption" id="" />
+						<label htmlFor="">10%</label>
+					</li>
+
+					<li>
+						<input type="radio" name="pollOption" id="" />
+						<label htmlFor="">25%</label>
+					</li>
+
+					<li>
+						<input type="radio" name="pollOption" id="" />
+						<label htmlFor="">50%</label>
+					</li>
+
+					<li>
+						<input type="radio" name="pollOption" id="" />
+						<label htmlFor="">75%</label>
+					</li>
+
+					<li>
+						<input type="radio" name="pollOption" id="" />
+						<label htmlFor="">100%</label>
+					</li>
+				</ul>
+			</section>
 			{!hasResponded && (
 				<SubmitButton
 					isPending={isPending}

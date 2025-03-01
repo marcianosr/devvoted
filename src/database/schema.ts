@@ -50,7 +50,10 @@ export const pollStatus = pgEnum("status", [
  * - single: Only one answer can be selected
  * - multiple: Multiple answers can be selected
  */
-export const pollAnswerType = pgEnum("answer_type", ["single", "multiple"] as const);
+export const pollAnswerType = pgEnum("answer_type", [
+	"single",
+	"multiple",
+] as const);
 
 // === TABLES ===
 
@@ -108,7 +111,7 @@ export const pollsTable = pgTable("polls", {
  * - Automatically deleted when parent poll is removed
  */
 export const pollOptionsTable = pgTable("polls_options", {
-	id: serial("id").primaryKey(),
+	id: serial("id").primaryKey().notNull(),
 	poll_id: integer("poll_id")
 		.references(() => pollsTable.id, { onDelete: "cascade" })
 		.notNull(),

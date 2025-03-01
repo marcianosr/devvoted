@@ -50,7 +50,21 @@ export default async function PollPage({ params }: Props) {
 	}
 
 	return (
-		<section className="container mx-auto px-4 py-8 space-y-8">
+		<section className="container mx-auto px-4 py-8">
+			<section className="mb-8">
+				<Text>📜 Category: {poll.category_code}</Text>
+				<Text>
+					🕒 Status:{" "}
+					{poll.status.charAt(0).toUpperCase() + poll.status.slice(1)}
+				</Text>
+				<Text>
+					💰 Available to bet: ??? from {poll.category_code} XP pool
+				</Text>
+				<Text>
+					🎯 Multiplier: <b>0.3×</b>
+				</Text>
+				<Text>🔥 Current streak</Text>
+			</section>
 			<PollQuestion poll={poll} />
 			<PollSubmission
 				poll={poll}
