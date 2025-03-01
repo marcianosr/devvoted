@@ -3,6 +3,7 @@ import { Fira_Code } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import { QueryProvider } from "@/providers/QueryProvider";
 import "./globals.css";
+import classNames from "classnames";
 
 const firaCode = Fira_Code({
 	variable: "--font-fira-sans",
@@ -23,9 +24,11 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={
-					`${firaCode.className} antialiased` + " " + layoutStyles
-				}
+				// className={
+				// 	`${firaCode.className} antialiased` + " " + layoutStyles
+				// }
+
+				className={classNames("pixter-display-font", layoutStyles)}
 			>
 				<QueryProvider>
 					<Navbar />

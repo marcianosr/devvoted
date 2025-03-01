@@ -7,6 +7,8 @@ import { updateUserConfig } from "@/services/config";
 import { getClientUser } from "@/services/clientUser";
 import Text from "@/components/ui/Text/Text";
 import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
+import styles from "./ConfigSelector.module.css";
+import Title from "@/components/ui/Title/Title";
 
 type Config = {
 	name: string;
@@ -44,14 +46,16 @@ const ConfigSelector = ({ configs }: ConfigSelectorProps) => {
 	});
 
 	return (
-		<section className="container mx-auto px-4 py-8 w-1/2 space-y-4">
-			<Text>🔥 Select your config to begin your next run:</Text>
+		<section className="container mx-auto px-4 py-8 w-xl space-y-4">
+			<Title variant="secondary">
+				🔥 Select your config to begin your next run
+			</Title>
 
 			<div className="space-y-4">
 				{configs.map((config) => (
 					<div
 						key={config.id}
-						className="config-selector"
+						className={styles.configSelector}
 						onClick={() => setSelectedConfig(config.id)}
 						onKeyDown={(e) => {
 							if (e.key === "Enter" || e.key === " ") {

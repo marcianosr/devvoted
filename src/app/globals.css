@@ -3,6 +3,7 @@
 :root {
 	--background: #ffffff;
 	--foreground: #171717;
+	--body-text-size: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -12,18 +13,54 @@
 	}
 }
 
+@font-face {
+	font-family: "Pixter";
+	src: url("/pixter-display.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "PixterDisplay";
+	src: url("/PixterDisplayBold.ttf") format("truetype");
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "PixterGranular";
+	src: url("/PixterGranularBold.ttf") format("truetype");
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+.pixter-display-font {
+	font-family: "Pixter", sans-serif;
+}
+
+.pixter-bold-font {
+	font-family: "PixterDisplay", sans-serif;
+}
+
+.pixter-granular-bold-font {
+	font-family: "PixterGranular", sans-serif;
+}
+
 body {
 	color: var(--foreground);
 	background: var(--background);
-	font-family: Arial, Helvetica, sans-serif;
 }
 
 button,
 a {
 	color: var(--foreground);
+	font-family: "PixterDisplay";
 }
 
-.config-selector {
-	border: 1px solid var(--foreground);
-	padding: 1rem;
+strong,
+b {
+	font-family: "PixterDisplay";
 }

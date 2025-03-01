@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import styles from "./Title.module.css";
+import classNames from "classnames";
 
 type TitleLevel = "h1" | "h2" | "h3";
 
@@ -14,5 +15,9 @@ export default function Title({
 	children,
 	as: Component = "h1",
 }: TitleProps) {
-	return <Component className={styles[variant]}>{children}</Component>;
+	return (
+		<Component className={classNames(styles[variant])}>
+			{children}
+		</Component>
+	);
 }

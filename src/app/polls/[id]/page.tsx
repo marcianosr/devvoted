@@ -36,6 +36,8 @@ export default async function PollPage({ params }: Props) {
 		user?.id
 	);
 
+	console.log(poll);
+
 	if (!poll) {
 		return (
 			<div className="container mx-auto px-4 py-8">
