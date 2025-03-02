@@ -11,6 +11,10 @@
 	line-height: 1;
 }
 
+.buttonLink:is(a) {
+	display: inline-flex;
+}
+
 .buttonLink::before,
 .buttonLink::after {
 	content: "";
