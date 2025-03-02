@@ -37,7 +37,6 @@ const ConfigSelector = ({ configs }: ConfigSelectorProps) => {
 				userId: user.id,
 				configId: selectedConfig,
 			});
-			// return updateUserConfig(user.id, selectedConfig);
 		},
 		onSuccess: () => {
 			router.push("/polls/1");
