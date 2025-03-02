@@ -6,6 +6,7 @@ import PollQuestion from "@/components/PollQuestion";
 import { getUser } from "@/services/user";
 import PollSubmission from "@/components/PollSubmission";
 import { getActiveRun } from "@/services/activeRun";
+import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
 
 type Props = {
 	params: { id: string };
@@ -39,9 +40,21 @@ export default async function PollPage({ params }: Props) {
 	const activeRun = await getActiveRun(user?.id ?? "");
 	console.log(activeRun);
 
+	if (!activeRun) {
+		return (
+			<div className="container mx-auto py-8 space-y-4">
+				<Title>Start a run first!</Title>
+				<Text>
+					You need to start a run before you can vote on polls.
+				</Text>
+				<ButtonLink href="/config">Start a run</ButtonLink>
+			</div>
+		);
+	}
+
 	if (!poll) {
 		return (
-			<div className="container mx-auto px-4 py-8">
+			<div className="container mx-auto py-8 space-y-4">
 				<Title>Poll Not Found</Title>
 				<Text>
 					The poll you&apos;re looking for doesn&apos;t exist.
@@ -59,8 +72,8 @@ export default async function PollPage({ params }: Props) {
 					{poll.status.charAt(0).toUpperCase() + poll.status.slice(1)}
 				</Text>
 				<Text>
-					💰 Available to bet: ??? from {activeRun?.category_code ?? "No"} XP
-					pool
+					💰 Available to bet: {activeRun?.category_code ?? "0"} from{" "}
+					{activeRun?.category_code} XP pool
 				</Text>
 				<Text>
 					🎯 Multiplier: <b>{activeRun?.streak_multiplier ?? 0}×</b>
