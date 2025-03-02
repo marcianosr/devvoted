@@ -33,7 +33,7 @@ const insertActiveRun = async (userId: string, categories: PollCategory[]) => {
 	);
 
 	const { error } = await (await supabase)
-		.from("active_runs")
+		.from("polls_active_runs")
 		.insert(activeRuns);
 
 	if (error) {

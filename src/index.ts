@@ -27,6 +27,7 @@ const categories: Omit<PollCategory, "id">[] = [
 	{ code: "general-frontend", name: "General Frontend" },
 	{ code: "typescript", name: "TypeScript" },
 	{ code: "general-backend", name: "General Backend" },
+	{ code: "git", name: "Git" },
 	{ code: "html", name: "HTML" },
 ];
 

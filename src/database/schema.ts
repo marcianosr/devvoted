@@ -177,7 +177,7 @@ export const pollResponsesTable = pgTable("polls_responses", {
  * User Category XP Table
  * Tracks permanent XP per category after locking in
  */
-export const userCategoryXPTable = pgTable("user_category_xp", {
+export const pollUserPerformanceTable = pgTable("polls_user_performance", {
 	id: serial("id").primaryKey(),
 	user_id: uuid("user_id")
 		.references(() => usersTable.id, { onDelete: "cascade" })
@@ -186,6 +186,10 @@ export const userCategoryXPTable = pgTable("user_category_xp", {
 		.references(() => pollCategoriesTable.code)
 		.notNull(),
 	permanent_xp: integer("permanent_xp").notNull().default(0),
+	best_streak: integer("best_streak").notNull().default(0),
+	best_multiplier: decimal("best_multiplier", { precision: 3, scale: 1 })
+		.notNull()
+		.default("0.0"),
 	created_at: timestamp("created_at").defaultNow(),
 	updated_at: timestamp("updated_at")
 		.defaultNow()
@@ -199,7 +203,7 @@ export const userCategoryXPTable = pgTable("user_category_xp", {
  * - Manages streak information
  * - Gets cleared or converted to permanent XP when locked in
  */
-export const activeRunTable = pgTable("active_runs", {
+export const pollsActiveRunTable = pgTable("polls_active_runs", {
 	id: serial("id").primaryKey(),
 	user_id: uuid("user_id")
 		.references(() => usersTable.id, { onDelete: "cascade" })

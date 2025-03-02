@@ -8,7 +8,7 @@ export const getActiveRun = async (
 	const supabase = await createClient();
 
 	const { data, error } = await supabase
-		.from("active_runs")
+		.from("polls_active_runs")
 		.select("*")
 		.eq("category_code", categoryCode)
 		.eq("user_id", userId)

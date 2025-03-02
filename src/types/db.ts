@@ -5,7 +5,7 @@ import {
 	pollResponseOptionsTable,
 	pollResponsesTable,
 	usersTable,
-	activeRunTable,
+	pollsActiveRunTable,
 } from "@/database/schema";
 import { InferInsertModel, InferSelectModel } from "drizzle-orm/table";
 
@@ -25,12 +25,12 @@ export type PollWithDetails = Poll & {
 export type Poll = InferSelectModel<typeof pollsTable>;
 export type PollOption = InferSelectModel<typeof pollOptionsTable>;
 
-export type ActiveRun = InferSelectModel<typeof activeRunTable>;
+export type ActiveRun = InferSelectModel<typeof pollsActiveRunTable>;
 export type User = InferSelectModel<typeof usersTable>;
 export type InsertUser = InferInsertModel<typeof usersTable>;
 export type InsertPoll = InferInsertModel<typeof pollsTable>;
 export type InsertPollOption = InferInsertModel<typeof pollOptionsTable>;
 export type InsertPollCategory = InferInsertModel<typeof pollCategoriesTable>;
 
-export type InsertActiveRun = InferInsertModel<typeof activeRunTable>;
-export type UpdateActiveRun = InferInsertModel<typeof activeRunTable>;
+export type InsertActiveRun = InferInsertModel<typeof pollsActiveRunTable>;
+export type UpdateActiveRun = InferInsertModel<typeof pollsActiveRunTable>;

@@ -50,7 +50,7 @@ export const getPreviousByCategoryCode = async (
 	const supabase = await createClient();
 
 	const { data: prevRun, error } = await supabase
-		.from("active_runs")
+		.from("polls_active_runs")
 		.select("*")
 		.eq("user_id", userId)
 		.eq("category_code", categoryCode)
@@ -72,7 +72,7 @@ export const updateActiveRunByCategoryCode = async (
 	const supabase = await createClient();
 
 	const { error } = await supabase
-		.from("active_runs")
+		.from("polls_active_runs")
 		.update(activeRun)
 		.eq("category_code", categoryCode)
 		.eq("user_id", activeRun.user_id);
@@ -95,11 +95,11 @@ export const createPostPollResponse = async ({
 		const response = await createPollResponse(supabase, poll.id, userId);
 
 		// Create response options
-		// await createPollResponseOptions(
-		// 	supabase,
-		// 	response.response_id,
-		// 	selectedOptions
-		// );
+		await createPollResponseOptions(
+			supabase,
+			response.response_id,
+			selectedOptions
+		);
 
 		// Get and update streak multiplier
 		const previousData = await getPreviousByCategoryCode(
