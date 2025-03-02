@@ -16,6 +16,7 @@ export const PollOption = ({
 	isReadOnly = false,
 }: Props) => (
 	<li className="flex gap-2">
+		correct: {JSON.stringify(option.is_correct)}
 		<input
 			type="checkbox"
 			checked={isSelected}

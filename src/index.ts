@@ -80,13 +80,61 @@ const polls: Omit<Poll, "id">[] = [
 		category_code: "general-frontend",
 		answer_type: "single",
 	},
+	{
+		question:
+			"In TS, the type system is very strict, what do you know about it, can you share?",
+		status: "open",
+		created_by: user.id,
+		updated_at: new Date(),
+		created_at: new Date(),
+		opening_time: new Date(),
+		closing_time: new Date(),
+		category_code: "typescript",
+		answer_type: "multiple",
+	},
+	{
+		question:
+			"For CSS devs this might be a no-brainer, but what flex property makes sure items are forced on multiple lines when they don’t fit their container?",
+		status: "open",
+		created_by: user.id,
+		updated_at: new Date(),
+		created_at: new Date(),
+		opening_time: new Date(),
+		closing_time: new Date(),
+		category_code: "css",
+		answer_type: "single",
+	},
+	{
+		question:
+			"In CSS, for readability it’s important to have vertical spacing for text inbetween, what property do you use that make your text look neat and clean?",
+		status: "open",
+		created_by: user.id,
+		updated_at: new Date(),
+		created_at: new Date(),
+		opening_time: new Date(),
+		closing_time: new Date(),
+		category_code: "css",
+		answer_type: "single",
+	},
+	{
+		question:
+			"In CSS, the position property was implemented long ago, which values from below remove the elements out of the document flow?",
+		status: "open",
+		created_by: user.id,
+		updated_at: new Date(),
+		created_at: new Date(),
+		opening_time: new Date(),
+		closing_time: new Date(),
+		category_code: "css",
+		answer_type: "single",
+	},
 ];
 
 const pollOptionsData = [
 	["Option 1", false],
 	["Option 2", false],
 	["Option 3", false],
-	["Option 1", false],
+	["Option 1", true],
 	["Option 2", false],
 	["Option 3", true],
 	["Option 4", false],
@@ -98,6 +146,21 @@ const pollOptionsData = [
 	["Option 3", false],
 	["Option 4", true],
 	["Option 5", false],
+	["Option 6", false],
+	["Option 7", false],
+	["Option 8", false],
+	["Option 9", false],
+	["Option 10", true],
+	["Option 11", false],
+	["Option 12", false],
+	["Option 13", false],
+	["Option 14", true],
+	["Option 15", false],
+	["Option 16", false],
+	["Option 17", false],
+	["Option 18", false],
+	["Option 19", false],
+	["Option 20", true],
 ];
 
 async function main() {
@@ -125,7 +188,7 @@ async function main() {
 
 		const pollOptions: Omit<PollOption, "id">[] = pollOptionsData.map(
 			([option, is_correct], index) => {
-				const poll_id = insertedPolls[Math.floor(index / 4)].id; // 4 options per poll (except last one has 5)
+				const poll_id = insertedPolls[Math.floor(index / 5)].id; // 4 options per poll (except last one has 5)
 				return {
 					poll_id,
 					option: option as string,

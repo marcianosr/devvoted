@@ -1,0 +1,1 @@
+ALTER TABLE "polls_active_runs" ALTER COLUMN "temporary_xp" SET DEFAULT 50;
