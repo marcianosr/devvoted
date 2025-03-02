@@ -45,6 +45,17 @@ export default async function PollPage({ params }: Props) {
 	);
 	console.log("activeRun", activeRun);
 
+	if (!poll) {
+		return (
+			<div className="container mx-auto py-8 space-y-4">
+				<Title>Poll Not Found</Title>
+				<Text>
+					The poll you&apos;re looking for doesn&apos;t exist.
+				</Text>
+			</div>
+		);
+	}
+
 	if (!activeRun) {
 		return (
 			<div className="container mx-auto py-8 space-y-4">
@@ -53,17 +64,6 @@ export default async function PollPage({ params }: Props) {
 					You need to start a run before you can vote on polls.
 				</Text>
 				<ButtonLink href="/config">Start a run</ButtonLink>
-			</div>
-		);
-	}
-
-	if (!poll) {
-		return (
-			<div className="container mx-auto py-8 space-y-4">
-				<Title>Poll Not Found</Title>
-				<Text>
-					The poll you&apos;re looking for doesn&apos;t exist.
-				</Text>
 			</div>
 		);
 	}
