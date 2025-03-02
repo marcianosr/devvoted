@@ -10,10 +10,11 @@ export const getActiveRun = async (
 		.from("active_runs")
 		.select("*")
 		.eq("user_id", userId)
-		.single();
+		.limit(1)
+		.maybeSingle();
 
-	if (error) {
-		console.error(error);
+	if (error && error.code !== "PGRST116") {
+		console.error("Error fetching active run:", error);
 		return null;
 	}
 

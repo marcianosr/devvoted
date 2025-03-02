@@ -59,11 +59,11 @@ export default async function PollPage({ params }: Props) {
 					{poll.status.charAt(0).toUpperCase() + poll.status.slice(1)}
 				</Text>
 				<Text>
-					💰 Available to bet: ??? from {activeRun?.category_code} XP
+					💰 Available to bet: ??? from {activeRun?.category_code ?? "No"} XP
 					pool
 				</Text>
 				<Text>
-					🎯 Multiplier: <b>{activeRun?.streak_multiplier}×</b>
+					🎯 Multiplier: <b>{activeRun?.streak_multiplier ?? 0}×</b>
 				</Text>
 				<Text>🔥 Current streak</Text>
 			</section>
