@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, fireEvent, waitFor } from "@testing-library/react";
 import PollSubmission from "./index";
-import * as pollsApi from "@/services/api/polls";
+import * as pollsApi from "@/services/api/createPostPollResponse";
 import {
 	createMockPoll,
 	createMockUser,
@@ -10,7 +10,7 @@ import {
 import { renderWithProviders } from "@/test/utils";
 
 vi.mock("@/services/api/polls", () => ({
-	submitPollResponse: vi.fn(),
+	createPostPollResponse: vi.fn(),
 }));
 
 describe(PollSubmission, () => {
@@ -44,7 +44,7 @@ describe(PollSubmission, () => {
 	});
 
 	it("shows success message immediately after successful submission", async () => {
-		vi.mocked(pollsApi.submitPollResponse).mockResolvedValueOnce();
+		vi.mocked(pollsApi.createPostPollResponse).mockResolvedValueOnce();
 
 		renderWithProviders(
 			<PollSubmission
@@ -70,7 +70,7 @@ describe(PollSubmission, () => {
 		});
 
 		// Verify API was called with correct parameters
-		expect(pollsApi.submitPollResponse).toHaveBeenCalledWith({
+		expect(pollsApi.createPostPollResponse).toHaveBeenCalledWith({
 			pollId: mockPoll.id.toString(),
 			userId: mockUser.id,
 			selectedOptions: ["1"], // ID of TypeScript option
@@ -79,7 +79,7 @@ describe(PollSubmission, () => {
 
 	it("shows error message when submission fails", async () => {
 		const errorMessage = "Failed to submit response";
-		vi.mocked(pollsApi.submitPollResponse).mockRejectedValueOnce(
+		vi.mocked(pollsApi.createPostPollResponse).mockRejectedValueOnce(
 			new Error(errorMessage)
 		);
 

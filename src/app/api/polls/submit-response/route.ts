@@ -1,14 +1,14 @@
-import { SubmitPollResponseParams } from "@/services/api/polls";
+import { CreatePostPollResponseRequest } from "@/services/api/createPostPollResponse";
 import { NextResponse } from "next/server";
 
-import { submitPollResponse } from "@/services/pollResponse";
+import { createPostPollResponse } from "@/services/createPollResponse";
 
 export async function POST(request: Request) {
 	try {
 		const { poll, userId, selectedOptions, selectedBet } =
-			(await request.json()) as SubmitPollResponseParams;
+			(await request.json()) as CreatePostPollResponseRequest;
 
-		await submitPollResponse({
+		await createPostPollResponse({
 			poll,
 			userId,
 			selectedOptions,

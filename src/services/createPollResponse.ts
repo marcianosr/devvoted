@@ -1,8 +1,9 @@
 import { createClient } from "@/app/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { SubmitPollResponseParams } from "./api/polls";
-import { InsertActiveRun } from "@/types/db";
+import { CreatePostPollResponseRequest } from "./api/createPostPollResponse";
+import { InsertActiveRun, UpdateActiveRun } from "@/types/db";
 
+// Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
 export const createPollResponse = async (
 	supabase: SupabaseClient,
 	pollId: number,
@@ -59,23 +60,23 @@ export const getPreviousStreak = async (
 
 export const calculateXP = (bet: number) => bet;
 
-export const createActiveRun = async (
+export const updateActiveRun = async (
 	supabase: SupabaseClient,
-	activeRun: InsertActiveRun
+	activeRun: UpdateActiveRun
 ) => {
-	const { error } = await supabase.from("active_runs").insert([activeRun]);
+	const { error } = await supabase.from("active_runs").upsert([activeRun]);
 
 	if (error) throw new Error(`Error creating active run: ${error.message}`);
 };
 
 export const DEFAULT_MULTIPLIER = 0.1;
 
-export const submitPollResponse = async ({
+export const createPostPollResponse = async ({
 	poll,
 	userId,
 	selectedOptions,
 	selectedBet,
-}: SubmitPollResponseParams) => {
+}: CreatePostPollResponseRequest) => {
 	const supabase = await createClient();
 
 	try {
@@ -93,13 +94,13 @@ export const submitPollResponse = async ({
 		const prevMultiplier = await getPreviousStreak(supabase, userId);
 		const newMultiplier = prevMultiplier + DEFAULT_MULTIPLIER;
 
-		// Create active run
-		await createActiveRun(supabase, {
-			user_id: userId,
-			category_code: poll.category_code,
-			temporary_xp: calculateXP(selectedBet),
-			streak_multiplier: newMultiplier,
-		});
+		// update and find active run
+		// await updateActiveRun(supabase, {
+		// 	user_id: userId,
+		// 	category_code: poll.category_code,
+		// 	temporary_xp: calculateXP(selectedBet),
+		// 	streak_multiplier: newMultiplier,
+		// });
 
 		return { success: true };
 	} catch (error) {

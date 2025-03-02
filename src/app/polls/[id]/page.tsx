@@ -33,12 +33,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PollPage({ params }: Props) {
 	const id = await params.id;
 	const user = await getUser();
-	const { poll, options, userSelectedOptions } = await getPollById(
-		id,
-		user?.id
-	);
+
 	const activeRun = await getActiveRun(user?.id ?? "");
-	console.log(activeRun);
+	console.log("activeRun", activeRun);
 
 	if (!activeRun) {
 		return (
@@ -51,6 +48,11 @@ export default async function PollPage({ params }: Props) {
 			</div>
 		);
 	}
+
+	const { poll, options, userSelectedOptions } = await getPollById(
+		id,
+		user?.id
+	);
 
 	if (!poll) {
 		return (

@@ -1,14 +1,14 @@
 import { Poll } from "@/types/db";
 
-export type SubmitPollResponseParams = {
+export type CreatePostPollResponseRequest = {
 	poll: Poll;
 	userId: string;
 	selectedOptions: string[];
 	selectedBet: number;
 };
 
-export const submitPollResponse = async (
-	data: SubmitPollResponseParams
+export const createPostPollResponse = async (
+	data: CreatePostPollResponseRequest
 ): Promise<void> => {
 	const response = await fetch("/api/polls/submit-response", {
 		method: "POST",

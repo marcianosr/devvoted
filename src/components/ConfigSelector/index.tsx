@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import { updateUserConfig } from "@/services/config";
 import { getClientUser } from "@/services/clientUser";
 import Text from "@/components/ui/Text/Text";
 import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
 import styles from "./ConfigSelector.module.css";
 import Title from "@/components/ui/Title/Title";
+import { createPostRunRequest } from "@/services/api/createPostRunRequest";
 
 type Config = {
 	name: string;
@@ -33,7 +33,11 @@ const ConfigSelector = ({ configs }: ConfigSelectorProps) => {
 			if (!user) {
 				throw new Error("You must be logged in to start a run");
 			}
-			return updateUserConfig(user.id, selectedConfig);
+			return createPostRunRequest({
+				userId: user.id,
+				configId: selectedConfig,
+			});
+			// return updateUserConfig(user.id, selectedConfig);
 		},
 		onSuccess: () => {
 			router.push("/polls/1");

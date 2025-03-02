@@ -8,7 +8,7 @@ import { ClosedPollMessage } from "@/components/PollSubmission/ClosedPollMessage
 import { PollOptions } from "@/components/PollSubmission/PollOptions";
 import { SubmitButton } from "@/components/PollSubmission/SubmitButton";
 import { BettingOptions } from "./BettingOptions";
-import { submitPollResponse } from "@/services/api/polls";
+import { createPostPollResponse } from "@/services/api/createPostPollResponse";
 
 const PollSubmission = ({
 	poll,
@@ -28,7 +28,7 @@ const PollSubmission = ({
 
 	const queryClient = useQueryClient();
 	const { mutate: submitPoll, isPending } = useMutation({
-		mutationFn: submitPollResponse,
+		mutationFn: createPostPollResponse,
 		onSuccess: () => {
 			// Update local state to show response immediately
 			setUserSelectedOptions(selectedOptions);
