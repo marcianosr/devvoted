@@ -71,16 +71,26 @@ export default async function PollPage({ params }: Props) {
 				<Text>📜 Category: {poll.category_code}</Text>
 				<Text>
 					🕒 Status:{" "}
-					{poll.status.charAt(0).toUpperCase() + poll.status.slice(1)}
+					<b>
+						{poll.status.charAt(0).toUpperCase() +
+							poll.status.slice(1)}
+					</b>
 				</Text>
 				<Text>
-					💰 Available to bet: {activeRun?.category_code ?? "0"} from{" "}
-					{activeRun?.category_code} XP pool
+					💰 Available to bet:{" "}
+					<b>{activeRun?.category_code ?? "0"}</b> from{" "}
+					<b>{activeRun?.category_code}</b> XP pool
 				</Text>
 				<Text>
 					🎯 Multiplier: <b>{activeRun?.streak_multiplier ?? 0}×</b>
 				</Text>
-				<Text>🔥 Current streak</Text>
+				<Text>
+					🔥 Current streak: <b>{activeRun?.current_streak ?? 0}</b>
+				</Text>
+				<Text>
+					⚙️ Playing with config:{" "}
+					<b>{user?.devvotedUser.active_config}</b>
+				</Text>
 			</section>
 			<PollQuestion poll={poll} />
 			<PollSubmission
