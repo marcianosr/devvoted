@@ -1,7 +1,7 @@
 import { createClient } from "@/app/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { CreatePostPollResponseRequest } from "./api/createPostPollResponse";
-import { UpdateActiveRun } from "@/types/db";
+import { ActiveRun, UpdateActiveRun } from "@/types/db";
 
 // Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
 export const createPollResponse = async (
@@ -43,17 +43,19 @@ export const createPollResponseOptions = async (
 		throw new Error(`Error creating response options: ${error.message}`);
 };
 
-export const getPreviousStreakByCategoryCode = async (
+export const getPreviousByCategoryCode = async (
 	userId: string,
 	categoryCode: string
-) => {
+): Promise<ActiveRun | null> => {
 	const supabase = await createClient();
 
 	const { data: prevRun, error } = await supabase
 		.from("active_runs")
-		.select("streak_multiplier")
+		.select("*")
 		.eq("user_id", userId)
-		.eq("category_code", categoryCode);
+		.eq("category_code", categoryCode)
+		.limit(1)
+		.maybeSingle<ActiveRun>();
 
 	if (error)
 		throw new Error(`Error getting previous streak: ${error.message}`);
@@ -93,19 +95,19 @@ export const createPostPollResponse = async ({
 		const response = await createPollResponse(supabase, poll.id, userId);
 
 		// Create response options
-		await createPollResponseOptions(
-			supabase,
-			response.response_id,
-			selectedOptions
-		);
+		// await createPollResponseOptions(
+		// 	supabase,
+		// 	response.response_id,
+		// 	selectedOptions
+		// );
 
 		// Get and update streak multiplier
-		const prevMultiplier = await getPreviousStreakByCategoryCode(
+		const previousData = await getPreviousByCategoryCode(
 			userId,
 			poll.category_code
 		);
 
-		const currentMultiplier = Number(prevMultiplier) || 0;
+		const currentMultiplier = Number(previousData?.streak_multiplier) || 0;
 		const newMultiplier = (
 			currentMultiplier + DEFAULT_MULTIPLIER_INCREASE
 		).toFixed(1);
@@ -116,6 +118,10 @@ export const createPostPollResponse = async ({
 				user_id: userId,
 				temporary_xp: calculateXP(selectedBet),
 				streak_multiplier: newMultiplier,
+				last_poll_at: new Date(),
+				current_streak: previousData
+					? previousData.current_streak + 1
+					: 1,
 			},
 			poll.category_code
 		);

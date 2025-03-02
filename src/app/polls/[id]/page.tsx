@@ -80,9 +80,8 @@ export default async function PollPage({ params }: Props) {
 					</b>
 				</Text>
 				<Text>
-					💰 Available to bet:{" "}
-					<b>{activeRun?.category_code ?? "0"}</b> from{" "}
-					<b>{activeRun?.category_code}</b> XP pool
+					💰 Available to bet: <b>{activeRun?.temporary_xp ?? "0"}</b>{" "}
+					XP from <b>{activeRun?.category_code}</b>
 				</Text>
 				<Text>
 					🎯 Streak Multiplier: <b>{activeRun?.streak_multiplier}×</b>
