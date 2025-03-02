@@ -1,16 +1,20 @@
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/app/supabase/client";
-import { User as AuthUser } from "@/types/db";
+import { User as DevvotedUser } from "@/types/db";
 
-const mapDbUserToAuthUser = (dbUser: User): AuthUser => ({
-	id: dbUser.id,
-	displayName: dbUser.display_name,
-	email: dbUser.email,
-	photoUrl: dbUser.photo_url,
-	roles: dbUser.roles,
-});
+const mapDbUserToAuthUser = (dbUser: User): DevvotedUser => {
+	return dbUser;
+};
 
-export async function getOrCreateUser(authUser: User): Promise<AuthUser> {
+// 	({
+// 	id: dbUser.id,
+// 	displayName: dbUser.user_metadata?.full_name || "",
+// 	email: dbUser.email || "",
+// 	photoUrl: dbUser.user_metadata?.avatar_url,
+// 	roles: dbUser.role,
+// });
+
+export async function getOrCreateUser(authUser: User): Promise<DevvotedUser> {
 	const supabase = createClient();
 
 	// Check if user exists in our users table
