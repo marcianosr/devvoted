@@ -1,3 +1,4 @@
+import { START_TEMPORARY_XP } from "@/services/constants";
 import {
 	boolean,
 	decimal,
@@ -211,7 +212,7 @@ export const pollsActiveRunTable = pgTable("polls_active_runs", {
 	category_code: varchar("category_code", { length: 50 })
 		.references(() => pollCategoriesTable.code)
 		.notNull(),
-	temporary_xp: integer("temporary_xp").notNull().default(0),
+	temporary_xp: integer("temporary_xp").notNull().default(START_TEMPORARY_XP),
 	current_streak: integer("current_streak").notNull().default(0),
 	streak_multiplier: decimal("streak_multiplier", { precision: 3, scale: 1 })
 		.notNull()

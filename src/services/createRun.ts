@@ -1,6 +1,7 @@
 import { createClient } from "@/app/supabase/server";
 import { CreatePostRunRequest } from "@/services/api/createPostRunRequest";
 import { InsertActiveRun, PollCategory } from "@/types/db";
+import { START_TEMPORARY_XP } from "./constants";
 
 export const createRun = async ({
 	userId,
@@ -28,7 +29,7 @@ const insertActiveRun = async (userId: string, categories: PollCategory[]) => {
 			current_streak: 0,
 			streak_multiplier: "0.0",
 			started_at: new Date(),
-			temporary_xp: 0,
+			temporary_xp: START_TEMPORARY_XP, // Start with 50 xp for now
 		})
 	);
 

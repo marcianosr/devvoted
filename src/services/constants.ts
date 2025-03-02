@@ -1,0 +1,2 @@
+export const START_TEMPORARY_XP = 50;
+export const START_MULTIPLIER_INCREASE = 0.1;
