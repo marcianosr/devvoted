@@ -2,12 +2,7 @@
 
 import { createClient } from "@/app/supabase/client";
 import { User } from "@supabase/supabase-js";
-
-type DevvotedUser = {
-	id: string;
-	active_config: string | null;
-	created_at: string;
-};
+import { User as DevvotedUser } from "@/types/db";
 
 export type AuthenticatedUser = User & {
 	devvotedUser: DevvotedUser;
