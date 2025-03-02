@@ -112,6 +112,7 @@ const PollSubmission = ({
 					isPollClosed={isPollClosed}
 					user={user}
 					hasSelectedOptions={selectedOptions.length > 0}
+					hasSelectedBet={selectedBet !== undefined}
 					onSubmit={handleSubmit}
 				/>
 			)}

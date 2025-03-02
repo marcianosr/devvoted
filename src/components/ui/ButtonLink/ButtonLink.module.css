@@ -33,3 +33,9 @@
 .buttonLink:hover {
 	text-decoration: underline;
 }
+
+.buttonLink[disabled] {
+	opacity: 0.5;
+	cursor: not-allowed;
+	text-decoration: none;
+}
