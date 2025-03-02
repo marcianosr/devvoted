@@ -1,0 +1,1 @@
+ALTER TABLE "active_runs" ALTER COLUMN "streak_multiplier" SET DATA TYPE numeric(3, 1);

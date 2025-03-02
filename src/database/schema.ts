@@ -209,7 +209,10 @@ export const activeRunTable = pgTable("active_runs", {
 		.notNull(),
 	temporary_xp: integer("temporary_xp").notNull().default(0),
 	current_streak: integer("current_streak").notNull().default(0),
-	streak_multiplier: decimal("streak_multiplier").notNull().default("0.0"),
+	streak_multiplier: decimal("streak_multiplier", { precision: 3, scale: 1 })
+		.notNull()
+		.default("0.0"),
+
 	started_at: timestamp("started_at").defaultNow(),
 	last_poll_at: timestamp("last_poll_at").defaultNow(),
 	locked_in_at: timestamp("locked_in_at"),

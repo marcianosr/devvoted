@@ -1,7 +1,7 @@
 import { createClient } from "@/app/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { CreatePostPollResponseRequest } from "./api/createPostPollResponse";
-import { InsertActiveRun, UpdateActiveRun } from "@/types/db";
+import { UpdateActiveRun } from "@/types/db";
 
 // Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
 export const createPollResponse = async (
@@ -43,33 +43,42 @@ export const createPollResponseOptions = async (
 		throw new Error(`Error creating response options: ${error.message}`);
 };
 
-export const getPreviousStreak = async (
-	supabase: SupabaseClient,
-	userId: string
+export const getPreviousStreakByCategoryCode = async (
+	userId: string,
+	categoryCode: string
 ) => {
-	const { data: prevRun } = await supabase
+	const supabase = await createClient();
+
+	const { data: prevRun, error } = await supabase
 		.from("active_runs")
 		.select("streak_multiplier")
 		.eq("user_id", userId)
-		.order("created_at", { ascending: false })
-		.limit(1)
-		.single();
+		.eq("category_code", categoryCode);
 
-	return prevRun?.streak_multiplier ?? 0;
+	if (error)
+		throw new Error(`Error getting previous streak: ${error.message}`);
+
+	return prevRun;
 };
 
 export const calculateXP = (bet: number) => bet;
 
-export const updateActiveRun = async (
-	supabase: SupabaseClient,
-	activeRun: UpdateActiveRun
+export const updateActiveRunByCategoryCode = async (
+	activeRun: Partial<UpdateActiveRun>,
+	categoryCode: string
 ) => {
-	const { error } = await supabase.from("active_runs").upsert([activeRun]);
+	const supabase = await createClient();
+
+	const { error } = await supabase
+		.from("active_runs")
+		.update(activeRun)
+		.eq("category_code", categoryCode)
+		.eq("user_id", activeRun.user_id);
 
 	if (error) throw new Error(`Error creating active run: ${error.message}`);
 };
 
-export const DEFAULT_MULTIPLIER = 0.1;
+export const DEFAULT_MULTIPLIER_INCREASE = 0.1;
 
 export const createPostPollResponse = async ({
 	poll,
@@ -91,16 +100,25 @@ export const createPostPollResponse = async ({
 		);
 
 		// Get and update streak multiplier
-		const prevMultiplier = await getPreviousStreak(supabase, userId);
-		const newMultiplier = prevMultiplier + DEFAULT_MULTIPLIER;
+		const prevMultiplier = await getPreviousStreakByCategoryCode(
+			userId,
+			poll.category_code
+		);
+
+		const currentMultiplier = Number(prevMultiplier) || 0;
+		const newMultiplier = (
+			currentMultiplier + DEFAULT_MULTIPLIER_INCREASE
+		).toFixed(1);
 
 		// update and find active run
-		// await updateActiveRun(supabase, {
-		// 	user_id: userId,
-		// 	category_code: poll.category_code,
-		// 	temporary_xp: calculateXP(selectedBet),
-		// 	streak_multiplier: newMultiplier,
-		// });
+		await updateActiveRunByCategoryCode(
+			{
+				user_id: userId,
+				temporary_xp: calculateXP(selectedBet),
+				streak_multiplier: newMultiplier,
+			},
+			poll.category_code
+		);
 
 		return { success: true };
 	} catch (error) {

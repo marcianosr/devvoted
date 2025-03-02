@@ -34,7 +34,15 @@ export default async function PollPage({ params }: Props) {
 	const id = await params.id;
 	const user = await getUser();
 
-	const activeRun = await getActiveRun(user?.id ?? "");
+	const { poll, options, userSelectedOptions } = await getPollById(
+		id,
+		user?.id
+	);
+
+	const activeRun = await getActiveRun(
+		user?.id ?? "",
+		poll?.category_code ?? ""
+	);
 	console.log("activeRun", activeRun);
 
 	if (!activeRun) {
@@ -48,11 +56,6 @@ export default async function PollPage({ params }: Props) {
 			</div>
 		);
 	}
-
-	const { poll, options, userSelectedOptions } = await getPollById(
-		id,
-		user?.id
-	);
 
 	if (!poll) {
 		return (
@@ -82,7 +85,7 @@ export default async function PollPage({ params }: Props) {
 					<b>{activeRun?.category_code}</b> XP pool
 				</Text>
 				<Text>
-					🎯 Multiplier: <b>{activeRun?.streak_multiplier ?? 0}×</b>
+					🎯 Streak Multiplier: <b>{activeRun?.streak_multiplier}×</b>
 				</Text>
 				<Text>
 					🔥 Current streak: <b>{activeRun?.current_streak ?? 0}</b>
