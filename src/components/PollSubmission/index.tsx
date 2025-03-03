@@ -17,8 +17,10 @@ const PollSubmission = ({
 	userSelectedOptions = [],
 }: PollSubmissionProps) => {
 	const isPollClosed = poll.status !== "open";
-	const [selectedOptions, setSelectedOptions] =
-		useState<string[]>(userSelectedOptions);
+	const hasResponded = userSelectedOptions.length > 0;
+	const [selectedOptions, setSelectedOptions] = useState<string[]>(
+		hasResponded ? userSelectedOptions : []
+	);
 	const [selectedBet, setSelectedBet] = useState<number>();
 	const [error, setError] = useState<string | null>(null);
 
@@ -33,8 +35,6 @@ const PollSubmission = ({
 			console.error("Error submitting poll:", err);
 		},
 	});
-
-	const hasResponded = userSelectedOptions.length > 0;
 
 	if (isPollClosed) {
 		return <ClosedPollMessage />;
