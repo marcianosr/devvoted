@@ -11,20 +11,25 @@ export const createPollResponse = async (
 	pollId: number,
 	userId: string
 ) => {
-	const { data: response, error } = await supabase
+	const { data, error } = await supabase
 		.from("polls_responses")
-		.insert([
-			{
-				poll_id: pollId,
-				user_id: userId,
-			},
-		])
-		.select()
+		.insert({
+			poll_id: pollId,
+			user_id: userId,
+		})
+		.select("response_id")
 		.single();
 
-	if (error)
-		throw new Error(`Error creating poll response: ${error.message}`);
-	return response;
+	if (error) {
+		console.error("Error creating poll response:", error);
+		throw new Error("Failed to create poll response");
+	}
+
+	if (!data || !data.response_id) {
+		throw new Error("Failed to get response ID after creation");
+	}
+
+	return data;
 };
 
 export const createPollResponseOptions = async (
@@ -32,17 +37,21 @@ export const createPollResponseOptions = async (
 	responseId: number,
 	selectedOptions: string[]
 ) => {
-	const responseOptions = selectedOptions.map((optionId: string) => ({
+	console.log("Creating response options with responseId:", responseId);
+
+	const responseOptions = selectedOptions.map((optionId) => ({
 		response_id: responseId,
-		option_id: optionId,
+		option_id: Number(optionId),
 	}));
 
 	const { error } = await supabase
 		.from("polls_response_options")
 		.insert(responseOptions);
 
-	if (error)
-		throw new Error(`Error creating response options: ${error.message}`);
+	if (error) {
+		console.error("Error creating poll response options:", error);
+		throw new Error("Failed to create poll response options");
+	}
 };
 
 export const getPreviousByCategoryCode = async (
@@ -101,27 +110,50 @@ export const createPostPollResponse = async ({
 			selectedOptions
 		);
 
-		const hasIncorrectAnswer = true;
+		// Get all poll options to check if we selected all correct ones
+		const { data: pollOptions } = await supabase
+			.from("polls_options")
+			.select("*")
+			.eq("poll_id", poll.id);
 
-		if (hasIncorrectAnswer) {
-			console.log("Incorrect answer");
-			// await handleWrongPollResponse({
-			// 	userId,
-			// 	categoryCode: poll.category_code,
-			// });
-			// return;
+		if (!pollOptions) {
+			throw new Error("Failed to fetch poll options");
+		}
+
+		// Get the correct options
+		const correctOptions = pollOptions.filter((opt) => opt.is_correct);
+
+		// Check if user selected any incorrect options
+		const hasIncorrectAnswer = selectedOptions.some((selectedId) => {
+			const option = pollOptions.find(
+				(opt) => opt.id === Number(selectedId)
+			);
+			return option && !option.is_correct;
+		});
+
+		// Check if user selected all correct options
+		const allCorrectOptionsSelected = correctOptions.every((correctOpt) =>
+			selectedOptions.includes(correctOpt.id.toString())
+		);
+
+		if (hasIncorrectAnswer || !allCorrectOptionsSelected) {
+			console.log("❌ Incorrect answer - Resetting streak");
+			await handleWrongPollResponse({
+				userId,
+				categoryCode: poll.category_code,
+			});
 		} else {
-			console.log("Correct answer");
-			// await handleCorrectPollResponse({
-			// 	selectedBet,
-			// 	userId,
-			// 	categoryCode: poll.category_code,
-			// });
+			console.log("✅ Correct answer - Updating streak and XP");
+			await handleCorrectPollResponse({
+				selectedBet,
+				userId,
+				categoryCode: poll.category_code,
+			});
 		}
 
 		return { success: true };
 	} catch (error) {
-		console.error("Error submitting poll response:", error);
+		console.error("Error in createPostPollResponse:", error);
 		throw error;
 	}
 };

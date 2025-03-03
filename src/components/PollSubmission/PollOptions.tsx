@@ -21,7 +21,7 @@ export const PollOptions = ({
 
 	return (
 		<ul>
-			{options.map((option) => (
+			{options.map((option: PollOptionType) => (
 				<PollOption
 					key={option.id}
 					option={option}

@@ -39,6 +39,8 @@ export default async function PollPage({ params }: Props) {
 		user?.id
 	);
 
+	console.log("userSelectedOptions", userSelectedOptions);
+
 	const activeRun = await getActiveRun(
 		user?.id ?? "",
 		poll?.category_code ?? ""
