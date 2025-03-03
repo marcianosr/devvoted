@@ -30,9 +30,9 @@ export const createPollResponse = async (
 export const createPollResponseOptions = async (
 	supabase: SupabaseClient,
 	responseId: number,
-	selectedOptions: PollOption[]
+	selectedOptions: string[]
 ) => {
-	const responseOptions = selectedOptions.map((optionId: PollOption) => ({
+	const responseOptions = selectedOptions.map((optionId: string) => ({
 		response_id: responseId,
 		option_id: optionId,
 	}));
