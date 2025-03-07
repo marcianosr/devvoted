@@ -1,6 +1,7 @@
 "use client";
 
 import { PollOption as PollOptionType } from "@/types/db";
+import classNames from "classnames";
 
 type Props = {
 	option: PollOptionType;
@@ -15,7 +16,12 @@ export const PollOption = ({
 	onOptionClick,
 	isReadOnly = false,
 }: Props) => (
-	<li className="flex gap-2">
+	<li
+		className={classNames("flex gap-2", {
+			"text-green-500": isReadOnly && option.is_correct,
+			"text-red-500": isReadOnly && !option.is_correct && isSelected,
+		})}
+	>
 		correct: {JSON.stringify(option.is_correct)}
 		<input
 			type="checkbox"
