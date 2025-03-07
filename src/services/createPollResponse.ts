@@ -208,14 +208,20 @@ const handleWrongPollResponse = async ({
 	userId: string;
 	categoryCode: string;
 }) => {
-	await resetActiveRunByCategoryCode(userId, categoryCode);
+	await resetActiveRunByCategoryCode({
+		userId,
+		categoryCode,
+	});
 	await decreaseAttemptsForUser(userId);
 };
 
-const resetActiveRunByCategoryCode = async (
-	userId: string,
-	categoryCode: string
-) => {
+export const resetActiveRunByCategoryCode = async ({
+	userId,
+	categoryCode,
+}: {
+	userId: string;
+	categoryCode: string;
+}) => {
 	const supabase = await createClient();
 
 	const { error: pollsActiveRunError } = await supabase
@@ -235,7 +241,11 @@ const resetActiveRunByCategoryCode = async (
 	return { success: true };
 };
 
-const resetActiveRunByAllCategories = async (userId: string) => {
+export const resetActiveRunByAllCategories = async ({
+	userId,
+}: {
+	userId: string;
+}) => {
 	const supabase = await createClient();
 
 	const { error: pollsActiveRunError } = await supabase

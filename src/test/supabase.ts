@@ -1,3 +1,4 @@
+import { ActiveRun } from "@/types/db";
 import { vi } from "vitest";
 
 export type MockSupabaseResponse<T> = {
@@ -14,6 +15,7 @@ export type MockSupabaseQuery = {
 	limit: ReturnType<typeof vi.fn>;
 	update: ReturnType<typeof vi.fn>;
 	maybeSingle: ReturnType<typeof vi.fn>;
+	delete: ReturnType<typeof vi.fn>;
 };
 
 export const createMockSupabaseQuery = (): MockSupabaseQuery => ({
@@ -25,6 +27,7 @@ export const createMockSupabaseQuery = (): MockSupabaseQuery => ({
 	limit: vi.fn().mockReturnThis(),
 	update: vi.fn().mockReturnThis(),
 	maybeSingle: vi.fn(),
+	delete: vi.fn().mockReturnThis(),
 });
 
 export const createMockPollsOptionsTable = () => ({
@@ -37,12 +40,16 @@ export const createMockPollsOptionsTable = () => ({
 });
 
 export const createMockActiveRunsTable = (
-	data = {
+	data: ActiveRun = {
 		id: 1,
 		user_id: "user123",
 		category_code: "fun",
-		streak: 1,
-		xp: 100,
+		last_poll_at: new Date(),
+		current_streak: 1,
+		locked_in_at: new Date(),
+		started_at: new Date(),
+		streak_multiplier: "1.0",
+		temporary_xp: 10,
 	}
 ) => ({
 	...createMockSupabaseQuery(),

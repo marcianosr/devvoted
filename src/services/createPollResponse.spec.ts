@@ -1,13 +1,17 @@
 // src/services/__tests__/createPollResponse.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createPostPollResponse } from "./createPollResponse";
+import {
+	createPostPollResponse,
+	resetActiveRunByAllCategories,
+	resetActiveRunByCategoryCode,
+} from "./createPollResponse";
 import { createClient } from "@/app/supabase/server";
 import { createMockPoll } from "@/test/factories";
 import { createMockSupabaseClient } from "@/test/supabase";
 
 vi.mock("@/app/supabase/server");
 
-describe("createPostPollResponse", () => {
+describe(createPostPollResponse, () => {
 	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
 
 	beforeEach(() => {
@@ -56,5 +60,95 @@ describe("createPostPollResponse", () => {
 				selectedBet: 100,
 			})
 		).rejects.toThrow("Failed to create poll response");
+	});
+});
+
+describe(resetActiveRunByCategoryCode, () => {
+	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
+
+	beforeEach(() => {
+		vi.clearAllMocks();
+		mockSupabase = createMockSupabaseClient();
+		vi.mocked(createClient).mockReturnValue(mockSupabase);
+	});
+
+	it("resets the active run for a specific category", async () => {
+		// Mock the Supabase update chain
+		mockSupabase.from.mockReturnValue({
+			update: vi.fn().mockReturnValue({
+				eq: vi.fn().mockReturnValue({
+					eq: vi.fn().mockResolvedValue({ error: null }),
+				}),
+			}),
+		});
+
+		const result = await resetActiveRunByCategoryCode({
+			userId: "user123",
+			categoryCode: "React",
+		});
+
+		expect(result.success).toBe(true);
+
+		expect(mockSupabase.from).toHaveBeenCalledWith("polls_active_runs");
+
+		expect(mockSupabase.from().update).toHaveBeenCalledWith(
+			expect.objectContaining({
+				last_poll_at: expect.any(Date),
+			})
+		);
+
+		expect(mockSupabase.from().update().eq).toHaveBeenCalledWith(
+			"category_code",
+			"React"
+		);
+		expect(mockSupabase.from().update().eq().eq).toHaveBeenCalledWith(
+			"user_id",
+			"user123"
+		);
+	});
+});
+
+describe(resetActiveRunByAllCategories, () => {
+	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
+
+	beforeEach(() => {
+		vi.clearAllMocks();
+		mockSupabase = createMockSupabaseClient();
+		vi.mocked(createClient).mockReturnValue(mockSupabase);
+	});
+
+	it("resets the active run for all categories", async () => {
+		mockSupabase.from.mockReturnValue({
+			update: vi.fn().mockReturnValue({
+				eq: vi.fn().mockReturnValue({
+					eq: vi.fn().mockResolvedValue({ error: null }),
+				}),
+			}),
+			delete: vi.fn().mockReturnValue({
+				eq: vi.fn().mockResolvedValue({ error: null }),
+			}),
+		});
+
+		const result = await resetActiveRunByAllCategories({
+			userId: "user123",
+		});
+
+		expect(result.success).toBe(true);
+
+		expect(mockSupabase.from).toHaveBeenCalledWith("polls_active_runs");
+		expect(mockSupabase.from().delete).toHaveBeenCalled();
+		expect(mockSupabase.from().delete().eq).toHaveBeenCalledWith(
+			"user_id",
+			"user123"
+		);
+
+		expect(mockSupabase.from).toHaveBeenCalledWith("users");
+		expect(mockSupabase.from().update).toHaveBeenCalledWith({
+			active_config: null,
+		});
+		expect(mockSupabase.from().update().eq).toHaveBeenCalledWith(
+			"id",
+			"user123"
+		);
 	});
 });
