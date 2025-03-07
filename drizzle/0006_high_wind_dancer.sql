@@ -1,0 +1,1 @@
+ALTER TABLE "polls_active_runs" ADD COLUMN "attempts" integer DEFAULT 3 NOT NULL;

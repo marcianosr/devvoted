@@ -7,6 +7,7 @@ import { getUser } from "@/services/user";
 import PollSubmission from "@/components/PollSubmission";
 import { getActiveRun } from "@/services/activeRun";
 import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
+import { START_AMOUNT_ATTEMPTS } from "@/services/constants";
 
 type Props = {
 	params: { id: string };
@@ -94,6 +95,13 @@ export default async function PollPage({ params }: Props) {
 				<Text>
 					⚙️ Playing with config:{" "}
 					<b>{user?.devvotedUser.active_config}</b>
+				</Text>
+				<Text>
+					🔄 Attempts:{" "}
+					<b>
+						{user?.devvotedUser.run_attempts}/
+						{START_AMOUNT_ATTEMPTS} left
+					</b>
 				</Text>
 			</section>
 			<PollQuestion poll={poll} />

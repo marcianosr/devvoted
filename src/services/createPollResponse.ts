@@ -1,9 +1,12 @@
 import { createClient } from "@/app/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { CreatePostPollResponseRequest } from "./api/createPostPollResponse";
-import { ActiveRun, PollOption, UpdateActiveRun } from "@/types/db";
-import { calculateBetXP } from "./calculateXP";
-import { START_MULTIPLIER_INCREASE } from "./constants";
+import { CreatePostPollResponseRequest } from "@/services/api/createPostPollResponse";
+import { ActiveRun, UpdateActiveRun } from "@/types/db";
+import { calculateBetXP } from "@/services/calculateXP";
+import {
+	START_MULTIPLIER_INCREASE,
+	startRunSettings,
+} from "@/services/constants";
 
 // Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
 export const createPollResponse = async (
@@ -54,7 +57,7 @@ export const createPollResponseOptions = async (
 	}
 };
 
-export const getPreviousByCategoryCode = async (
+export const getPreviousRunDataByCategoryCode = async (
 	userId: string,
 	categoryCode: string
 ): Promise<ActiveRun | null> => {
@@ -168,11 +171,14 @@ const handleCorrectPollResponse = async ({
 	categoryCode: string;
 }) => {
 	// Get and update streak multiplier
-	const previousData = await getPreviousByCategoryCode(userId, categoryCode);
+	const previousData = await getPreviousRunDataByCategoryCode(
+		userId,
+		categoryCode
+	);
 
 	const currentMultiplier = Number(previousData?.streak_multiplier) || 0;
 	const newMultiplier = (
-		currentMultiplier + START_MULTIPLIER_INCREASE
+		currentMultiplier + Number(START_MULTIPLIER_INCREASE)
 	).toFixed(1);
 
 	const currentXP = previousData?.temporary_xp ?? 0;
@@ -203,6 +209,7 @@ const handleWrongPollResponse = async ({
 	categoryCode: string;
 }) => {
 	await resetActiveRunByCategoryCode(userId, categoryCode);
+	await decreaseAttemptsForUser(userId);
 };
 
 const resetActiveRunByCategoryCode = async (
@@ -211,18 +218,90 @@ const resetActiveRunByCategoryCode = async (
 ) => {
 	const supabase = await createClient();
 
-	const { error } = await supabase
+	const { error: pollsActiveRunError } = await supabase
 		.from("polls_active_runs")
 		.update({
-			temporary_xp: 0,
-			streak_multiplier: "0.0",
+			...startRunSettings,
 			last_poll_at: new Date(),
-			current_streak: 0,
 		})
 		.eq("category_code", categoryCode)
 		.eq("user_id", userId);
 
-	if (error) throw new Error(`Error resetting active run: ${error.message}`);
+	if (pollsActiveRunError)
+		throw new Error(
+			`Error resetting active run: ${pollsActiveRunError.message}`
+		);
+
+	return { success: true };
+};
+
+const resetActiveRunByAllCategories = async (userId: string) => {
+	const supabase = await createClient();
+
+	const { error: pollsActiveRunError } = await supabase
+		.from("polls_active_runs")
+		.delete()
+		.eq("user_id", userId);
+
+	if (pollsActiveRunError)
+		throw new Error(
+			`Error resetting active run: ${pollsActiveRunError.message}`
+		);
+
+	const { error: userError } = await supabase
+		.from("users")
+		.update({
+			active_config: null,
+		})
+		.eq("id", userId);
+	if (userError)
+		throw new Error(`Error resetting active run: ${userError.message}`);
+
+	return { success: true };
+};
+
+const decreaseAttemptsForUser = async (userId: string) => {
+	const supabase = await createClient();
+
+	// Fetch the current value
+	const { data: user, error: fetchError } = await supabase
+		.from("users")
+		.select("run_attempts")
+		.eq("id", userId)
+		.single();
+
+	if (fetchError) {
+		throw new Error(`Error fetching user: ${fetchError.message}`);
+	}
+
+	// Ensure `run_attempts` is not null or undefined
+	if (user.run_attempts === null || user.run_attempts === undefined) {
+		throw new Error(`User run_attempts is undefined or null`);
+	}
+
+	// Decrement and update
+	const newValue = Math.max(user.run_attempts - 1, 0); // Ensure it doesn't go negative
+
+	const { error: updateError, data: updatedUser } = await supabase
+		.from("users")
+		.update({ run_attempts: newValue })
+		.eq("id", userId)
+		.select()
+		.single();
+
+	if (updateError) {
+		throw new Error(`Error updating attempts: ${updateError.message}`);
+	}
+
+	console.log("🐸 Decreasing attempts:", updatedUser);
+
+	// If user has no attempts left, reset everything!
+	if (newValue === 0) {
+		console.log(
+			"🚨 No attempts left! Resetting active run for all categories..."
+		);
+		await resetActiveRunByAllCategories(userId);
+	}
 
 	return { success: true };
 };

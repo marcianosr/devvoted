@@ -1,2 +1,13 @@
+import { ActiveRun } from "@/types/db";
+
 export const START_TEMPORARY_XP = 50;
-export const START_MULTIPLIER_INCREASE = 0.1;
+export const START_MULTIPLIER_INCREASE = "0.1"; // Decimal value for Postgres
+
+export const START_AMOUNT_ATTEMPTS = 3;
+
+export const startRunSettings: Partial<ActiveRun> = {
+	temporary_xp: START_TEMPORARY_XP,
+	current_streak: 0,
+	streak_multiplier: START_MULTIPLIER_INCREASE,
+	locked_in_at: null,
+};

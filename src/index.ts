@@ -161,6 +161,11 @@ const pollOptionsData = [
 	["Option 18", false],
 	["Option 19", false],
 	["Option 20", true],
+	["Option 21", false],
+	["Option 22", false],
+	["Option 23", false],
+	["Option 24", true],
+	["Option 25", false],
 ];
 
 async function main() {

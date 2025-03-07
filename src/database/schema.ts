@@ -1,4 +1,7 @@
-import { START_TEMPORARY_XP } from "@/services/constants";
+import {
+	START_AMOUNT_ATTEMPTS,
+	START_TEMPORARY_XP,
+} from "@/services/constants";
 import {
 	boolean,
 	decimal,
@@ -76,6 +79,9 @@ export const usersTable = pgTable("users", {
 		.notNull()
 		.default(0),
 	active_config: varchar("active_config", { length: 256 }), // Current active game configuration/deck
+	run_attempts: integer("run_attempts")
+		.notNull()
+		.default(START_AMOUNT_ATTEMPTS),
 });
 
 /**

@@ -1,7 +1,7 @@
 import { createClient } from "@/app/supabase/server";
 import { CreatePostRunRequest } from "@/services/api/createPostRunRequest";
 import { InsertActiveRun, PollCategory } from "@/types/db";
-import { START_TEMPORARY_XP } from "./constants";
+import { START_AMOUNT_ATTEMPTS, startRunSettings } from "./constants";
 
 export const createRun = async ({
 	userId,
@@ -26,10 +26,8 @@ const insertActiveRun = async (userId: string, categories: PollCategory[]) => {
 		(category) => ({
 			user_id: userId,
 			category_code: category.code,
-			current_streak: 0,
-			streak_multiplier: "0.0",
 			started_at: new Date(),
-			temporary_xp: START_TEMPORARY_XP, // Start with 50 xp for now
+			...startRunSettings,
 		})
 	);
 
@@ -51,6 +49,7 @@ const updateUserConfig = async (userId: string, configId: string) => {
 		.from("users")
 		.update({
 			active_config: configId,
+			run_attempts: START_AMOUNT_ATTEMPTS,
 		})
 		.eq("id", userId)
 		.single();
