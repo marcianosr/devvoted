@@ -40,8 +40,6 @@ export default async function PollPage({ params }: Props) {
 		user?.id
 	);
 
-	console.log("userSelectedOptions", userSelectedOptions);
-
 	const activeRun = await getActiveRun(
 		user?.id ?? "",
 		poll?.category_code ?? ""
@@ -72,8 +70,8 @@ export default async function PollPage({ params }: Props) {
 	}
 
 	return (
-		<section className="container mx-auto px-4 py-8">
-			<section className="mb-8">
+		<section className="container mx-auto py-8 grid grid-cols-1 md:grid-cols-[250px_1fr] gap-4">
+			<aside>
 				<Text>📜 Category: {poll.category_code}</Text>
 				<Text>
 					🕒 Status:{" "}
@@ -103,14 +101,22 @@ export default async function PollPage({ params }: Props) {
 						{START_AMOUNT_ATTEMPTS} left
 					</b>
 				</Text>
+			</aside>
+			<section>
+				<PollQuestion poll={poll} />
+				<PollSubmission
+					poll={poll}
+					options={options}
+					user={user}
+					userSelectedOptions={userSelectedOptions}
+				/>
+				{user?.devvotedUser.run_attempts === 0 && (
+					<>
+						<Text>🔧 Run over!</Text>
+						<ButtonLink href="/config">Start a new run</ButtonLink>
+					</>
+				)}
 			</section>
-			<PollQuestion poll={poll} />
-			<PollSubmission
-				poll={poll}
-				options={options}
-				user={user}
-				userSelectedOptions={userSelectedOptions}
-			/>
 		</section>
 	);
 }
