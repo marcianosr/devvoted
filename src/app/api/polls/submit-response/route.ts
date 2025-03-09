@@ -8,13 +8,14 @@ export async function POST(request: Request) {
 		const { poll, userId, selectedOptions, selectedBet } =
 			(await request.json()) as CreatePostPollResponseRequest;
 
-		await createPostPollResponse({
+		const result = await createPostPollResponse({
 			poll,
 			userId,
 			selectedOptions,
 			selectedBet,
 		});
-		return NextResponse.json({ success: true });
+
+		return NextResponse.json(result);
 	} catch (error) {
 		console.error("Error in poll submission:", error);
 		return NextResponse.json(

@@ -139,22 +139,74 @@ export const createPostPollResponse = async ({
 			selectedOptions.includes(correctOpt.id.toString())
 		);
 
+		// Get previous run data to calculate changes
+		const previousData = await getPreviousRunDataByCategoryCode(
+			userId,
+			poll.category_code
+		);
+
+		const previousXP = previousData?.temporary_xp ?? 0;
+		const previousMultiplier = Number(previousData?.streak_multiplier) || 0;
+		const previousStreak = previousData?.current_streak ?? 0;
+
+		const result = {
+			success: true,
+			isCorrect: false,
+			changes: {
+				previousXP,
+				newXP: previousXP,
+				xpGain: 0,
+				previousMultiplier,
+				newMultiplier: previousMultiplier,
+				previousStreak,
+				newStreak: previousStreak,
+			},
+		};
+
 		if (hasIncorrectAnswer || !allCorrectOptionsSelected) {
 			console.log("❌ Incorrect answer - Resetting streak");
 			await handleWrongPollResponse({
 				userId,
 				categoryCode: poll.category_code,
 			});
+
+			result.isCorrect = false;
+			// For incorrect answers, we reset to default values
+			result.changes.newXP = previousXP;
+			result.changes.newMultiplier = 0;
+			result.changes.newStreak = 0;
+			result.changes.xpGain = 0;
 		} else {
 			console.log("✅ Correct answer - Updating streak and XP");
+
+			// Calculate new values
+			const newMultiplier = (
+				previousMultiplier + Number(START_MULTIPLIER_INCREASE)
+			).toFixed(1);
+
+			const xpCalculation = calculateBetXP({
+				availableXP: previousXP,
+				betPercentage: selectedBet,
+				streakMultiplier: Number(newMultiplier),
+			});
+
+			const newXP = previousXP + xpCalculation.totalXP;
+			const newStreak = previousStreak + 1;
+
 			await handleCorrectPollResponse({
 				selectedBet,
 				userId,
 				categoryCode: poll.category_code,
 			});
+
+			result.isCorrect = true;
+			result.changes.newXP = newXP;
+			result.changes.xpGain = xpCalculation.totalXP;
+			result.changes.newMultiplier = Number(newMultiplier);
+			result.changes.newStreak = newStreak;
 		}
 
-		return { success: true };
+		return result;
 	} catch (error) {
 		console.error("Error in createPostPollResponse:", error);
 		throw error;

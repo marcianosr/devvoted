@@ -7,7 +7,7 @@ import { getUser } from "@/services/user";
 import PollSubmission from "@/components/PollSubmission";
 import { getActiveRun } from "@/services/activeRun";
 import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
-import { START_AMOUNT_ATTEMPTS } from "@/services/constants";
+import RunProgressBar from "@/components/RunProgressBar";
 
 type Props = {
 	params: { id: string };
@@ -71,37 +71,7 @@ export default async function PollPage({ params }: Props) {
 
 	return (
 		<section className="container mx-auto py-8 grid grid-cols-1 md:grid-cols-[250px_1fr] gap-4">
-			<aside>
-				<Text>📜 Category: {poll.category_code}</Text>
-				<Text>
-					🕒 Status:{" "}
-					<b>
-						{poll.status.charAt(0).toUpperCase() +
-							poll.status.slice(1)}
-					</b>
-				</Text>
-				<Text>
-					💰 Available to bet: <b>{activeRun?.temporary_xp ?? "0"}</b>{" "}
-					XP from <b>{activeRun?.category_code}</b>
-				</Text>
-				<Text>
-					🎯 Streak Multiplier: <b>{activeRun?.streak_multiplier}×</b>
-				</Text>
-				<Text>
-					🔥 Current streak: <b>{activeRun?.current_streak ?? 0}</b>
-				</Text>
-				<Text>
-					⚙️ Playing with config:{" "}
-					<b>{user?.devvotedUser.active_config}</b>
-				</Text>
-				<Text>
-					🔄 Attempts:{" "}
-					<b>
-						{user?.devvotedUser.run_attempts}/
-						{START_AMOUNT_ATTEMPTS} left
-					</b>
-				</Text>
-			</aside>
+			<RunProgressBar activeRun={activeRun} poll={poll} user={user} />
 			<section>
 				<PollQuestion poll={poll} />
 				<PollSubmission

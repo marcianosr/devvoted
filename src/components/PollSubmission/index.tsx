@@ -8,7 +8,10 @@ import { ClosedPollMessage } from "@/components/PollSubmission/ClosedPollMessage
 import { PollOptions } from "@/components/PollSubmission/PollOptions";
 import { SubmitButton } from "@/components/PollSubmission/SubmitButton";
 import { BettingOptions } from "./BettingOptions";
-import { createPostPollResponse } from "@/services/api/createPostPollResponse";
+import {
+	createPostPollResponse,
+	PollResponseResult,
+} from "@/services/api/createPostPollResponse";
 
 const PollSubmission = ({
 	poll,
@@ -23,12 +26,16 @@ const PollSubmission = ({
 	);
 	const [selectedBet, setSelectedBet] = useState<number>();
 	const [error, setError] = useState<string | null>(null);
+	const [results, setResults] = useState<PollResponseResult | null>(null);
+
+	console.log("-------------", results);
 
 	const queryClient = useQueryClient();
 	const { mutate: submitPoll, isPending } = useMutation({
 		mutationFn: createPostPollResponse,
-		onSuccess: () => {
+		onSuccess: (data: PollResponseResult) => {
 			queryClient.invalidateQueries({ queryKey: ["polls", poll.id] });
+			setResults(data);
 		},
 		onError: (err: Error) => {
 			setError(err.message);

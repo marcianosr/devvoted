@@ -1,5 +1,19 @@
 import { Poll } from "@/types/db";
 
+export type PollResponseResult = {
+	success: boolean;
+	isCorrect: boolean;
+	changes: {
+		previousXP: number;
+		newXP: number;
+		xpGain: number;
+		previousMultiplier: number;
+		newMultiplier: number;
+		previousStreak: number;
+		newStreak: number;
+	};
+};
+
 export type CreatePostPollResponseRequest = {
 	poll: Poll;
 	userId: string;
@@ -9,7 +23,7 @@ export type CreatePostPollResponseRequest = {
 
 export const createPostPollResponse = async (
 	data: CreatePostPollResponseRequest
-): Promise<void> => {
+): Promise<PollResponseResult> => {
 	const response = await fetch("/api/polls/submit-response", {
 		method: "POST",
 		headers: {
