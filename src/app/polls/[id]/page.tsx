@@ -22,7 +22,7 @@ export const getPollById = async (id: string, userId?: string) => {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-	const id = await params.id;
+	const { id } = await params;
 	const { poll } = await getPollById(id);
 
 	return {
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PollPage({ params }: Props) {
-	const id = await params.id;
+	const { id } = await params;
 	const user = await getUser();
 
 	const { poll, options, userSelectedOptions } = await getPollById(

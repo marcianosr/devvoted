@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fira_Code } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import { QueryProvider } from "@/providers/QueryProvider";
+import { PollResultProvider } from "@/app/context/PollResultContext";
 import "./globals.css";
 import classNames from "classnames";
 
@@ -31,8 +32,10 @@ export default function RootLayout({
 				className={classNames("pixter-display-font", layoutStyles)}
 			>
 				<QueryProvider>
-					<Navbar />
-					<main>{children}</main>
+					<PollResultProvider>
+						<Navbar />
+						<main>{children}</main>
+					</PollResultProvider>
 				</QueryProvider>
 			</body>
 		</html>

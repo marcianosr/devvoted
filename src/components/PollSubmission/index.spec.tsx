@@ -50,7 +50,19 @@ describe(PollSubmission, () => {
 	it.todo(
 		"shows success message immediately after successful submission",
 		async () => {
-			vi.mocked(pollsApi.createPostPollResponse).mockResolvedValueOnce();
+			vi.mocked(pollsApi.createPostPollResponse).mockResolvedValueOnce({
+				changes: {
+					newMultiplier: 1,
+					newStreak: 1,
+					newXP: 1,
+					previousMultiplier: 1,
+					previousStreak: 1,
+					previousXP: 1,
+					xpGain: 1,
+				},
+				success: true,
+				isCorrect: false,
+			});
 
 			renderWithProviders(
 				<PollSubmission

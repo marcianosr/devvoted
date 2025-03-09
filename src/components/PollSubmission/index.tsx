@@ -12,6 +12,7 @@ import {
 	createPostPollResponse,
 	PollResponseResult,
 } from "@/services/api/createPostPollResponse";
+import { usePollResult } from "@/app/context/PollResultContext";
 
 const PollSubmission = ({
 	poll,
@@ -26,16 +27,14 @@ const PollSubmission = ({
 	);
 	const [selectedBet, setSelectedBet] = useState<number>();
 	const [error, setError] = useState<string | null>(null);
-	const [results, setResults] = useState<PollResponseResult | null>(null);
-
-	console.log("-------------", results);
+	const { setPollResult } = usePollResult();
 
 	const queryClient = useQueryClient();
 	const { mutate: submitPoll, isPending } = useMutation({
 		mutationFn: createPostPollResponse,
 		onSuccess: (data: PollResponseResult) => {
 			queryClient.invalidateQueries({ queryKey: ["polls", poll.id] });
-			setResults(data);
+			setPollResult(data); // Update the context with the poll result
 		},
 		onError: (err: Error) => {
 			setError(err.message);
