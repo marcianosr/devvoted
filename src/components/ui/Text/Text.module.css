@@ -1,4 +1,5 @@
-.paragraph {
+.paragraph,
+.normal {
 	font-size: var(--body-text-size);
 	font-family: "Pixter";
 }
@@ -14,4 +15,13 @@
 .warning {
 	color: orange;
 	font-family: "Pixter";
+}
+
+.success {
+	color: green;
+	font-family: "Pixter";
+}
+
+.bold {
+	font-family: "PixterDisplay";
 }

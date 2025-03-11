@@ -1,19 +1,21 @@
 "use client";
 
 import { usePollResult } from "@/app/context/PollResultContext";
-import Text from "@/components/ui/Text/Text";
+import Text, { UpgradedText } from "@/components/ui/Text/Text";
 import { AuthenticatedUser } from "@/services/clientUser";
 import { START_AMOUNT_ATTEMPTS } from "@/services/constants";
-import { ActiveRun, Poll } from "@/types/db";
+import { ActiveRun, Poll, User } from "@/types/db";
 
 type RunProgressBarProps = {
 	activeRun: ActiveRun;
 	poll: Poll;
-	user: AuthenticatedUser | null;
+	user: AuthenticatedUser;
 };
 
 const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 	const { pollResult } = usePollResult();
+
+	console.log(pollResult);
 
 	return (
 		<aside>
@@ -29,33 +31,33 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 				from{" "}
 				<b>
 					{activeRun?.category_code}{" "}
-					{pollResult?.changes.newXP && (
-						<span className="text-green-500">
-							→ {pollResult?.changes.newXP} XP
-						</span>
-					)}
+					<UpgradedText
+						condition={
+							!!pollResult?.changes.newXP &&
+							pollResult?.changes.xpGain > 0
+						}
+						text={`→ ${pollResult?.changes.newXP} XP`}
+					/>
 				</b>
 			</Text>
 			<Text>
 				🎯 Streak Multiplier:{" "}
 				<b>
 					{activeRun?.streak_multiplier}×{" "}
-					{pollResult?.changes.newMultiplier && (
-						<span className="text-green-500">
-							→ {pollResult?.changes.newMultiplier}×
-						</span>
-					)}
+					<UpgradedText
+						condition={!!pollResult?.changes.newMultiplier}
+						text={`→ ${pollResult?.changes.newMultiplier}×`}
+					/>
 				</b>
 			</Text>
 			<Text>
 				🔥 Current streak:{" "}
 				<b>
 					{activeRun?.current_streak ?? 0}{" "}
-					{pollResult?.changes.newStreak && (
-						<span className="text-green-500">
-							→ {pollResult?.changes.newStreak}
-						</span>
-					)}
+					<UpgradedText
+						condition={!!pollResult?.changes.newStreak}
+						text={`→ ${pollResult?.changes.newStreak}`}
+					/>
 				</b>
 			</Text>
 			<Text>

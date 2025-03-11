@@ -3,17 +3,25 @@ import styles from "./Text.module.css";
 import classNames from "classnames";
 type TextProps = {
 	children: ReactNode;
-	variant?: "default" | "small" | "error" | "warning";
-	as?: "p" | "span";
+	variant?: "default" | "small" | "error" | "warning" | "success";
+	as?: "p" | "span" | "b";
+	weight?: "bold" | "normal";
 };
 
 export default function Text({
 	children,
 	variant = "default",
 	as: Component = "p",
+	weight = "normal",
 }: TextProps) {
 	return (
-		<Component className={classNames(styles.paragraph, styles[variant])}>
+		<Component
+			className={classNames(
+				styles.paragraph,
+				styles[variant],
+				styles[weight]
+			)}
+		>
 			{children}
 		</Component>
 	);
@@ -30,3 +38,19 @@ export function SmallText({
 		</Text>
 	);
 }
+
+export const UpgradedText = ({
+	condition,
+	text,
+}: {
+	condition: boolean;
+	text: string;
+}) => {
+	if (!condition) return null;
+
+	return (
+		<Text variant="success" weight="bold" as="b">
+			{text}
+		</Text>
+	);
+};
