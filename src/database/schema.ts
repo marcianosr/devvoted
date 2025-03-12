@@ -182,7 +182,7 @@ export const pollResponsesTable = pgTable("polls_responses", {
 
 /**
  * User Category XP Table
- * Tracks permanent XP per category after locking in
+ * Stands for tracking user's performance in a specific categories
  */
 export const pollUserPerformanceTable = pgTable("polls_user_performance", {
 	id: serial("id").primaryKey(),
@@ -192,7 +192,9 @@ export const pollUserPerformanceTable = pgTable("polls_user_performance", {
 	category_code: varchar("category_code", { length: 50 })
 		.references(() => pollCategoriesTable.code)
 		.notNull(),
-	permanent_xp: integer("permanent_xp").notNull().default(0),
+	devvoted_score: decimal("devvoted_score", { precision: 10, scale: 2 })
+		.notNull()
+		.default("0.0"),
 	best_streak: integer("best_streak").notNull().default(0),
 	best_multiplier: decimal("best_multiplier", { precision: 3, scale: 1 })
 		.notNull()
@@ -226,7 +228,6 @@ export const pollsActiveRunTable = pgTable("polls_active_runs", {
 
 	started_at: timestamp("started_at").defaultNow(),
 	last_poll_at: timestamp("last_poll_at").defaultNow(),
-	locked_in_at: timestamp("locked_in_at"),
 });
 
 // === TYPE EXPORTS ===

@@ -9,5 +9,4 @@ export const startRunSettings: Partial<ActiveRun> = {
 	temporary_xp: START_TEMPORARY_XP,
 	current_streak: 0,
 	streak_multiplier: START_MULTIPLIER_INCREASE,
-	locked_in_at: null,
 };

@@ -46,7 +46,6 @@ export const createMockActiveRunsTable = (
 		category_code: "fun",
 		last_poll_at: new Date(),
 		current_streak: 1,
-		locked_in_at: new Date(),
 		started_at: new Date(),
 		streak_multiplier: "1.0",
 		temporary_xp: 10,

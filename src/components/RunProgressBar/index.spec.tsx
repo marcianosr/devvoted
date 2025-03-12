@@ -23,7 +23,6 @@ const createMockActiveRun = (overrides?: Partial<ActiveRun>): ActiveRun => ({
 	streak_multiplier: "0.5",
 	started_at: new Date(),
 	last_poll_at: new Date(),
-	locked_in_at: null,
 	...overrides,
 });
 

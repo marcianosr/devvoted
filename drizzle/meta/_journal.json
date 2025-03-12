@@ -57,6 +57,13 @@
       "when": 1741276864305,
       "tag": "0007_neat_sprite",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1741794747604,
+      "tag": "0008_brown_lady_vermin",
+      "breakpoints": true
     }
   ]
 }
