@@ -7,6 +7,9 @@ import {
 	START_MULTIPLIER_INCREASE,
 	startRunSettings,
 } from "@/services/constants";
+import { db } from "@/database/db";
+import { pollUserPerformanceTable } from "@/database/schema";
+import { eq, and } from "drizzle-orm";
 
 // Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
 export const createPollResponse = async (
@@ -145,10 +148,30 @@ export const createPostPollResponse = async ({
 			poll.category_code
 		);
 
+		// Fetch current user performance data to get the devvoted_score
+		const userPerformanceData = await db
+			.select()
+			.from(pollUserPerformanceTable)
+			.where(
+				and(
+					eq(pollUserPerformanceTable.user_id, userId),
+					eq(
+						pollUserPerformanceTable.category_code,
+						poll.category_code
+					)
+				)
+			)
+			.limit(1);
+
+		const previousDevvotedScore = userPerformanceData[0]?.devvoted_score
+			? Number(userPerformanceData[0].devvoted_score)
+			: 0;
+
 		const previousXP = previousData?.temporary_xp ?? 0;
 		const previousMultiplier = Number(previousData?.streak_multiplier) || 0;
 		const previousStreak = previousData?.current_streak ?? 0;
 
+		// Type this object
 		const result = {
 			success: true,
 			isCorrect: false,
@@ -160,6 +183,7 @@ export const createPostPollResponse = async ({
 				newMultiplier: previousMultiplier,
 				previousStreak,
 				newStreak: previousStreak,
+				devvotedScore: previousDevvotedScore,
 			},
 		};
 
@@ -176,6 +200,26 @@ export const createPostPollResponse = async ({
 			result.changes.newMultiplier = 0;
 			result.changes.newStreak = 0;
 			result.changes.xpGain = 0;
+
+			// For incorrect answers, devvoted_score might decrease slightly or stay the same
+			// Fetch the updated score after handling the wrong response
+			const updatedPerformance = await db
+				.select()
+				.from(pollUserPerformanceTable)
+				.where(
+					and(
+						eq(pollUserPerformanceTable.user_id, userId),
+						eq(
+							pollUserPerformanceTable.category_code,
+							poll.category_code
+						)
+					)
+				)
+				.limit(1);
+
+			result.changes.devvotedScore = updatedPerformance[0]?.devvoted_score
+				? Number(updatedPerformance[0].devvoted_score)
+				: previousDevvotedScore;
 		} else {
 			console.log("✅ Correct answer - Updating streak and XP");
 
@@ -204,6 +248,25 @@ export const createPostPollResponse = async ({
 			result.changes.xpGain = xpCalculation.totalXP;
 			result.changes.newMultiplier = Number(newMultiplier);
 			result.changes.newStreak = newStreak;
+
+			// For correct answers, fetch the updated devvoted_score after handling the correct response
+			const updatedPerformance = await db
+				.select()
+				.from(pollUserPerformanceTable)
+				.where(
+					and(
+						eq(pollUserPerformanceTable.user_id, userId),
+						eq(
+							pollUserPerformanceTable.category_code,
+							poll.category_code
+						)
+					)
+				)
+				.limit(1);
+
+			result.changes.devvotedScore = updatedPerformance[0]?.devvoted_score
+				? Number(updatedPerformance[0].devvoted_score)
+				: previousDevvotedScore;
 		}
 
 		return result;
@@ -362,7 +425,7 @@ const decreaseAttemptsForUser = async (userId: string) => {
 		console.log(
 			"🚨 No attempts left! Resetting active run for all categories..."
 		);
-		await resetActiveRunByAllCategories(userId);
+		await resetActiveRunByAllCategories({ userId });
 	}
 
 	return { success: true };

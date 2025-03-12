@@ -14,6 +14,13 @@ vi.mock("@/app/context/PollResultContext", () => ({
 		children,
 }));
 
+vi.mock("@/services/userPerformance", () => ({
+	useUserPerformance: vi.fn().mockReturnValue({
+		data: { devvoted_score: 10.5 },
+		isLoading: false,
+	}),
+}));
+
 const createMockActiveRun = (overrides?: Partial<ActiveRun>): ActiveRun => ({
 	id: 1,
 	user_id: "test-user-1",
@@ -59,9 +66,12 @@ describe(RunProgressBar, () => {
 		expect(screen.getByText(/Current streak:/)).toHaveTextContent(
 			`Current streak: ${mockActiveRun.current_streak}`
 		);
+
+		expect(screen.getByText(/Knowledge Score:/)).toHaveTextContent(
+			"Knowledge Score: 10.50"
+		);
 	});
 
-	// ! Check
 	it("shows an upgrade diff between before answering and after", async () => {
 		const initialActiveRun = createMockActiveRun({
 			temporary_xp: 100,
@@ -100,6 +110,7 @@ describe(RunProgressBar, () => {
 					newXP: 150,
 					newMultiplier: "0.7",
 					xpGain: 50,
+					devvotedScore: 12.0,
 				},
 			},
 		});
@@ -130,6 +141,37 @@ describe(RunProgressBar, () => {
 
 		expect(screen.getByText(/Streak Multiplier:/)).toHaveTextContent(
 			`Streak Multiplier: ${initialActiveRun.streak_multiplier}× → ${updatedActiveRun.streak_multiplier}×`
+		);
+
+		expect(screen.getByText(/Knowledge Score:/)).toHaveTextContent(
+			`Knowledge Score: 10.50 🔼 (+1.50)`
+		);
+	});
+
+	it("shows decreased score when devvotedScore decreases", async () => {
+		// Mock a decrease in devvoted_score
+		(usePollResult as Mock).mockReturnValue({
+			pollResult: {
+				changes: {
+					newStreak: 0,
+					newXP: 100,
+					newMultiplier: "0.0",
+					xpGain: 0,
+					devvotedScore: 9.5,
+				},
+			},
+		});
+
+		render(
+			<RunProgressBar
+				activeRun={mockActiveRun}
+				poll={mockPoll}
+				user={mockUser}
+			/>
+		);
+
+		expect(screen.getByText(/Knowledge Score:/)).toHaveTextContent(
+			`Knowledge Score: 10.50 🔽 (-1.00)`
 		);
 	});
 

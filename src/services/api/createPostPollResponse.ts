@@ -11,6 +11,7 @@ export type PollResponseResult = {
 		newMultiplier: number;
 		previousStreak: number;
 		newStreak: number;
+		devvotedScore: number;
 	};
 };
 

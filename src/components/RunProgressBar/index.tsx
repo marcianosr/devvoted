@@ -4,7 +4,8 @@ import { usePollResult } from "@/app/context/PollResultContext";
 import Text, { UpgradedText } from "@/components/ui/Text/Text";
 import { AuthenticatedUser } from "@/services/clientUser";
 import { START_AMOUNT_ATTEMPTS } from "@/services/constants";
-import { ActiveRun, Poll, User } from "@/types/db";
+import { useUserPerformance } from "@/services/userPerformance";
+import { ActiveRun, Poll } from "@/types/db";
 
 type RunProgressBarProps = {
 	activeRun: ActiveRun;
@@ -14,12 +15,49 @@ type RunProgressBarProps = {
 
 const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 	const { pollResult } = usePollResult();
+	const { data: userPerformance, isLoading } = useUserPerformance(
+		user?.id,
+		poll.category_code
+	);
 
-	console.log(pollResult);
+	// Format the devvoted_score to display with 2 decimal places
+	const formattedScore = userPerformance?.devvoted_score
+		? Number(userPerformance.devvoted_score).toFixed(2)
+		: "0.00";
+
+	// Get the score from the poll result if available
+	const newScore = pollResult?.changes.devvotedScore
+		? Number(pollResult.changes.devvotedScore).toFixed(2)
+		: null;
+
+	// Calculate the score difference if we have both scores
+	const scoreDifference =
+		newScore && formattedScore
+			? (Number(newScore) - Number(formattedScore)).toFixed(2)
+			: null;
+
+	// Determine if the score increased
+	const scoreIncreased = scoreDifference && Number(scoreDifference) > 0;
+	const scoreDecreased = scoreDifference && Number(scoreDifference) < 0;
 
 	return (
 		<aside>
 			<Text>📜 Category: {poll.category_code}</Text>
+			<Text>
+				📊 Knowledge Score: {isLoading ? "Loading..." : formattedScore}{" "}
+				{scoreIncreased && (
+					<UpgradedText
+						condition={true}
+						text={`🔼 (+${scoreDifference})`}
+					/>
+				)}
+				{scoreDecreased && (
+					<UpgradedText
+						condition={false}
+						text={`🔽 (${scoreDifference})`}
+					/>
+				)}
+			</Text>
 			<Text>
 				🕒 Status:{" "}
 				<b>

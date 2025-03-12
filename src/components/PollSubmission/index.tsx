@@ -33,6 +33,7 @@ const PollSubmission = ({
 	const { mutate: submitPoll, isPending } = useMutation({
 		mutationFn: createPostPollResponse,
 		onSuccess: (data: PollResponseResult) => {
+			console.log("data", data);
 			queryClient.invalidateQueries({ queryKey: ["polls", poll.id] });
 			setPollResult(data); // Update the context with the poll result
 		},
@@ -68,6 +69,13 @@ const PollSubmission = ({
 			return;
 
 		setError(null);
+
+		console.log("submitting poll", {
+			poll,
+			userId: user.id,
+			selectedOptions,
+			selectedBet,
+		});
 
 		submitPoll({
 			poll,
