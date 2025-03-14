@@ -11,6 +11,55 @@ import { db } from "@/database/db";
 import { pollUserPerformanceTable } from "@/database/schema";
 import { eq, and } from "drizzle-orm";
 
+type FetchPollOptionsFn = {
+	supabase: SupabaseClient;
+	pollId: number;
+};
+
+const fetchPollOptions = async ({ supabase, pollId }: FetchPollOptionsFn) => {
+	const { data, error } = await supabase
+		.from("polls_options")
+		.select("*")
+		.eq("poll_id", pollId);
+	if (error) throw new Error("Failed to fetch poll options");
+	return data;
+};
+
+export const getPreviousRunDataByCategoryCode = async (
+	userId: string,
+	categoryCode: string
+): Promise<ActiveRun | null> => {
+	const supabase = await createClient();
+
+	const { data, error } = await supabase
+		.from("polls_active_runs")
+		.select("*")
+		.eq("user_id", userId)
+		.eq("category_code", categoryCode)
+		.limit(1)
+		.maybeSingle<ActiveRun>();
+
+	if (error)
+		throw new Error(`Error getting previous streak: ${error.message}`);
+
+	return data;
+};
+
+export const updateActiveRunByCategoryCode = async (
+	activeRun: Partial<UpdateActiveRun>,
+	categoryCode: string
+) => {
+	const supabase = await createClient();
+
+	const { error } = await supabase
+		.from("polls_active_runs")
+		.update(activeRun)
+		.eq("category_code", categoryCode)
+		.eq("user_id", activeRun.user_id);
+
+	if (error) throw new Error(`Error creating active run: ${error.message}`);
+};
+
 // Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
 export const createPollResponse = async (
 	supabase: SupabaseClient,
@@ -38,6 +87,42 @@ export const createPollResponse = async (
 	return data;
 };
 
+export const resetActiveRunByCategoryCode = async ({
+	userId,
+	categoryCode,
+}: {
+	userId: string;
+	categoryCode: string;
+}) => {
+	const supabase = await createClient();
+	const { error } = await supabase
+		.from("polls_active_runs")
+		.update({ ...startRunSettings, last_poll_at: new Date() })
+		.eq("category_code", categoryCode)
+		.eq("user_id", userId);
+	if (error) throw new Error(`Error resetting active run: ${error.message}`);
+
+	return { success: true };
+};
+
+const decreaseAttemptsForUser = async (userId: string) => {
+	const supabase = await createClient();
+	const { data: user, error } = await supabase
+		.from("users")
+		.select("run_attempts")
+		.eq("id", userId)
+		.single();
+	if (error || !user?.run_attempts)
+		throw new Error(`Error fetching user attempts: ${error?.message}`);
+
+	const newAttempts = Math.max(user.run_attempts - 1, 0);
+	await supabase
+		.from("users")
+		.update({ run_attempts: newAttempts })
+		.eq("id", userId);
+
+	if (newAttempts === 0) await resetActiveRunByAllCategories({ userId });
+};
 export const createPollResponseOptions = async (
 	supabase: SupabaseClient,
 	responseId: number,
@@ -60,42 +145,7 @@ export const createPollResponseOptions = async (
 	}
 };
 
-export const getPreviousRunDataByCategoryCode = async (
-	userId: string,
-	categoryCode: string
-): Promise<ActiveRun | null> => {
-	const supabase = await createClient();
-
-	const { data: prevRun, error } = await supabase
-		.from("polls_active_runs")
-		.select("*")
-		.eq("user_id", userId)
-		.eq("category_code", categoryCode)
-		.limit(1)
-		.maybeSingle<ActiveRun>();
-
-	if (error)
-		throw new Error(`Error getting previous streak: ${error.message}`);
-
-	return prevRun;
-};
-
 export const calculateXP = (bet: number) => bet;
-
-export const updateActiveRunByCategoryCode = async (
-	activeRun: Partial<UpdateActiveRun>,
-	categoryCode: string
-) => {
-	const supabase = await createClient();
-
-	const { error } = await supabase
-		.from("polls_active_runs")
-		.update(activeRun)
-		.eq("category_code", categoryCode)
-		.eq("user_id", activeRun.user_id);
-
-	if (error) throw new Error(`Error creating active run: ${error.message}`);
-};
 
 export const createPostPollResponse = async ({
 	poll,
@@ -117,14 +167,10 @@ export const createPostPollResponse = async ({
 		);
 
 		// Get all poll options to check if we selected all correct ones
-		const { data: pollOptions } = await supabase
-			.from("polls_options")
-			.select("*")
-			.eq("poll_id", poll.id);
-
-		if (!pollOptions) {
-			throw new Error("Failed to fetch poll options");
-		}
+		const pollOptions = await fetchPollOptions({
+			supabase,
+			pollId: poll.id,
+		});
 
 		// Get the correct options
 		const correctOptions = pollOptions.filter((opt) => opt.is_correct);
@@ -330,32 +376,6 @@ const handleWrongPollResponse = async ({
 	await decreaseAttemptsForUser(userId);
 };
 
-export const resetActiveRunByCategoryCode = async ({
-	userId,
-	categoryCode,
-}: {
-	userId: string;
-	categoryCode: string;
-}) => {
-	const supabase = await createClient();
-
-	const { error: pollsActiveRunError } = await supabase
-		.from("polls_active_runs")
-		.update({
-			...startRunSettings,
-			last_poll_at: new Date(),
-		})
-		.eq("category_code", categoryCode)
-		.eq("user_id", userId);
-
-	if (pollsActiveRunError)
-		throw new Error(
-			`Error resetting active run: ${pollsActiveRunError.message}`
-		);
-
-	return { success: true };
-};
-
 export const resetActiveRunByAllCategories = async ({
 	userId,
 }: {
@@ -381,52 +401,6 @@ export const resetActiveRunByAllCategories = async ({
 		.eq("id", userId);
 	if (userError)
 		throw new Error(`Error resetting active run: ${userError.message}`);
-
-	return { success: true };
-};
-
-const decreaseAttemptsForUser = async (userId: string) => {
-	const supabase = await createClient();
-
-	// Fetch the current value
-	const { data: user, error: fetchError } = await supabase
-		.from("users")
-		.select("run_attempts")
-		.eq("id", userId)
-		.single();
-
-	if (fetchError) {
-		throw new Error(`Error fetching user: ${fetchError.message}`);
-	}
-
-	// Ensure `run_attempts` is not null or undefined
-	if (user.run_attempts === null || user.run_attempts === undefined) {
-		throw new Error(`User run_attempts is undefined or null`);
-	}
-
-	// Decrement and update
-	const newValue = Math.max(user.run_attempts - 1, 0); // Ensure it doesn't go negative
-
-	const { error: updateError, data: updatedUser } = await supabase
-		.from("users")
-		.update({ run_attempts: newValue })
-		.eq("id", userId)
-		.select()
-		.single();
-
-	if (updateError) {
-		throw new Error(`Error updating attempts: ${updateError.message}`);
-	}
-
-	console.log("🐸 Decreasing attempts:", updatedUser);
-
-	// If user has no attempts left, reset everything!
-	if (newValue === 0) {
-		console.log(
-			"🚨 No attempts left! Resetting active run for all categories..."
-		);
-		await resetActiveRunByAllCategories({ userId });
-	}
 
 	return { success: true };
 };

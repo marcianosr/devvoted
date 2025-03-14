@@ -1,4 +1,3 @@
-// src/services/__tests__/createPollResponse.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
 	createPostPollResponse,
@@ -23,7 +22,6 @@ describe(createPostPollResponse, () => {
 	it("handles answer submission with correct data", async () => {
 		const mockPoll = createMockPoll();
 
-		// Mock response for creating poll response
 		mockSupabase.single.mockResolvedValueOnce({
 			data: { response_id: 1 },
 			error: null,
@@ -31,7 +29,7 @@ describe(createPostPollResponse, () => {
 
 		const result = await createPostPollResponse({
 			poll: mockPoll,
-			userId: "user123",
+			userId: "123e4567-e89b-12d3-a456-426614174000",
 			selectedOptions: ["1", "2"],
 			selectedBet: 100,
 		});
@@ -55,7 +53,7 @@ describe(createPostPollResponse, () => {
 		await expect(
 			createPostPollResponse({
 				poll: mockPoll,
-				userId: "user123",
+				userId: "123e4567-e89b-12d3-a456-426614174000",
 				selectedOptions: ["1", "2"],
 				selectedBet: 100,
 			})
@@ -83,7 +81,7 @@ describe(resetActiveRunByCategoryCode, () => {
 		});
 
 		const result = await resetActiveRunByCategoryCode({
-			userId: "user123",
+			userId: "123e4567-e89b-12d3-a456-426614174000",
 			categoryCode: "React",
 		});
 
@@ -103,7 +101,7 @@ describe(resetActiveRunByCategoryCode, () => {
 		);
 		expect(mockSupabase.from().update().eq().eq).toHaveBeenCalledWith(
 			"user_id",
-			"user123"
+			"123e4567-e89b-12d3-a456-426614174000"
 		);
 	});
 });
@@ -130,7 +128,7 @@ describe(resetActiveRunByAllCategories, () => {
 		});
 
 		const result = await resetActiveRunByAllCategories({
-			userId: "user123",
+			userId: "123e4567-e89b-12d3-a456-426614174000",
 		});
 
 		expect(result.success).toBe(true);
@@ -139,7 +137,7 @@ describe(resetActiveRunByAllCategories, () => {
 		expect(mockSupabase.from().delete).toHaveBeenCalled();
 		expect(mockSupabase.from().delete().eq).toHaveBeenCalledWith(
 			"user_id",
-			"user123"
+			"123e4567-e89b-12d3-a456-426614174000"
 		);
 
 		expect(mockSupabase.from).toHaveBeenCalledWith("users");
@@ -148,7 +146,7 @@ describe(resetActiveRunByAllCategories, () => {
 		});
 		expect(mockSupabase.from().update().eq).toHaveBeenCalledWith(
 			"id",
-			"user123"
+			"123e4567-e89b-12d3-a456-426614174000"
 		);
 	});
 });
