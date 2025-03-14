@@ -72,7 +72,7 @@ export const pollAnswerType = pgEnum("answer_type", [
 export const usersTable = pgTable("users", {
 	id: uuid("id").primaryKey(),
 	display_name: varchar("display_name", { length: 256 }).notNull(),
-	email: varchar("email", { length: 256 }).notNull(),
+	email: varchar("email", { length: 256 }).notNull().unique(),
 	photo_url: text("photo_url"),
 	role: userRoles("roles").notNull().default("user"),
 	total_polls_submitted: integer("total_polls_submitted")
@@ -199,6 +199,9 @@ export const pollUserPerformanceTable = pgTable("polls_user_performance", {
 	best_multiplier: decimal("best_multiplier", { precision: 3, scale: 1 })
 		.notNull()
 		.default("0.0"),
+	betting_average: decimal("betting_average", { precision: 4, scale: 1 }) // Allows values like 3.5, 12.6, 75.0
+		.notNull()
+		.default("0.0"),
 	created_at: timestamp("created_at").defaultNow(),
 	updated_at: timestamp("updated_at")
 		.defaultNow()
@@ -221,7 +224,7 @@ export const pollsActiveRunTable = pgTable("polls_active_runs", {
 		.references(() => pollCategoriesTable.code)
 		.notNull(),
 	temporary_xp: integer("temporary_xp").notNull().default(START_TEMPORARY_XP),
-	current_streak: integer("current_streak").notNull().default(0),
+	current_streak: integer("current_streak").notNull().default(1),
 	streak_multiplier: decimal("streak_multiplier", { precision: 3, scale: 1 })
 		.notNull()
 		.default("0.0"),

@@ -1,10 +1,10 @@
 "use client";
 
 import { createClient } from "@/app/supabase/client";
-import { User } from "@supabase/supabase-js";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 import { User as DevvotedUser } from "@/types/db";
 
-export type AuthenticatedUser = User & {
+export type AuthenticatedUser = SupabaseUser & {
 	devvotedUser: DevvotedUser;
 };
 
