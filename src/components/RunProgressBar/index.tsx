@@ -44,7 +44,7 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 		<aside>
 			<Text>📜 Category: {poll.category_code}</Text>
 			<Text>
-				📊 Knowledge Score: {isLoading ? "Loading..." : formattedScore}{" "}
+				📊 DevVoted Score: {isLoading ? "Loading..." : formattedScore}{" "}
 				{scoreIncreased && (
 					<UpgradedText
 						condition={true}
