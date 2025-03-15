@@ -1,0 +1,1 @@
+ALTER TABLE "polls_user_performance" ADD CONSTRAINT "polls_user_performance_user_id_category_code_unique" UNIQUE("user_id","category_code");

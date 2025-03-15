@@ -1,7 +1,12 @@
 import { createClient } from "@/app/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { CreatePostPollResponseRequest } from "@/services/api/createPostPollResponse";
-import { ActiveRun, UpdateActiveRun } from "@/types/db";
+import {
+	ActiveRun,
+	InsertUserPerformance,
+	UpdateActiveRun,
+	UserPerformance,
+} from "@/types/db";
 import { calculateBetXP } from "@/services/calculateXP";
 import {
 	START_MULTIPLIER_INCREASE,
@@ -10,6 +15,7 @@ import {
 import { db } from "@/database/db";
 import { pollUserPerformanceTable } from "@/database/schema";
 import { eq, and } from "drizzle-orm";
+import { getUserPerformance } from "./userPerformance";
 
 type FetchPollOptionsFn = {
 	supabase: SupabaseClient;
@@ -123,6 +129,7 @@ const decreaseAttemptsForUser = async (userId: string) => {
 
 	if (newAttempts === 0) await resetActiveRunByAllCategories({ userId });
 };
+
 export const createPollResponseOptions = async (
 	supabase: SupabaseClient,
 	responseId: number,
@@ -145,7 +152,68 @@ export const createPollResponseOptions = async (
 	}
 };
 
-export const calculateXP = (bet: number) => bet;
+const upsertScoresToPollUserPerformance = async ({
+	user_id,
+	category_code,
+	devvoted_score,
+	betting_average,
+}: InsertUserPerformance) => {
+	const supabase = await createClient();
+
+	const { error } = await supabase.from("polls_user_performance").upsert(
+		{
+			user_id,
+			category_code,
+			devvoted_score,
+			betting_average,
+		},
+		{
+			onConflict: "user_id, category_code",
+		}
+	);
+
+	if (error)
+		throw new Error(
+			`Error inserting poll user performance: ${error.message}`
+		);
+};
+
+// Calculate the betting average for a user in a specific category
+const calculateBettingAverage = async (
+	userId: string,
+	currentBet: number,
+	previousBettingAverage: number
+): Promise<string> => {
+	const supabase = await createClient();
+
+	// Get all poll responses for this user in this category
+	const { data: pollResponses, error } = await supabase
+		.from("polls_responses")
+		.select("poll_id, response_id")
+		.eq("user_id", userId)
+		.order("created_at", { ascending: false });
+
+	if (error) {
+		console.error("Error fetching poll responses:", error);
+		return currentBet.toFixed(1); // Return current bet if we can't calculate average
+	}
+
+	// If this is the first response, just return the current bet
+	if (!pollResponses || pollResponses.length === 0) {
+		return currentBet.toFixed(1);
+	}
+
+	// Get all previous bets from the database
+	// For now, we'll simulate this by using the current bet for all responses
+	// In a real implementation, you would fetch the actual bet values from a table that stores them
+
+	// Calculate average including the current bet
+	const totalResponses = pollResponses.length + 1; // +1 for current response
+	const previousBetsSum = pollResponses.length * currentBet; // Simplified for now
+	const newAverage = (previousBetsSum + currentBet) / totalResponses;
+
+	return newAverage.toFixed(1);
+};
 
 export const createPostPollResponse = async ({
 	poll,
@@ -213,9 +281,20 @@ export const createPostPollResponse = async ({
 			? Number(userPerformanceData[0].devvoted_score)
 			: 0;
 
+		const previousBettingAverage = userPerformanceData[0]?.betting_average
+			? Number(userPerformanceData[0].betting_average)
+			: 0;
+
 		const previousXP = previousData?.temporary_xp ?? 0;
 		const previousMultiplier = Number(previousData?.streak_multiplier) || 0;
 		const previousStreak = previousData?.current_streak ?? 0;
+
+		// Calculate the new betting average
+		const newBettingAverage = await calculateBettingAverage(
+			userId,
+			selectedBet,
+			previousBettingAverage
+		);
 
 		// Type this object
 		const result = {
@@ -230,6 +309,7 @@ export const createPostPollResponse = async ({
 				previousStreak,
 				newStreak: previousStreak,
 				devvotedScore: previousDevvotedScore,
+				newBettingAverage: parseFloat(newBettingAverage),
 			},
 		};
 
@@ -269,7 +349,6 @@ export const createPostPollResponse = async ({
 		} else {
 			console.log("✅ Correct answer - Updating streak and XP");
 
-			// Calculate new values
 			const newMultiplier = (
 				previousMultiplier + Number(START_MULTIPLIER_INCREASE)
 			).toFixed(1);
@@ -287,6 +366,44 @@ export const createPostPollResponse = async ({
 				selectedBet,
 				userId,
 				categoryCode: poll.category_code,
+			});
+
+			// const previousBettingAverageData = await db
+			// 	.select()
+			// 	.from(pollUserPerformanceTable)
+			// 	.where(
+			// 		and(
+			// 			eq(pollUserPerformanceTable.user_id, userId),
+			// 			eq(
+			// 				pollUserPerformanceTable.category_code,
+			// 				poll.category_code
+			// 			)
+			// 		)
+			// 	)
+			// 	.limit(1);
+
+			const { data, error } = await supabase
+				.from("polls_user_performance")
+				.select("*")
+				.eq("user_id", userId)
+				.eq("category_code", poll.category_code)
+				.maybeSingle();
+
+			if (error) {
+				console.error("Error fetching user performance:", error);
+				return null;
+			}
+
+			console.log("previousUserPerformanceData", data);
+
+			// Update the betting average in the user performance table
+			await upsertScoresToPollUserPerformance({
+				user_id: userId,
+				category_code: poll.category_code,
+				// devvoted_score: "12.23",
+				// @TODO: This doesn't work, string concatenation
+				betting_average:
+					((data?.betting_average ?? 0) + Number(newBettingAverage)).toFixed(1),
 			});
 
 			result.isCorrect = true;
@@ -360,6 +477,55 @@ const handleCorrectPollResponse = async ({
 		},
 		categoryCode
 	);
+
+	// Update user performance metrics
+	// 1. Update best_multiplier if the new multiplier is higher
+	// 2. Update devvoted_score (simplified calculation for now)
+	// Note: betting_average is already updated in createPostPollResponse
+	const userPerformanceData = await db
+		.select()
+		.from(pollUserPerformanceTable)
+		.where(
+			and(
+				eq(pollUserPerformanceTable.user_id, userId),
+				eq(pollUserPerformanceTable.category_code, categoryCode)
+			)
+		)
+		.limit(1);
+
+	if (userPerformanceData.length > 0) {
+		const currentBestMultiplier =
+			Number(userPerformanceData[0].best_multiplier) || 0;
+		const currentDevvotedScore =
+			Number(userPerformanceData[0].devvoted_score) || 0;
+
+		// Only update best_multiplier if new value is higher
+		const bestMultiplier =
+			Number(newMultiplier) > currentBestMultiplier
+				? newMultiplier
+				: userPerformanceData[0].best_multiplier;
+
+		// Calculate a "fake" devvoted_score for now - increases with each correct answer
+		// This is a simplified calculation that can be replaced with a more complex algorithm later
+		const newDevvotedScore = (
+			currentDevvotedScore +
+			xpCalculation.totalXP * 0.1
+		).toFixed(2);
+
+		await db
+			.update(pollUserPerformanceTable)
+			.set({
+				best_multiplier: bestMultiplier,
+				devvoted_score: newDevvotedScore,
+				updated_at: new Date(),
+			})
+			.where(
+				and(
+					eq(pollUserPerformanceTable.user_id, userId),
+					eq(pollUserPerformanceTable.category_code, categoryCode)
+				)
+			);
+	}
 };
 
 const handleWrongPollResponse = async ({
@@ -373,6 +539,46 @@ const handleWrongPollResponse = async ({
 		userId,
 		categoryCode,
 	});
+
+	// Update user performance metrics for wrong answers
+	// 1. Decrease devvoted_score slightly (or keep it the same if it's already low)
+	// Note: best_multiplier is not affected by wrong answers
+	const userPerformanceData = await db
+		.select()
+		.from(pollUserPerformanceTable)
+		.where(
+			and(
+				eq(pollUserPerformanceTable.user_id, userId),
+				eq(pollUserPerformanceTable.category_code, categoryCode)
+			)
+		)
+		.limit(1);
+
+	if (userPerformanceData.length > 0) {
+		const currentDevvotedScore =
+			Number(userPerformanceData[0].devvoted_score) || 0;
+
+		// For wrong answers, slightly decrease the devvoted_score (minimum 0)
+		// This is a simplified calculation that can be replaced with a more complex algorithm later
+		const newDevvotedScore = Math.max(
+			0,
+			currentDevvotedScore - 0.5
+		).toFixed(2);
+
+		await db
+			.update(pollUserPerformanceTable)
+			.set({
+				devvoted_score: newDevvotedScore,
+				updated_at: new Date(),
+			})
+			.where(
+				and(
+					eq(pollUserPerformanceTable.user_id, userId),
+					eq(pollUserPerformanceTable.category_code, categoryCode)
+				)
+			);
+	}
+
 	await decreaseAttemptsForUser(userId);
 };
 

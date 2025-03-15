@@ -12,6 +12,7 @@ export type PollResponseResult = {
 		previousStreak: number;
 		newStreak: number;
 		devvotedScore: number;
+		newBettingAverage: number;
 	};
 };
 

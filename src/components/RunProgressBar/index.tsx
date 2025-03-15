@@ -10,7 +10,7 @@ import { ActiveRun, Poll } from "@/types/db";
 type RunProgressBarProps = {
 	activeRun: ActiveRun;
 	poll: Poll;
-	user: AuthenticatedUser;
+	user: AuthenticatedUser | null;
 };
 
 const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
@@ -19,6 +19,8 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 		user?.id,
 		poll.category_code
 	);
+
+	const bettingAverage = userPerformance?.betting_average ?? 0;
 
 	// Format the devvoted_score to display with 2 decimal places
 	const formattedScore = userPerformance?.devvoted_score
@@ -85,6 +87,16 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 					<UpgradedText
 						condition={!!pollResult?.changes.newMultiplier}
 						text={`→ ${pollResult?.changes.newMultiplier}×`}
+					/>
+				</b>
+			</Text>
+			<Text>
+				🎯 Betting average:{" "}
+				<b>
+					{bettingAverage}
+					<UpgradedText
+						condition={!!pollResult?.changes.newBettingAverage}
+						text={`→ ${pollResult?.changes.newBettingAverage}×`}
 					/>
 				</b>
 			</Text>
