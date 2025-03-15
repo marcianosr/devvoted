@@ -1,7 +1,7 @@
 "use client";
 
 import { usePollResult } from "@/app/context/PollResultContext";
-import Text, { UpgradedText } from "@/components/ui/Text/Text";
+import Text, { PerformanceText } from "@/components/ui/Text/Text";
 import { AuthenticatedUser } from "@/services/clientUser";
 import { START_AMOUNT_ATTEMPTS } from "@/services/constants";
 import { useUserPerformance } from "@/services/userPerformance";
@@ -20,25 +20,23 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 		poll.category_code
 	);
 
+	console.log("userPerformance", userPerformance);
+
 	const bettingAverage = userPerformance?.betting_average ?? 0;
 
-	// Format the devvoted_score to display with 2 decimal places
 	const formattedScore = userPerformance?.devvoted_score
 		? Number(userPerformance.devvoted_score).toFixed(2)
 		: "0.00";
 
-	// Get the score from the poll result if available
 	const newScore = pollResult?.changes.devvotedScore
 		? Number(pollResult.changes.devvotedScore).toFixed(2)
 		: null;
 
-	// Calculate the score difference if we have both scores
 	const scoreDifference =
 		newScore && formattedScore
 			? (Number(newScore) - Number(formattedScore)).toFixed(2)
 			: null;
 
-	// Determine if the score increased
 	const scoreIncreased = scoreDifference && Number(scoreDifference) > 0;
 	const scoreDecreased = scoreDifference && Number(scoreDifference) < 0;
 
@@ -47,18 +45,16 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 			<Text>📜 Category: {poll.category_code}</Text>
 			<Text>
 				📊 DevVoted Score: {isLoading ? "Loading..." : formattedScore}{" "}
-				{scoreIncreased && (
-					<UpgradedText
-						condition={true}
-						text={`🔼 (+${scoreDifference})`}
-					/>
-				)}
-				{scoreDecreased && (
-					<UpgradedText
-						condition={false}
-						text={`🔽 (${scoreDifference})`}
-					/>
-				)}
+				<PerformanceText
+					variant="upgraded"
+					condition={!!scoreIncreased}
+					text={`🔼 (+${scoreDifference})`}
+				/>
+				<PerformanceText
+					variant="downgraded"
+					condition={!!scoreDecreased}
+					text={`🔽 (-${scoreDifference})`}
+				/>
 			</Text>
 			<Text>
 				🕒 Status:{" "}
@@ -71,10 +67,19 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 				from{" "}
 				<b>
 					{activeRun?.category_code}{" "}
-					<UpgradedText
+					<PerformanceText
+						variant="upgraded"
 						condition={
-							!!pollResult?.changes.newXP &&
-							pollResult?.changes.xpGain > 0
+							Number(pollResult?.changes.newXP) >
+							Number(pollResult?.changes.previousXP)
+						}
+						text={`→ ${pollResult?.changes.newXP} XP`}
+					/>
+					<PerformanceText
+						variant="downgraded"
+						condition={
+							Number(pollResult?.changes.newXP) <
+							Number(pollResult?.changes.previousXP)
 						}
 						text={`→ ${pollResult?.changes.newXP} XP`}
 					/>
@@ -84,8 +89,20 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 				🎯 Streak Multiplier:{" "}
 				<b>
 					{activeRun?.streak_multiplier}×{" "}
-					<UpgradedText
-						condition={!!pollResult?.changes.newMultiplier}
+					<PerformanceText
+						variant="upgraded"
+						condition={
+							Number(pollResult?.changes.newMultiplier) >
+							Number(pollResult?.changes.previousMultiplier)
+						}
+						text={`→ ${pollResult?.changes.newMultiplier}×`}
+					/>
+					<PerformanceText
+						variant="downgraded"
+						condition={
+							Number(pollResult?.changes.newMultiplier) <
+							Number(pollResult?.changes.previousMultiplier)
+						}
 						text={`→ ${pollResult?.changes.newMultiplier}×`}
 					/>
 				</b>
@@ -93,10 +110,22 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 			<Text>
 				🎯 Betting average:{" "}
 				<b>
-					{bettingAverage}
-					<UpgradedText
-						condition={!!pollResult?.changes.newBettingAverage}
-						text={`→ ${pollResult?.changes.newBettingAverage}×`}
+					{bettingAverage}{" "}
+					<PerformanceText
+						variant="upgraded"
+						condition={
+							Number(pollResult?.changes.newBettingAverage) >
+							Number(pollResult?.changes.previousBettingAverage)
+						}
+						text={`→ ${pollResult?.changes.newBettingAverage}`}
+					/>
+					<PerformanceText
+						variant="downgraded"
+						condition={
+							Number(pollResult?.changes.newBettingAverage) <
+							Number(pollResult?.changes.previousBettingAverage)
+						}
+						text={`→ ${pollResult?.changes.newBettingAverage}`}
 					/>
 				</b>
 			</Text>
@@ -104,8 +133,12 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 				🔥 Current streak:{" "}
 				<b>
 					{activeRun?.current_streak ?? 0}{" "}
-					<UpgradedText
-						condition={!!pollResult?.changes.newStreak}
+					<PerformanceText
+						variant="upgraded"
+						condition={
+							Number(pollResult?.changes.newStreak) >
+							Number(pollResult?.changes.previousStreak)
+						}
 						text={`→ ${pollResult?.changes.newStreak}`}
 					/>
 				</b>
