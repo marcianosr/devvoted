@@ -39,17 +39,24 @@ export function SmallText({
 	);
 }
 
-export const UpgradedText = ({
+export const PerformanceText = ({
+	variant,
 	condition,
 	text,
 }: {
+	variant: "upgraded" | "downgraded";
 	condition: boolean;
 	text: string;
 }) => {
 	if (!condition) return null;
 
+	const mapping = {
+		["upgraded"]: "success",
+		["downgraded"]: "error",
+	} as const;
+
 	return (
-		<Text variant="success" weight="bold" as="b">
+		<Text variant={mapping[variant]} weight="bold" as="b">
 			{text}
 		</Text>
 	);

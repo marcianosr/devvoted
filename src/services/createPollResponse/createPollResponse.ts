@@ -134,7 +134,7 @@ export const createPostPollResponse = async ({
 
 			result.isCorrect = false;
 			// For incorrect answers, we reset to default values
-			result.changes.newXP = previousXP;
+			result.changes.newXP = 50;
 			result.changes.newMultiplier = 0;
 			result.changes.newStreak = 0;
 			result.changes.xpGain = 0;
