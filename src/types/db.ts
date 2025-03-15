@@ -37,4 +37,9 @@ export type InsertActiveRun = InferInsertModel<typeof pollsActiveRunTable>;
 export type UpdateActiveRun = InferInsertModel<typeof pollsActiveRunTable>;
 
 export type UserPerformance = InferSelectModel<typeof pollUserPerformanceTable>;
-export type InsertUserPerformance = InferInsertModel<typeof pollUserPerformanceTable>;
+export type InsertUserPerformance = InferInsertModel<
+	typeof pollUserPerformanceTable
+>;
+export type UpdateUserPerformance = InferInsertModel<
+	typeof pollUserPerformanceTable
+>;
