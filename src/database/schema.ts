@@ -1,5 +1,6 @@
 import {
 	START_AMOUNT_ATTEMPTS,
+	START_MULTIPLIER_INCREASE,
 	START_TEMPORARY_XP,
 } from "@/services/constants";
 import {
@@ -236,7 +237,7 @@ export const pollsActiveRunTable = pgTable("polls_active_runs", {
 	current_streak: integer("current_streak").notNull().default(1),
 	streak_multiplier: decimal("streak_multiplier", { precision: 3, scale: 1 })
 		.notNull()
-		.default("0.0"),
+		.default(START_MULTIPLIER_INCREASE),
 
 	started_at: timestamp("started_at").defaultNow(),
 	last_poll_at: timestamp("last_poll_at").defaultNow(),

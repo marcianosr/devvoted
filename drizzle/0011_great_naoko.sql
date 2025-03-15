@@ -1,0 +1,1 @@
+ALTER TABLE "polls_active_runs" ALTER COLUMN "streak_multiplier" SET DEFAULT '0.1';

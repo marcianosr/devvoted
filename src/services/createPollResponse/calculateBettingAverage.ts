@@ -26,7 +26,7 @@ export const getPreviousBettingAverage = async (
 		return data.length > 0 ? data[0].betting_average : "0.0";
 	} catch (error) {
 		console.error("Error fetching previous betting average:", error);
-		return "0.0"; // Default value in case of an error
+		return "0.0";
 	}
 };
 
@@ -46,7 +46,7 @@ export const calculateNewBettingAverage = (
 	};
 };
 
-export const calculateBettingAverage = async ({
+export const getBettingAverage = async ({
 	userId,
 	selectedBet,
 }: CalculateBettingAverageFn): Promise<CalculateBettingAverageFnResult> => {

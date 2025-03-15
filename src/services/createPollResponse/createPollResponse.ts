@@ -5,7 +5,10 @@ import {
 	PollResponseResult,
 } from "@/services/api/createPostPollResponse";
 import { calculateBetXP } from "@/services/calculateXP";
-import { START_MULTIPLIER_INCREASE } from "@/services/constants";
+import {
+	START_MULTIPLIER_INCREASE,
+	START_TEMPORARY_XP,
+} from "@/services/constants";
 import { db } from "@/database/db";
 import {
 	pollResponseOptionsTable,
@@ -14,7 +17,7 @@ import {
 import { eq, and } from "drizzle-orm";
 import { getRunDataByCategoryCode } from "./runDataByCategory";
 import { getPollOptions } from "./getPollOptions";
-import { calculateBettingAverage } from "./calculateBettingAverage";
+import { getBettingAverage } from "./calculateBettingAverage";
 import { handleWrongPollResponse } from "./handleWrongPollResponse";
 import { handleCorrectPollResponse } from "./handleCorrectPollResponse";
 import { getUserPerformanceData } from "./getUserPerformanceData";
@@ -134,30 +137,33 @@ export const createPostPollResponse = async ({
 
 			result.isCorrect = false;
 			// For incorrect answers, we reset to default values
-			result.changes.newXP = 50;
-			result.changes.newMultiplier = 0;
+			result.changes.newXP = START_TEMPORARY_XP;
+			result.changes.newMultiplier = Number(START_MULTIPLIER_INCREASE);
 			result.changes.newStreak = 0;
 			result.changes.xpGain = 0;
+
+			// ! Consider refactoring this into a single function call
+			await upsertScoresToPollUserPerformance({
+				supabase,
+				user_id: userId,
+				category_code: poll.category_code,
+				devvoted_score: previousDevvotedScore.toFixed(2),
+				betting_average: (
+					Number(previousBettingAverage) + Number(newBettingAverage)
+				).toFixed(1),
+			});
 
 			// For incorrect answers, devvoted_score might decrease slightly or stay the same
 			// Fetch the updated score after handling the wrong response
 			// COULD possible be the same as getUserPerformanceQuery
-			const updatedPerformance = await db
-				.select()
-				.from(pollUserPerformanceTable)
-				.where(
-					and(
-						eq(pollUserPerformanceTable.user_id, userId),
-						eq(
-							pollUserPerformanceTable.category_code,
-							poll.category_code
-						)
-					)
-				)
-				.limit(1);
 
-			result.changes.devvotedScore = updatedPerformance[0]?.devvoted_score
-				? Number(updatedPerformance[0].devvoted_score)
+			const updatedPerformance = await getUserPerformanceData(
+				userId,
+				poll.category_code
+			);
+
+			result.changes.devvotedScore = updatedPerformance?.devvoted_score
+				? Number(updatedPerformance.devvoted_score)
 				: previousDevvotedScore;
 		} else {
 			console.log("✅ Correct answer - Updating streak and XP");
@@ -181,16 +187,12 @@ export const createPostPollResponse = async ({
 				categoryCode: poll.category_code,
 			});
 
-			// const userPerformanceData = await getUserPerformanceData(
-			// 	userId,
-			// 	poll.category_code
-			// );
-			// Update the betting average in the user performance table
+			// ! Consider refactoring this into a single function call
 			await upsertScoresToPollUserPerformance({
 				supabase,
 				user_id: userId,
 				category_code: poll.category_code,
-				// devvoted_score: "12.23",
+				devvoted_score: previousDevvotedScore.toFixed(2),
 				betting_average: (
 					Number(previousBettingAverage) + Number(newBettingAverage)
 				).toFixed(1),
@@ -203,22 +205,13 @@ export const createPostPollResponse = async ({
 			result.changes.newStreak = newStreak;
 
 			// For correct answers, fetch the updated devvoted_score after handling the correct response
-			const updatedPerformance = await db
-				.select()
-				.from(pollUserPerformanceTable)
-				.where(
-					and(
-						eq(pollUserPerformanceTable.user_id, userId),
-						eq(
-							pollUserPerformanceTable.category_code,
-							poll.category_code
-						)
-					)
-				)
-				.limit(1);
+			const updatedPerformance = await getUserPerformanceData(
+				userId,
+				poll.category_code
+			);
 
-			result.changes.devvotedScore = updatedPerformance[0]?.devvoted_score
-				? Number(updatedPerformance[0].devvoted_score)
+			result.changes.devvotedScore = updatedPerformance?.devvoted_score
+				? Number(updatedPerformance.devvoted_score)
 				: previousDevvotedScore;
 		}
 
@@ -251,10 +244,9 @@ const getRunAndUserPerformanceData = async (
 			? Number(previousUserPerformanceData.devvoted_score)
 			: 0,
 		previousBettingAverage: (
-			await calculateBettingAverage({ userId, selectedBet })
+			await getBettingAverage({ userId, selectedBet })
 		).previousBettingAverage,
-		newBettingAverage: (
-			await calculateBettingAverage({ userId, selectedBet })
-		).newBettingAverage,
+		newBettingAverage: (await getBettingAverage({ userId, selectedBet }))
+			.newBettingAverage,
 	};
 };
