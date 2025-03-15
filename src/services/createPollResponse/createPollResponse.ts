@@ -240,9 +240,10 @@ const getRunAndUserPerformanceData = async (
 			? Number(previousUserPerformanceData.devvoted_score)
 			: 0,
 		previousBettingAverage: (
-			await getBettingAverage({ userId, selectedBet })
+			await getBettingAverage({ userId, categoryCode, selectedBet })
 		).previousBettingAverage,
-		newBettingAverage: (await getBettingAverage({ userId, selectedBet }))
-			.newBettingAverage,
+		newBettingAverage: (
+			await getBettingAverage({ userId, categoryCode, selectedBet })
+		).newBettingAverage,
 	};
 };
