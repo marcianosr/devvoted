@@ -1,4 +1,4 @@
-import { startRunSettings } from "../constants";
+import { startRunSettings } from "./constants";
 import { SupabaseClient } from "@supabase/supabase-js";
 
 export const resetActiveRunByAllCategories = async ({

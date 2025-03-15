@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import {
 	resetActiveRunByAllCategories,
 	resetActiveRunByCategoryCode,
-} from "./resetRun";
+} from "@/services/resetRun";
 import { pollUserPerformanceTable } from "@/database/schema";
 import { db } from "@/database/db";
 import { SupabaseClient } from "@supabase/supabase-js";
