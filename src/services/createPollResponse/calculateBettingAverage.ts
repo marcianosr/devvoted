@@ -50,6 +50,25 @@ export const getBettingAverage = async ({
 	userId,
 	selectedBet,
 }: CalculateBettingAverageFn): Promise<CalculateBettingAverageFnResult> => {
-	const previousBettingAverage = await getPreviousBettingAverage(userId);
-	return calculateNewBettingAverage(previousBettingAverage, selectedBet);
+	try {
+		// Get previous betting average
+		const previousAverage = await getPreviousBettingAverage(userId);
+		const previousAverageNumber = Number(previousAverage);
+
+		// Calculate new betting average correctly
+		const newAverageNumber = selectedBet
+			? (previousAverageNumber + Number(selectedBet)) / 2
+			: previousAverageNumber;
+
+		return {
+			previousBettingAverage: previousAverageNumber.toFixed(1),
+			newBettingAverage: newAverageNumber.toFixed(1),
+		};
+	} catch (error) {
+		console.error("Error calculating betting average:", error);
+		return {
+			previousBettingAverage: "0.0",
+			newBettingAverage: "0.0",
+		};
+	}
 };

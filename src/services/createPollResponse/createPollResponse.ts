@@ -148,9 +148,7 @@ export const createPostPollResponse = async ({
 				user_id: userId,
 				category_code: poll.category_code,
 				devvoted_score: previousDevvotedScore.toFixed(2),
-				betting_average: (
-					Number(previousBettingAverage) + Number(newBettingAverage)
-				).toFixed(1),
+				betting_average: Number(newBettingAverage).toFixed(1), // Ensure we store the calculated average
 			});
 
 			// For incorrect answers, devvoted_score might decrease slightly or stay the same
@@ -193,9 +191,7 @@ export const createPostPollResponse = async ({
 				user_id: userId,
 				category_code: poll.category_code,
 				devvoted_score: previousDevvotedScore.toFixed(2),
-				betting_average: (
-					Number(previousBettingAverage) + Number(newBettingAverage)
-				).toFixed(1),
+				betting_average: Number(newBettingAverage).toFixed(1), // Ensure we store the calculated average
 			});
 
 			result.isCorrect = true;
