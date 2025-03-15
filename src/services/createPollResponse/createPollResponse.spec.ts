@@ -3,7 +3,7 @@ import {
 	createPostPollResponse,
 	resetActiveRunByAllCategories,
 	resetActiveRunByCategoryCode,
-} from "./createPollResponse";
+} from "../createPollResponse";
 import { createClient } from "@/app/supabase/server";
 import { createMockPoll } from "@/test/factories";
 import { createMockSupabaseClient } from "@/test/supabase";

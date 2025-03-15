@@ -1,12 +1,7 @@
 import { createClient } from "@/app/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { CreatePostPollResponseRequest } from "@/services/api/createPostPollResponse";
-import {
-	ActiveRun,
-	InsertUserPerformance,
-	UpdateActiveRun,
-	UserPerformance,
-} from "@/types/db";
+import { ActiveRun, InsertUserPerformance, UpdateActiveRun } from "@/types/db";
 import { calculateBetXP } from "@/services/calculateXP";
 import {
 	START_MULTIPLIER_INCREASE,
@@ -15,7 +10,6 @@ import {
 import { db } from "@/database/db";
 import { pollUserPerformanceTable } from "@/database/schema";
 import { eq, and } from "drizzle-orm";
-import { getUserPerformance } from "./userPerformance";
 
 type FetchPollOptionsFn = {
 	supabase: SupabaseClient;
@@ -402,8 +396,9 @@ export const createPostPollResponse = async ({
 				category_code: poll.category_code,
 				// devvoted_score: "12.23",
 				// @TODO: This doesn't work, string concatenation
-				betting_average:
-					((data?.betting_average ?? 0) + Number(newBettingAverage)).toFixed(1),
+				betting_average: (
+					(data?.betting_average ?? 0) + Number(newBettingAverage)
+				).toFixed(1),
 			});
 
 			result.isCorrect = true;

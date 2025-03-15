@@ -1,7 +1,7 @@
 import { CreatePostPollResponseRequest } from "@/services/api/createPostPollResponse";
 import { NextResponse } from "next/server";
 
-import { createPostPollResponse } from "@/services/createPollResponse";
+import { createPostPollResponse } from "@/services/createPollResponse/createPollResponse";
 
 export async function POST(request: Request) {
 	try {
