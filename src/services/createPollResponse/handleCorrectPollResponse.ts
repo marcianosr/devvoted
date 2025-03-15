@@ -2,7 +2,7 @@ import { pollUserPerformanceTable } from "@/database/schema";
 import { calculateBetXP } from "../calculateXP";
 import { START_MULTIPLIER_INCREASE } from "../constants";
 import {
-	getPreviousRunDataByCategoryCode,
+	getRunDataByCategoryCode,
 	updateActiveRunByCategoryCode,
 } from "./runDataByCategory";
 import { and, eq } from "drizzle-orm";
@@ -17,12 +17,7 @@ export const handleCorrectPollResponse = async ({
 	userId: string;
 	categoryCode: string;
 }) => {
-	// Get and update streak multiplier
-	const previousData = await getPreviousRunDataByCategoryCode(
-		userId,
-		categoryCode
-	);
-
+	const previousData = await getRunDataByCategoryCode(userId, categoryCode);
 	const currentMultiplier = Number(previousData?.streak_multiplier) || 0;
 	const newMultiplier = (
 		currentMultiplier + Number(START_MULTIPLIER_INCREASE)
@@ -35,7 +30,6 @@ export const handleCorrectPollResponse = async ({
 		streakMultiplier: Number(newMultiplier),
 	});
 
-	// update and find active run
 	await updateActiveRunByCategoryCode(
 		{
 			user_id: userId,

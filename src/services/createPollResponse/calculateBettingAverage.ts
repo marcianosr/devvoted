@@ -1,41 +1,55 @@
-import { SupabaseClient } from "@supabase/supabase-js";
+import { db } from "@/database/db";
+import { pollUserPerformanceTable } from "@/database/schema";
+import { eq } from "drizzle-orm";
 
 // Calculate the betting average for a user in a specific category
 type CalculateBettingAverageFn = {
-	supabase: SupabaseClient;
 	userId: string;
 	selectedBet: number;
 };
+
+type CalculateBettingAverageFnResult = {
+	newBettingAverage: string;
+	previousBettingAverage: string;
+};
+// Fetches the previous betting average for a user
+export const getPreviousBettingAverage = async (
+	userId: string
+): Promise<string> => {
+	try {
+		const data = await db
+			.select()
+			.from(pollUserPerformanceTable)
+			.where(eq(pollUserPerformanceTable.user_id, userId))
+			.limit(1);
+
+		return data.length > 0 ? data[0].betting_average : "0.0";
+	} catch (error) {
+		console.error("Error fetching previous betting average:", error);
+		return "0.0"; // Default value in case of an error
+	}
+};
+
+// Calculates the new betting average
+export const calculateNewBettingAverage = (
+	previousBettingAverage: string,
+	selectedBet: number
+): CalculateBettingAverageFnResult => {
+	const newBettingAverage = (
+		(Number(previousBettingAverage) + Number(selectedBet)) /
+		2
+	).toFixed(1);
+
+	return {
+		newBettingAverage,
+		previousBettingAverage,
+	};
+};
+
 export const calculateBettingAverage = async ({
-	supabase,
 	userId,
 	selectedBet,
-}: CalculateBettingAverageFn): Promise<string> => {
-	// Get all poll responses for this user in this category
-	const { data: pollResponses, error } = await supabase
-		.from("polls_responses")
-		.select("poll_id, response_id")
-		.eq("user_id", userId)
-		.order("created_at", { ascending: false });
-
-	if (error) {
-		console.error("Error fetching poll responses:", error);
-		return selectedBet.toFixed(1); // Return current bet if we can't calculate average
-	}
-
-	// If this is the first response, just return the current bet
-	if (!pollResponses || pollResponses.length === 0) {
-		return selectedBet.toFixed(1);
-	}
-
-	// Get all previous bets from the database
-	// For now, we'll simulate this by using the current bet for all responses
-	// In a real implementation, you would fetch the actual bet values from a table that stores them
-
-	// Calculate average including the current bet
-	const totalResponses = pollResponses.length + 1; // +1 for current response
-	const previousBetsSum = pollResponses.length * selectedBet; // Simplified for now
-	const newAverage = (previousBetsSum + selectedBet) / totalResponses;
-
-	return newAverage.toFixed(1);
+}: CalculateBettingAverageFn): Promise<CalculateBettingAverageFnResult> => {
+	const previousBettingAverage = await getPreviousBettingAverage(userId);
+	return calculateNewBettingAverage(previousBettingAverage, selectedBet);
 };
