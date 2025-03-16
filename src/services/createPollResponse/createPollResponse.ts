@@ -10,11 +10,7 @@ import {
 	START_TEMPORARY_XP,
 } from "@/services/constants";
 import { db } from "@/database/db";
-import {
-	pollResponseOptionsTable,
-	pollUserPerformanceTable,
-} from "@/database/schema";
-import { eq, and } from "drizzle-orm";
+import { pollResponseOptionsTable } from "@/database/schema";
 import { getRunDataByCategoryCode } from "./runDataByCategory";
 import { getPollOptions } from "./getPollOptions";
 import { getBettingAverage } from "./calculateBettingAverage";
@@ -155,14 +151,15 @@ export const createPostPollResponse = async ({
 			// Fetch the updated score after handling the wrong response
 			// COULD possible be the same as getUserPerformanceQuery
 
-			const updatedPerformance = await getUserPerformanceData(
+			const updatedPerformanceData = await getUserPerformanceData(
 				userId,
 				poll.category_code
 			);
 
-			result.changes.devvotedScore = updatedPerformance?.devvoted_score
-				? Number(updatedPerformance.devvoted_score)
-				: previousDevvotedScore;
+			result.changes.devvotedScore =
+				updatedPerformanceData?.devvoted_score
+					? Number(updatedPerformanceData.devvoted_score)
+					: previousDevvotedScore;
 		} else {
 			console.log("✅ Correct answer - Updating streak and XP");
 
@@ -201,14 +198,15 @@ export const createPostPollResponse = async ({
 			result.changes.newStreak = newStreak;
 
 			// For correct answers, fetch the updated devvoted_score after handling the correct response
-			const updatedPerformance = await getUserPerformanceData(
+			const updatedPerformanceData = await getUserPerformanceData(
 				userId,
 				poll.category_code
 			);
 
-			result.changes.devvotedScore = updatedPerformance?.devvoted_score
-				? Number(updatedPerformance.devvoted_score)
-				: previousDevvotedScore;
+			result.changes.devvotedScore =
+				updatedPerformanceData?.devvoted_score
+					? Number(updatedPerformanceData.devvoted_score)
+					: previousDevvotedScore;
 		}
 
 		return result;
