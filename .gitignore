@@ -49,3 +49,5 @@ firestore-debug.log
 .windsurfrules
 
 /src/lib/firebase-config.local.ts
+
+idea.md
