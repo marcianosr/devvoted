@@ -17,7 +17,7 @@ import { handleWrongPollResponse } from "./handleWrongPollResponse";
 import { handleCorrectPollResponse } from "./handleCorrectPollResponse";
 import { getUserPerformanceData } from "./getUserPerformanceData";
 import { upsertScoresToPollUserPerformance } from "./upsertScoresToPollUserPerformance";
-import { getStreakMultiplierIncreaseForBet } from "../multipliers";
+import { getStreakMultiplierIncreaseForBet, DEFAULT_MULTIPLIER } from "../multipliers";
 
 // Not sure where to put this file, as it is inserting data triggered by /api/submit-response
 export const createPollResponse = async (
@@ -132,13 +132,11 @@ export const createPostPollResponse = async ({
 				categoryCode: poll.category_code,
 			});
 
-			// Get the default multiplier value from constants
-			const defaultMultiplier = 0.1;
-
 			result.isCorrect = false;
 			// For incorrect answers, we reset to default values
+			// This impacts the Knowledge Score since streak multiplier is a direct multiplier in the formula
 			result.changes.newXP = START_TEMPORARY_XP;
-			result.changes.newMultiplier = defaultMultiplier;
+			result.changes.newMultiplier = DEFAULT_MULTIPLIER; // Reset to default multiplier (0.1)
 			result.changes.newStreak = 0;
 			result.changes.xpGain = 0;
 

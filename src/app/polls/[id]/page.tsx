@@ -8,6 +8,7 @@ import PollSubmission from "@/components/PollSubmission";
 import { getActiveRun } from "@/services/activeRun";
 import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
 import RunProgressBar from "@/components/RunProgressBar";
+import Link from "next/link";
 
 type Props = {
 	params: { id: string };
@@ -86,6 +87,7 @@ export default async function PollPage({ params }: Props) {
 						<ButtonLink href="/config">Start a new run</ButtonLink>
 					</>
 				)}
+				<Link href={`/polls/${Number(id) + 1}`}>Next poll</Link>
 			</section>
 		</section>
 	);

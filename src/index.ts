@@ -130,6 +130,53 @@ const polls: Omit<Poll, "id">[] = [
 		category_code: "css",
 		answer_type: "single",
 	},
+	{
+		question: "What is the best way to center a flex item vertically?",
+		status: "open",
+		created_by: user.id,
+		updated_at: new Date(),
+		created_at: new Date(),
+		opening_time: new Date(),
+		closing_time: new Date(),
+		category_code: "css",
+		answer_type: "single",
+	},
+	{
+		question:
+			"In CSS, the z-index property is used to control the stack order of elements, what is the default value?",
+		status: "open",
+		created_by: user.id,
+		updated_at: new Date(),
+		created_at: new Date(),
+		opening_time: new Date(),
+		closing_time: new Date(),
+		category_code: "css",
+		answer_type: "single",
+	},
+	{
+		question:
+			"In CSS, margin is a property that can be used to create space between an element and its container, what are the possible values?",
+		status: "open",
+		created_by: user.id,
+		updated_at: new Date(),
+		created_at: new Date(),
+		opening_time: new Date(),
+		closing_time: new Date(),
+		category_code: "css",
+		answer_type: "single",
+	},
+	{
+		question:
+			"In CSS, what is the best way to center a flex item horizontally?",
+		status: "open",
+		created_by: user.id,
+		updated_at: new Date(),
+		created_at: new Date(),
+		opening_time: new Date(),
+		closing_time: new Date(),
+		category_code: "css",
+		answer_type: "single",
+	},
 ];
 
 const pollOptionsData = [
@@ -168,6 +215,31 @@ const pollOptionsData = [
 	["Option 23", false],
 	["Option 24", true],
 	["Option 25", false],
+	["Option 26", false],
+	["Option 27", false],
+	["Option 28", false],
+	["Option 29", false],
+	["Option 30", true],
+	["Option 31", false],
+	["Option 32", false],
+	["Option 33", false],
+	["Option 34", true],
+	["Option 35", false],
+	["Option 36", false],
+	["Option 37", false],
+	["Option 38", false],
+	["Option 39", false],
+	["Option 40", true],
+	["Option 41", false],
+	["Option 42", false],
+	["Option 43", false],
+	["Option 44", true],
+	["Option 45", false],
+	["Option 46", false],
+	["Option 47", false],
+	["Option 48", false],
+	["Option 49", false],
+	["Option 50", true],
 ];
 
 async function main() {
@@ -193,16 +265,28 @@ async function main() {
 
 		console.log("🌱 Creating poll options...");
 
-		const pollOptions: Omit<PollOption, "id">[] = pollOptionsData.map(
-			([option, is_correct], index) => {
-				const poll_id = insertedPolls[Math.floor(index / 5)].id; // 4 options per poll (except last one has 5)
+		const pollOptions: Omit<PollOption, "id">[] = pollOptionsData
+			.map(([option, is_correct], index) => {
+				// Calculate which poll this option belongs to
+				// We have 10 options per poll (2 polls with 5 options each originally, now more polls)
+				const pollIndex = Math.floor(index / 5);
+
+				// Make sure we don't exceed the number of polls we have
+				if (pollIndex >= insertedPolls.length) {
+					console.log(
+						`Skipping option ${option} as we don't have enough polls`
+					);
+					return null;
+				}
+
+				const poll_id = insertedPolls[pollIndex].id;
 				return {
 					poll_id,
 					option: option as string,
 					is_correct: is_correct as boolean,
 				};
-			}
-		);
+			})
+			.filter(Boolean) as Omit<PollOption, "id">[]; // Filter out any null values
 
 		await db.insert(pollOptionsTable).values(pollOptions);
 
