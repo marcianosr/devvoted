@@ -18,6 +18,7 @@ import { handleWrongPollResponse } from "./handleWrongPollResponse";
 import { handleCorrectPollResponse } from "./handleCorrectPollResponse";
 import { getUserPerformanceData } from "./getUserPerformanceData";
 import { upsertScoresToPollUserPerformance } from "./upsertScoresToPollUserPerformance";
+import { getStreakMultiplierIncreaseForBet } from "@/services/multipliers";
 
 // Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
 export const createPollResponse = async (
@@ -163,8 +164,12 @@ export const createPostPollResponse = async ({
 		} else {
 			console.log("✅ Correct answer - Updating streak and XP");
 
+			// Get streak multiplier increase based on betting percentage
+			const multiplierIncrease = getStreakMultiplierIncreaseForBet(selectedBet);
+			
+			// Calculate new multiplier with the dynamic increase
 			const newMultiplier = (
-				previousMultiplier + Number(START_MULTIPLIER_INCREASE)
+				previousMultiplier + multiplierIncrease
 			).toFixed(1);
 
 			const xpCalculation = calculateBetXP({
@@ -180,17 +185,11 @@ export const createPostPollResponse = async ({
 				selectedBet,
 				userId,
 				categoryCode: poll.category_code,
+				calculatedXP: xpCalculation.totalXP, // Pass the calculated XP value
 			});
 
-			// ! Consider refactoring this into a single function call
-			await upsertScoresToPollUserPerformance({
-				supabase,
-				user_id: userId,
-				category_code: poll.category_code,
-				devvoted_score: previousDevvotedScore.toFixed(2),
-				betting_average: Number(newBettingAverage).toFixed(1), // Ensure we store the calculated average
-			});
-
+			// Calculate and update the devvoted score
+			// The score should increase due to improved accuracy and potentially higher streak multiplier
 			result.isCorrect = true;
 			result.changes.newXP = newXP;
 			result.changes.xpGain = xpCalculation.totalXP;

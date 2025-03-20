@@ -13,15 +13,19 @@ import {
 	MAX_STREAK_MULTIPLIER
 } from "../multipliers";
 
+type HandleCorrectPollResponseParams = {
+	selectedBet: number;
+	userId: string;
+	categoryCode: string;
+	calculatedXP?: number; // Optional parameter for pre-calculated XP
+};
+
 export const handleCorrectPollResponse = async ({
 	selectedBet,
 	userId,
 	categoryCode,
-}: {
-	selectedBet: number;
-	userId: string;
-	categoryCode: string;
-}) => {
+	calculatedXP,
+}: HandleCorrectPollResponseParams) => {
 	const previousData = await getRunDataByCategoryCode(userId, categoryCode);
 	
 	// If no previous data exists, start with the default multiplier
@@ -40,16 +44,27 @@ export const handleCorrectPollResponse = async ({
 	const newMultiplier = newMultiplierValue.toFixed(1);
 
 	const currentXP = previousData?.temporary_xp ?? 0;
-	const xpCalculation = calculateBetXP({
-		availableXP: currentXP,
-		betPercentage: selectedBet,
-		streakMultiplier: Number(newMultiplier),
-	});
+	
+	// Use pre-calculated XP if provided, otherwise calculate it here
+	let totalXPToAdd: number;
+	
+	if (calculatedXP !== undefined) {
+		// Use the pre-calculated XP value
+		totalXPToAdd = calculatedXP;
+	} else {
+		// Calculate XP if not provided (backward compatibility)
+		const xpCalculation = calculateBetXP({
+			availableXP: currentXP,
+			betPercentage: selectedBet,
+			streakMultiplier: Number(newMultiplier),
+		});
+		totalXPToAdd = xpCalculation.totalXP;
+	}
 
 	await updateActiveRunByCategoryCode(
 		{
 			user_id: userId,
-			temporary_xp: currentXP + xpCalculation.totalXP,
+			temporary_xp: currentXP + totalXPToAdd,
 			streak_multiplier: newMultiplier,
 			last_poll_at: new Date(),
 			current_streak: previousData ? previousData.current_streak + 1 : 1, // Start at 1 for first correct answer
@@ -88,7 +103,7 @@ export const handleCorrectPollResponse = async ({
 		// This is a simplified calculation that can be replaced with a more complex algorithm later
 		const newDevvotedScore = (
 			currentDevvotedScore +
-			xpCalculation.totalXP * 0.1
+			totalXPToAdd * 0.1
 		).toFixed(2);
 
 		await db
