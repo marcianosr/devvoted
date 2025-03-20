@@ -134,34 +134,22 @@ export const createPostPollResponse = async ({
 
 			result.isCorrect = false;
 			// For incorrect answers, we reset to default values
-			// This impacts the Knowledge Score since streak multiplier is a direct multiplier in the formula
+			// This impacts the devvoted score since streak multiplier is a direct multiplier in the formula
 			result.changes.newXP = START_TEMPORARY_XP;
 			result.changes.newMultiplier = DEFAULT_MULTIPLIER; // Reset to default multiplier (0.1)
 			result.changes.newStreak = 0;
 			result.changes.xpGain = 0;
 
-			// ! Consider refactoring this into a single function call
-			await upsertScoresToPollUserPerformance({
+			// Calculate and update the devvoted score
+			// The score may decrease due to the accuracy factor in the formula
+			const updatedScore = await upsertScoresToPollUserPerformance({
 				supabase,
 				user_id: userId,
 				category_code: poll.category_code,
-				devvoted_score: previousDevvotedScore.toFixed(2),
 				betting_average: Number(newBettingAverage).toFixed(1), // Ensure we store the calculated average
 			});
 
-			// For incorrect answers, devvoted_score might decrease slightly or stay the same
-			// Fetch the updated score after handling the wrong response
-			// COULD possible be the same as getUserPerformanceQuery
-
-			const updatedPerformanceData = await getUserPerformanceData(
-				userId,
-				poll.category_code
-			);
-
-			result.changes.devvotedScore =
-				updatedPerformanceData?.devvoted_score
-					? Number(updatedPerformanceData.devvoted_score)
-					: previousDevvotedScore;
+			result.changes.devvotedScore = updatedScore;
 		} else {
 			console.log("✅ Correct answer - Updating streak and XP");
 
@@ -188,12 +176,12 @@ export const createPostPollResponse = async ({
 				categoryCode: poll.category_code,
 			});
 
-			// ! Consider refactoring this into a single function call
-			await upsertScoresToPollUserPerformance({
+			// Calculate and update the devvoted score
+			// The score should increase due to improved accuracy and potentially higher streak multiplier
+			const updatedScore = await upsertScoresToPollUserPerformance({
 				supabase,
 				user_id: userId,
 				category_code: poll.category_code,
-				devvoted_score: previousDevvotedScore.toFixed(2),
 				betting_average: Number(newBettingAverage).toFixed(1), // Ensure we store the calculated average
 			});
 
@@ -202,17 +190,7 @@ export const createPostPollResponse = async ({
 			result.changes.xpGain = xpCalculation.totalXP;
 			result.changes.newMultiplier = Number(newMultiplier);
 			result.changes.newStreak = newStreak;
-
-			// For correct answers, fetch the updated devvoted_score after handling the correct response
-			const updatedPerformanceData = await getUserPerformanceData(
-				userId,
-				poll.category_code
-			);
-
-			result.changes.devvotedScore =
-				updatedPerformanceData?.devvoted_score
-					? Number(updatedPerformanceData.devvoted_score)
-					: previousDevvotedScore;
+			result.changes.devvotedScore = updatedScore;
 		}
 
 		return result;
