@@ -6,6 +6,7 @@ import {
 } from "@/services/api/createPostPollResponse";
 import { calculateBetXP } from "@/services/calculateXP";
 import {
+	START_MULTIPLIER_INCREASE,
 	START_TEMPORARY_XP,
 } from "@/services/constants";
 import { db } from "@/database/db";
@@ -17,9 +18,8 @@ import { handleWrongPollResponse } from "./handleWrongPollResponse";
 import { handleCorrectPollResponse } from "./handleCorrectPollResponse";
 import { getUserPerformanceData } from "./getUserPerformanceData";
 import { upsertScoresToPollUserPerformance } from "./upsertScoresToPollUserPerformance";
-import { getStreakMultiplierIncreaseForBet, DEFAULT_MULTIPLIER } from "../multipliers";
 
-// Not sure where to put this file, as it is inserting data triggered by /api/submit-response
+// Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
 export const createPollResponse = async (
 	supabase: SupabaseClient,
 	pollId: number,
@@ -106,7 +106,6 @@ export const createPostPollResponse = async ({
 			selectedBet
 		);
 
-		// Initialize result object with default values and previous state
 		const result: PollResponseResult = {
 			success: true,
 			isCorrect: false,
@@ -134,31 +133,38 @@ export const createPostPollResponse = async ({
 
 			result.isCorrect = false;
 			// For incorrect answers, we reset to default values
-			// This impacts the devvoted score since streak multiplier is a direct multiplier in the formula
 			result.changes.newXP = START_TEMPORARY_XP;
-			result.changes.newMultiplier = DEFAULT_MULTIPLIER; // Reset to default multiplier (0.1)
+			result.changes.newMultiplier = Number(START_MULTIPLIER_INCREASE);
 			result.changes.newStreak = 0;
 			result.changes.xpGain = 0;
 
-			// Calculate and update the devvoted score
-			// The score may decrease due to the accuracy factor in the formula
-			const updatedScore = await upsertScoresToPollUserPerformance({
+			// ! Consider refactoring this into a single function call
+			await upsertScoresToPollUserPerformance({
 				supabase,
 				user_id: userId,
 				category_code: poll.category_code,
+				devvoted_score: previousDevvotedScore.toFixed(2),
 				betting_average: Number(newBettingAverage).toFixed(1), // Ensure we store the calculated average
 			});
 
-			result.changes.devvotedScore = updatedScore;
+			// For incorrect answers, devvoted_score might decrease slightly or stay the same
+			// Fetch the updated score after handling the wrong response
+			// COULD possible be the same as getUserPerformanceQuery
+
+			const updatedPerformanceData = await getUserPerformanceData(
+				userId,
+				poll.category_code
+			);
+
+			result.changes.devvotedScore =
+				updatedPerformanceData?.devvoted_score
+					? Number(updatedPerformanceData.devvoted_score)
+					: previousDevvotedScore;
 		} else {
 			console.log("✅ Correct answer - Updating streak and XP");
 
-			// Get streak multiplier increase based on betting percentage
-			const multiplierIncrease = getStreakMultiplierIncreaseForBet(selectedBet);
-			
-			// Calculate new multiplier with the dynamic increase
 			const newMultiplier = (
-				previousMultiplier + multiplierIncrease
+				previousMultiplier + Number(START_MULTIPLIER_INCREASE)
 			).toFixed(1);
 
 			const xpCalculation = calculateBetXP({
@@ -176,12 +182,12 @@ export const createPostPollResponse = async ({
 				categoryCode: poll.category_code,
 			});
 
-			// Calculate and update the devvoted score
-			// The score should increase due to improved accuracy and potentially higher streak multiplier
-			const updatedScore = await upsertScoresToPollUserPerformance({
+			// ! Consider refactoring this into a single function call
+			await upsertScoresToPollUserPerformance({
 				supabase,
 				user_id: userId,
 				category_code: poll.category_code,
+				devvoted_score: previousDevvotedScore.toFixed(2),
 				betting_average: Number(newBettingAverage).toFixed(1), // Ensure we store the calculated average
 			});
 
@@ -190,7 +196,17 @@ export const createPostPollResponse = async ({
 			result.changes.xpGain = xpCalculation.totalXP;
 			result.changes.newMultiplier = Number(newMultiplier);
 			result.changes.newStreak = newStreak;
-			result.changes.devvotedScore = updatedScore;
+
+			// For correct answers, fetch the updated devvoted_score after handling the correct response
+			const updatedPerformanceData = await getUserPerformanceData(
+				userId,
+				poll.category_code
+			);
+
+			result.changes.devvotedScore =
+				updatedPerformanceData?.devvoted_score
+					? Number(updatedPerformanceData.devvoted_score)
+					: previousDevvotedScore;
 		}
 
 		return result;

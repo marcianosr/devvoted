@@ -9,14 +9,13 @@ export const calculateBetXP = ({
 	betPercentage,
 	streakMultiplier,
 }: XPCalculationParams) => {
-	// Calculate bet XP based on percentage
 	const betXP = Math.floor(availableXP * (betPercentage / 100));
-
-	// Calculate bonus XP from multiplier
 	const multiplierBonus = Math.floor(betXP * streakMultiplier);
-
-	// Calculate total XP
 	const totalXP = betXP + multiplierBonus;
+
+	console.log(
+		`Bet XP: ${betXP} x Multiplier Bonus: ${multiplierBonus} = Total XP: ${totalXP}`
+	);
 
 	return {
 		betXP,
