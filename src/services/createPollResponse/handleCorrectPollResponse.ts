@@ -1,12 +1,12 @@
 import { pollUserPerformanceTable } from "@/database/schema";
 import { calculateBetXP } from "../calculateXP";
-import { START_MULTIPLIER_INCREASE } from "../constants";
 import {
 	getRunDataByCategoryCode,
 	updateActiveRunByCategoryCode,
 } from "./runDataByCategory";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/database/db";
+import { getStreakMultiplierIncreaseForBet } from "../multipliers";
 
 export const handleCorrectPollResponse = async ({
 	selectedBet,
@@ -19,8 +19,13 @@ export const handleCorrectPollResponse = async ({
 }) => {
 	const previousData = await getRunDataByCategoryCode(userId, categoryCode);
 	const currentMultiplier = Number(previousData?.streak_multiplier) || 0;
+	
+	// Get streak multiplier increase based on betting percentage
+	const multiplierIncrease = getStreakMultiplierIncreaseForBet(selectedBet);
+	
+	// Calculate new multiplier with the dynamic increase
 	const newMultiplier = (
-		currentMultiplier + Number(START_MULTIPLIER_INCREASE)
+		currentMultiplier + multiplierIncrease
 	).toFixed(1);
 
 	const currentXP = previousData?.temporary_xp ?? 0;

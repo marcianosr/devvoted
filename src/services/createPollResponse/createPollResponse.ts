@@ -6,7 +6,6 @@ import {
 } from "@/services/api/createPostPollResponse";
 import { calculateBetXP } from "@/services/calculateXP";
 import {
-	START_MULTIPLIER_INCREASE,
 	START_TEMPORARY_XP,
 } from "@/services/constants";
 import { db } from "@/database/db";
@@ -18,8 +17,9 @@ import { handleWrongPollResponse } from "./handleWrongPollResponse";
 import { handleCorrectPollResponse } from "./handleCorrectPollResponse";
 import { getUserPerformanceData } from "./getUserPerformanceData";
 import { upsertScoresToPollUserPerformance } from "./upsertScoresToPollUserPerformance";
+import { getStreakMultiplierIncreaseForBet } from "../multipliers";
 
-// Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
+// Not sure where to put this file, as it is inserting data triggered by /api/submit-response
 export const createPollResponse = async (
 	supabase: SupabaseClient,
 	pollId: number,
@@ -106,6 +106,7 @@ export const createPostPollResponse = async ({
 			selectedBet
 		);
 
+		// Initialize result object with default values and previous state
 		const result: PollResponseResult = {
 			success: true,
 			isCorrect: false,
@@ -131,10 +132,13 @@ export const createPostPollResponse = async ({
 				categoryCode: poll.category_code,
 			});
 
+			// Get the default multiplier value from constants
+			const defaultMultiplier = 0.1;
+
 			result.isCorrect = false;
 			// For incorrect answers, we reset to default values
 			result.changes.newXP = START_TEMPORARY_XP;
-			result.changes.newMultiplier = Number(START_MULTIPLIER_INCREASE);
+			result.changes.newMultiplier = defaultMultiplier;
 			result.changes.newStreak = 0;
 			result.changes.xpGain = 0;
 
@@ -163,8 +167,12 @@ export const createPostPollResponse = async ({
 		} else {
 			console.log("✅ Correct answer - Updating streak and XP");
 
+			// Get streak multiplier increase based on betting percentage
+			const multiplierIncrease = getStreakMultiplierIncreaseForBet(selectedBet);
+			
+			// Calculate new multiplier with the dynamic increase
 			const newMultiplier = (
-				previousMultiplier + Number(START_MULTIPLIER_INCREASE)
+				previousMultiplier + multiplierIncrease
 			).toFixed(1);
 
 			const xpCalculation = calculateBetXP({
