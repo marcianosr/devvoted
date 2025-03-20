@@ -291,6 +291,8 @@ async function main() {
 		await db.insert(pollOptionsTable).values(pollOptions);
 
 		console.log("🌱 Seeding complete!");
+
+		process.exit(0);
 	} catch (error) {
 		console.error("🌱 Error seeding database:", error);
 	}
