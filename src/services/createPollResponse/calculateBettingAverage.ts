@@ -2,6 +2,7 @@ import { db } from "@/database/db";
 import {
 	pollResponsesTable,
 	pollUserPerformanceTable,
+	pollsTable,
 } from "@/database/schema";
 import { eq, and } from "drizzle-orm";
 
@@ -16,15 +17,31 @@ type CalculateBettingAverageFnResult = {
 	previousBettingAverage: string;
 };
 
-// Fetches the count of polls answered by a user
+/**
+ * Fetches the count of polls answered by a user in a specific category
+ * 
+ * @param userId - The user ID
+ * @param categoryCode - The category code
+ * @returns The number of polls answered by the user in the category
+ */
 export const getPollsAnsweredCount = async (
-	userId: string
+	userId: string,
+	categoryCode: string
 ): Promise<number> => {
 	try {
 		const responses = await db
 			.select({ response_id: pollResponsesTable.response_id })
 			.from(pollResponsesTable)
-			.where(eq(pollResponsesTable.user_id, userId));
+			.innerJoin(
+				pollsTable,
+				eq(pollResponsesTable.poll_id, pollsTable.id)
+			)
+			.where(
+				and(
+					eq(pollResponsesTable.user_id, userId),
+					eq(pollsTable.category_code, categoryCode)
+				)
+			);
 
 		return responses.length;
 	} catch (error) {
@@ -33,31 +50,13 @@ export const getPollsAnsweredCount = async (
 	}
 };
 
-// Fetches the total sum of bets placed by a user
-export const getTotalBetsSum = async (
-	userId: string,
-	selectedBet: number
-): Promise<number> => {
-	try {
-		// For this implementation, we'll use a simpler approach:
-		// We'll count the number of polls answered and multiply by the selected bet
-		// This simulates the scenario where all previous bets were the same as the current one
-		const pollsAnswered = await getPollsAnsweredCount(userId);
-
-		// If this is the first poll, the total is just the selected bet
-		if (pollsAnswered === 0) {
-			return selectedBet;
-		}
-
-		// Otherwise, simulate as if all previous polls had the same bet amount
-		return pollsAnswered * selectedBet;
-	} catch (error) {
-		console.error("Error calculating total bets sum:", error);
-		return 0;
-	}
-};
-
-// Fetches the previous betting average for a user
+/**
+ * Fetches the previous betting average for a user in a specific category
+ * 
+ * @param userId - The user ID
+ * @param categoryCode - The category code
+ * @returns The previous betting average as a string
+ */
 export const getPreviousBettingAverage = async (
 	userId: string,
 	categoryCode: string
@@ -83,6 +82,16 @@ export const getPreviousBettingAverage = async (
 	}
 };
 
+/**
+ * Calculates the new betting average for a user in a specific category
+ * 
+ * Formula: newAverage = (previousAverage * numberOfItems + newValue) / (numberOfItems + 1)
+ * 
+ * @param userId - The user ID
+ * @param categoryCode - The category code
+ * @param selectedBet - The current bet percentage (1-100)
+ * @returns The previous and new betting average
+ */
 export const getBettingAverage = async ({
 	categoryCode,
 	userId,
@@ -93,13 +102,24 @@ export const getBettingAverage = async ({
 			userId,
 			categoryCode
 		);
-		const pollsAnsweredCount = await getPollsAnsweredCount(userId);
+		const pollsAnsweredCount = await getPollsAnsweredCount(userId, categoryCode);
+		
+		// If this is the first poll, the average is just the selected bet
+		if (pollsAnsweredCount === 0) {
+			return {
+				previousBettingAverage: "0.0",
+				newBettingAverage: selectedBet.toFixed(1),
+			};
+		}
+		
+		// Calculate the new average using the running average formula
+		// newAverage = (previousAverage * numberOfItems + newValue) / (numberOfItems + 1)
+		const newAverage = 
+			(Number(previousAverage) * pollsAnsweredCount + selectedBet) / (pollsAnsweredCount + 1);
 
 		return {
 			previousBettingAverage: previousAverage,
-			newBettingAverage: (Number(previousAverage) + selectedBet).toFixed(
-				1
-			),
+			newBettingAverage: newAverage.toFixed(1),
 		};
 	} catch (error) {
 		console.error("Error calculating betting average:", error);
