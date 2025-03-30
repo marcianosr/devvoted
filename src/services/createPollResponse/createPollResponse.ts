@@ -132,20 +132,6 @@ export const createPostPollResponse = async ({
 			});
 
 			return result;
-
-			// For incorrect answers, devvoted_score might decrease slightly or stay the same
-			// Fetch the updated score after handling the wrong response
-			// COULD possible be the same as getUserPerformanceQuery
-
-			// const updatedPerformanceData = await getUserPerformanceData(
-			// 	userId,
-			// 	poll.category_code
-			// );
-
-			// result.changes.devvotedScore =
-			// 	updatedPerformanceData?.devvoted_score
-			// 		? Number(updatedPerformanceData.devvoted_score)
-			// 		: previousDevvotedScore;
 		} else {
 			console.log("✅ Correct answer - Updating streak and XP");
 
@@ -195,20 +181,7 @@ export const createPostPollResponse = async ({
 			});
 
 			return result;
-
-			// For correct answers, fetch the updated devvoted_score after handling the correct response
-			// const updatedPerformanceData = await getUserPerformanceData(
-			// 	userId,
-			// 	poll.category_code
-			// );
-
-			// result.changes.devvotedScore =
-			// 	updatedPerformanceData?.devvoted_score
-			// 		? Number(updatedPerformanceData.devvoted_score)
-			// 		: previousDevvotedScore;
 		}
-
-		return result;
 	} catch (error) {
 		console.error("Error in createPostPollResponse:", error);
 		throw error;

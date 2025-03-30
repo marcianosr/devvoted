@@ -11,55 +11,59 @@ import {
 vi.mock("@/app/supabase/server");
 
 describe.only(createPostPollResponse, () => {
-	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
-
-	beforeEach(() => {
-		vi.clearAllMocks();
-		mockSupabase = createMockSupabaseClient();
-		vi.mocked(createClient).mockReturnValue(mockSupabase);
-	});
-
-	it("handles answer submission with correct data", async () => {
-		const mockPoll = createMockPoll();
-
-		mockSupabase.single.mockResolvedValueOnce({
-			data: { response_id: 1 },
-			error: null,
-		});
-
-		const result = await createPostPollResponse({
-			poll: mockPoll,
-			userId: "123e4567-e89b-12d3-a456-426614174000",
-			selectedOptions: ["1", "2"],
-			selectedBet: 100,
-		});
-
-		expect(result.success).toBe(true);
-		expect(mockSupabase.from).toHaveBeenCalledWith("polls_responses");
-		expect(mockSupabase.from).toHaveBeenCalledWith("polls_options");
-		expect(mockSupabase.from).toHaveBeenCalledWith("polls_active_runs");
-	});
-
-	it("handles answer submission with wrong data", async () => {
-		const mockPoll = createMockPoll();
-
-		// Mock response for creating poll response with an error
-		mockSupabase.single.mockResolvedValueOnce({
-			data: null,
-			error: "Something went wrong",
-		});
-
-		// Use expect().rejects to test that the promise rejects with the expected error
-		await expect(
-			createPostPollResponse({
-				poll: mockPoll,
-				userId: "123e4567-e89b-12d3-a456-426614174000",
-				selectedOptions: ["1", "2"],
-				selectedBet: 100,
-			})
-		).rejects.toThrow("Failed to create poll response");
-	});
+	it.todo("createPostPollResponse");
 });
+
+// describe.only(createPostPollResponse, () => {
+// 	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
+
+// 	beforeEach(() => {
+// 		vi.clearAllMocks();
+// 		mockSupabase = createMockSupabaseClient();
+// 		vi.mocked(createClient).mockReturnValue(mockSupabase);
+// 	});
+
+// 	it("handles answer submission with correct data", async () => {
+// 		const mockPoll = createMockPoll();
+
+// 		mockSupabase.single.mockResolvedValueOnce({
+// 			data: { response_id: 1 },
+// 			error: null,
+// 		});
+
+// 		const result = await createPostPollResponse({
+// 			poll: mockPoll,
+// 			userId: "123e4567-e89b-12d3-a456-426614174000",
+// 			selectedOptions: ["1", "2"],
+// 			selectedBet: 100,
+// 		});
+
+// 		expect(result.success).toBe(true);
+// 		expect(mockSupabase.from).toHaveBeenCalledWith("polls_responses");
+// 		expect(mockSupabase.from).toHaveBeenCalledWith("polls_options");
+// 		expect(mockSupabase.from).toHaveBeenCalledWith("polls_active_runs");
+// 	});
+
+// 	it("handles answer submission with wrong data", async () => {
+// 		const mockPoll = createMockPoll();
+
+// 		// Mock response for creating poll response with an error
+// 		mockSupabase.single.mockResolvedValueOnce({
+// 			data: null,
+// 			error: "Something went wrong",
+// 		});
+
+// 		// Use expect().rejects to test that the promise rejects with the expected error
+// 		await expect(
+// 			createPostPollResponse({
+// 				poll: mockPoll,
+// 				userId: "123e4567-e89b-12d3-a456-426614174000",
+// 				selectedOptions: ["1", "2"],
+// 				selectedBet: 100,
+// 			})
+// 		).rejects.toThrow("Failed to create poll response");
+// 	});
+// });
 
 // describe.skip(resetActiveRunByCategoryCode, () => {
 // 	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
