@@ -1,21 +1,5 @@
 import { Poll } from "@/types/db";
-
-export type PollResponseResult = {
-	success: boolean;
-	isCorrect: boolean;
-	changes: {
-		previousXP: number;
-		newXP: number;
-		xpGain: number;
-		previousMultiplier: number;
-		newMultiplier: number;
-		previousStreak: number;
-		newStreak: number;
-		devvotedScore: number;
-		newBettingAverage: string;
-		previousBettingAverage: string;
-	};
-};
+import { BuildPollResult } from "../createPollResponse/buildPollResult";
 
 export type CreatePostPollResponseRequest = {
 	poll: Poll;
@@ -26,7 +10,7 @@ export type CreatePostPollResponseRequest = {
 
 export const createPostPollResponse = async (
 	data: CreatePostPollResponseRequest
-): Promise<PollResponseResult> => {
+): Promise<BuildPollResult> => {
 	const response = await fetch("/api/polls/submit-response", {
 		method: "POST",
 		headers: {

@@ -10,7 +10,7 @@ import {
 
 vi.mock("@/app/supabase/server");
 
-describe.skip(createPostPollResponse, () => {
+describe.only(createPostPollResponse, () => {
 	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
 
 	beforeEach(() => {
@@ -61,92 +61,92 @@ describe.skip(createPostPollResponse, () => {
 	});
 });
 
-describe.skip(resetActiveRunByCategoryCode, () => {
-	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
+// describe.skip(resetActiveRunByCategoryCode, () => {
+// 	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
 
-	beforeEach(() => {
-		vi.clearAllMocks();
-		mockSupabase = createMockSupabaseClient();
-		vi.mocked(createClient).mockReturnValue(mockSupabase);
-	});
+// 	beforeEach(() => {
+// 		vi.clearAllMocks();
+// 		mockSupabase = createMockSupabaseClient();
+// 		vi.mocked(createClient).mockReturnValue(mockSupabase);
+// 	});
 
-	it("resets the active run for a specific category", async () => {
-		// Mock the Supabase update chain
-		mockSupabase.from.mockReturnValue({
-			update: vi.fn().mockReturnValue({
-				eq: vi.fn().mockReturnValue({
-					eq: vi.fn().mockResolvedValue({ error: null }),
-				}),
-			}),
-		});
+// 	it("resets the active run for a specific category", async () => {
+// 		// Mock the Supabase update chain
+// 		mockSupabase.from.mockReturnValue({
+// 			update: vi.fn().mockReturnValue({
+// 				eq: vi.fn().mockReturnValue({
+// 					eq: vi.fn().mockResolvedValue({ error: null }),
+// 				}),
+// 			}),
+// 		});
 
-		const result = await resetActiveRunByCategoryCode({
-			userId: "123e4567-e89b-12d3-a456-426614174000",
-			categoryCode: "React",
-		});
+// 		const result = await resetActiveRunByCategoryCode({
+// 			userId: "123e4567-e89b-12d3-a456-426614174000",
+// 			categoryCode: "React",
+// 		});
 
-		expect(result.success).toBe(true);
+// 		expect(result.success).toBe(true);
 
-		expect(mockSupabase.from).toHaveBeenCalledWith("polls_active_runs");
+// 		expect(mockSupabase.from).toHaveBeenCalledWith("polls_active_runs");
 
-		expect(mockSupabase.from().update).toHaveBeenCalledWith(
-			expect.objectContaining({
-				last_poll_at: expect.any(Date),
-			})
-		);
+// 		expect(mockSupabase.from().update).toHaveBeenCalledWith(
+// 			expect.objectContaining({
+// 				last_poll_at: expect.any(Date),
+// 			})
+// 		);
 
-		expect(mockSupabase.from().update().eq).toHaveBeenCalledWith(
-			"category_code",
-			"React"
-		);
-		expect(mockSupabase.from().update().eq().eq).toHaveBeenCalledWith(
-			"user_id",
-			"123e4567-e89b-12d3-a456-426614174000"
-		);
-	});
-});
+// 		expect(mockSupabase.from().update().eq).toHaveBeenCalledWith(
+// 			"category_code",
+// 			"React"
+// 		);
+// 		expect(mockSupabase.from().update().eq().eq).toHaveBeenCalledWith(
+// 			"user_id",
+// 			"123e4567-e89b-12d3-a456-426614174000"
+// 		);
+// 	});
+// });
 
-describe.skip(resetActiveRunByAllCategories, () => {
-	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
+// describe.skip(resetActiveRunByAllCategories, () => {
+// 	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
 
-	beforeEach(() => {
-		vi.clearAllMocks();
-		mockSupabase = createMockSupabaseClient();
-		vi.mocked(createClient).mockReturnValue(mockSupabase);
-	});
+// 	beforeEach(() => {
+// 		vi.clearAllMocks();
+// 		mockSupabase = createMockSupabaseClient();
+// 		vi.mocked(createClient).mockReturnValue(mockSupabase);
+// 	});
 
-	it("resets the active run for all categories", async () => {
-		mockSupabase.from.mockReturnValue({
-			update: vi.fn().mockReturnValue({
-				eq: vi.fn().mockReturnValue({
-					eq: vi.fn().mockResolvedValue({ error: null }),
-				}),
-			}),
-			delete: vi.fn().mockReturnValue({
-				eq: vi.fn().mockResolvedValue({ error: null }),
-			}),
-		});
+// 	it("resets the active run for all categories", async () => {
+// 		mockSupabase.from.mockReturnValue({
+// 			update: vi.fn().mockReturnValue({
+// 				eq: vi.fn().mockReturnValue({
+// 					eq: vi.fn().mockResolvedValue({ error: null }),
+// 				}),
+// 			}),
+// 			delete: vi.fn().mockReturnValue({
+// 				eq: vi.fn().mockResolvedValue({ error: null }),
+// 			}),
+// 		});
 
-		const result = await resetActiveRunByAllCategories({
-			userId: "123e4567-e89b-12d3-a456-426614174000",
-		});
+// 		const result = await resetActiveRunByAllCategories({
+// 			userId: "123e4567-e89b-12d3-a456-426614174000",
+// 		});
 
-		expect(result.success).toBe(true);
+// 		expect(result.success).toBe(true);
 
-		expect(mockSupabase.from).toHaveBeenCalledWith("polls_active_runs");
-		expect(mockSupabase.from().delete).toHaveBeenCalled();
-		expect(mockSupabase.from().delete().eq).toHaveBeenCalledWith(
-			"user_id",
-			"123e4567-e89b-12d3-a456-426614174000"
-		);
+// 		expect(mockSupabase.from).toHaveBeenCalledWith("polls_active_runs");
+// 		expect(mockSupabase.from().delete).toHaveBeenCalled();
+// 		expect(mockSupabase.from().delete().eq).toHaveBeenCalledWith(
+// 			"user_id",
+// 			"123e4567-e89b-12d3-a456-426614174000"
+// 		);
 
-		expect(mockSupabase.from).toHaveBeenCalledWith("users");
-		expect(mockSupabase.from().update).toHaveBeenCalledWith({
-			active_config: null,
-		});
-		expect(mockSupabase.from().update().eq).toHaveBeenCalledWith(
-			"id",
-			"123e4567-e89b-12d3-a456-426614174000"
-		);
-	});
-});
+// 		expect(mockSupabase.from).toHaveBeenCalledWith("users");
+// 		expect(mockSupabase.from().update).toHaveBeenCalledWith({
+// 			active_config: null,
+// 		});
+// 		expect(mockSupabase.from().update().eq).toHaveBeenCalledWith(
+// 			"id",
+// 			"123e4567-e89b-12d3-a456-426614174000"
+// 		);
+// 	});
+// });

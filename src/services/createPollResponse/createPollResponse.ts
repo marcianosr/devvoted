@@ -1,9 +1,6 @@
 import { createClient } from "@/app/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
-import {
-	CreatePostPollResponseRequest,
-	PollResponseResult,
-} from "@/services/api/createPostPollResponse";
+import { CreatePostPollResponseRequest } from "@/services/api/createPostPollResponse";
 import { calculateBetXP } from "@/services/calculateXP";
 import {
 	START_MULTIPLIER_INCREASE,
@@ -12,13 +9,14 @@ import {
 import { db } from "@/database/db";
 import { pollResponseOptionsTable } from "@/database/schema";
 import { getRunDataByCategoryCode } from "./runDataByCategory";
-import { getPollOptions } from "./getPollOptions";
 import { getBettingAverage } from "./calculateBettingAverage";
 import { handleWrongPollResponse } from "./handleWrongPollResponse";
 import { handleCorrectPollResponse } from "./handleCorrectPollResponse";
 import { getUserPerformanceData } from "./getUserPerformanceData";
 import { upsertScoresToPollUserPerformance } from "./upsertScoresToPollUserPerformance";
 import { getStreakMultiplierIncreaseForBet } from "@/services/multipliers";
+import { evaluatePollResponse } from "./evaluatePollResponse";
+import { buildPollResult } from "./buildPollResult";
 
 // Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
 export const createPollResponse = async (
@@ -77,23 +75,6 @@ export const createPostPollResponse = async ({
 	const supabase = await createClient();
 
 	try {
-		const response = await createPollResponse(supabase, poll.id, userId);
-		await createPollResponseOptions(response.response_id, selectedOptions);
-		const pollOptions = await getPollOptions({
-			supabase,
-			pollId: poll.id,
-		});
-		const correctOptions = pollOptions.filter((opt) => opt.is_correct);
-		const hasIncorrectOption = selectedOptions.some((selectedId) => {
-			const option = pollOptions.find(
-				(opt) => opt.id === Number(selectedId)
-			);
-			return option && !option.is_correct;
-		});
-		const hasAllCorrectOptionsSelected = correctOptions.every(
-			(correctOpt) => selectedOptions.includes(correctOpt.id.toString())
-		);
-
 		const {
 			previousXP,
 			previousMultiplier,
@@ -107,22 +88,13 @@ export const createPostPollResponse = async ({
 			selectedBet
 		);
 
-		const result: PollResponseResult = {
-			success: true,
-			isCorrect: false,
-			changes: {
-				previousXP,
-				newXP: previousXP,
-				xpGain: 0,
-				previousMultiplier,
-				newMultiplier: previousMultiplier,
-				previousStreak,
-				newStreak: previousStreak,
-				devvotedScore: previousDevvotedScore,
-				newBettingAverage,
-				previousBettingAverage,
-			},
-		};
+		const { hasIncorrectOption, hasAllCorrectOptionsSelected } =
+			await evaluatePollResponse({
+				supabase,
+				poll,
+				userId,
+				selectedOptions,
+			});
 
 		if (hasIncorrectOption || !hasAllCorrectOptionsSelected) {
 			console.log("❌ Incorrect answer - Resetting streak");
@@ -132,12 +104,23 @@ export const createPostPollResponse = async ({
 				categoryCode: poll.category_code,
 			});
 
-			result.isCorrect = false;
-			// For incorrect answers, we reset to default values
-			result.changes.newXP = START_TEMPORARY_XP;
-			result.changes.newMultiplier = Number(START_MULTIPLIER_INCREASE);
-			result.changes.newStreak = 0;
-			result.changes.xpGain = 0;
+			const result = await buildPollResult({
+				status: "incorrect",
+				previousStats: {
+					xp: previousXP,
+					multiplier: previousMultiplier,
+					streak: previousStreak,
+					devvotedScore: previousDevvotedScore,
+					bettingAverage: previousBettingAverage,
+				},
+				newStats: {
+					xp: START_TEMPORARY_XP,
+					multiplier: Number(START_MULTIPLIER_INCREASE),
+					streak: 0,
+					devvotedScore: previousDevvotedScore,
+					bettingAverage: newBettingAverage,
+				},
+			});
 
 			// ! Consider refactoring this into a single function call
 			await upsertScoresToPollUserPerformance({
@@ -148,25 +131,28 @@ export const createPostPollResponse = async ({
 				betting_average: Number(newBettingAverage).toFixed(1), // Ensure we store the calculated average
 			});
 
+			return result;
+
 			// For incorrect answers, devvoted_score might decrease slightly or stay the same
 			// Fetch the updated score after handling the wrong response
 			// COULD possible be the same as getUserPerformanceQuery
 
-			const updatedPerformanceData = await getUserPerformanceData(
-				userId,
-				poll.category_code
-			);
+			// const updatedPerformanceData = await getUserPerformanceData(
+			// 	userId,
+			// 	poll.category_code
+			// );
 
-			result.changes.devvotedScore =
-				updatedPerformanceData?.devvoted_score
-					? Number(updatedPerformanceData.devvoted_score)
-					: previousDevvotedScore;
+			// result.changes.devvotedScore =
+			// 	updatedPerformanceData?.devvoted_score
+			// 		? Number(updatedPerformanceData.devvoted_score)
+			// 		: previousDevvotedScore;
 		} else {
 			console.log("✅ Correct answer - Updating streak and XP");
 
 			// Get streak multiplier increase based on betting percentage
-			const multiplierIncrease = getStreakMultiplierIncreaseForBet(selectedBet);
-			
+			const multiplierIncrease =
+				getStreakMultiplierIncreaseForBet(selectedBet);
+
 			// Calculate new multiplier with the dynamic increase
 			const newMultiplier = (
 				previousMultiplier + multiplierIncrease
@@ -190,22 +176,36 @@ export const createPostPollResponse = async ({
 
 			// Calculate and update the devvoted score
 			// The score should increase due to improved accuracy and potentially higher streak multiplier
-			result.isCorrect = true;
-			result.changes.newXP = newXP;
-			result.changes.xpGain = xpCalculation.totalXP;
-			result.changes.newMultiplier = Number(newMultiplier);
-			result.changes.newStreak = newStreak;
+			const result = await buildPollResult({
+				status: "correct",
+				previousStats: {
+					xp: previousXP,
+					multiplier: previousMultiplier,
+					streak: previousStreak,
+					devvotedScore: previousDevvotedScore,
+					bettingAverage: previousBettingAverage,
+				},
+				newStats: {
+					xp: newXP,
+					multiplier: Number(newMultiplier),
+					streak: newStreak,
+					devvotedScore: previousDevvotedScore,
+					bettingAverage: newBettingAverage,
+				},
+			});
+
+			return result;
 
 			// For correct answers, fetch the updated devvoted_score after handling the correct response
-			const updatedPerformanceData = await getUserPerformanceData(
-				userId,
-				poll.category_code
-			);
+			// const updatedPerformanceData = await getUserPerformanceData(
+			// 	userId,
+			// 	poll.category_code
+			// );
 
-			result.changes.devvotedScore =
-				updatedPerformanceData?.devvoted_score
-					? Number(updatedPerformanceData.devvoted_score)
-					: previousDevvotedScore;
+			// result.changes.devvotedScore =
+			// 	updatedPerformanceData?.devvoted_score
+			// 		? Number(updatedPerformanceData.devvoted_score)
+			// 		: previousDevvotedScore;
 		}
 
 		return result;
