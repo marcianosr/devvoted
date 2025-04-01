@@ -1,69 +1,52 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createPostPollResponse } from "@/services/createPollResponse/createPollResponse";
+import { createPollResponse } from "@/services/createPollResponse/createPollResponse";
 import { createClient } from "@/app/supabase/server";
-import { createMockPoll } from "@/test/factories";
 import { createMockSupabaseClient } from "@/test/supabase";
-import {
-	resetActiveRunByAllCategories,
-	resetActiveRunByCategoryCode,
-} from "@/services/resetRun";
+
+import { SupabaseClient } from "@supabase/supabase-js";
 
 vi.mock("@/app/supabase/server");
 
-describe.only(createPostPollResponse, () => {
-	it.todo("createPostPollResponse");
+describe("createPollResponse", () => {
+	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
+
+	beforeEach(() => {
+		vi.clearAllMocks();
+		mockSupabase = createMockSupabaseClient();
+		vi.mocked(createClient).mockResolvedValue(
+			mockSupabase as unknown as SupabaseClient
+		);
+	});
+
+	it("successfully creates a poll response and returns the response ID", async () => {
+		const pollId = 123;
+		const userId = "user-123";
+		const expectedResponseId = 456;
+
+		mockSupabase.from = vi.fn().mockReturnThis();
+		mockSupabase.insert = vi.fn().mockReturnThis();
+		mockSupabase.select = vi.fn().mockReturnThis();
+		mockSupabase.single = vi.fn().mockResolvedValue({
+			data: { response_id: expectedResponseId },
+			error: null,
+		});
+
+		const result = await createPollResponse(
+			mockSupabase as unknown as SupabaseClient,
+			pollId,
+			userId
+		);
+
+		expect(mockSupabase.from).toHaveBeenCalledWith("polls_responses");
+		expect(mockSupabase.insert).toHaveBeenCalledWith({
+			poll_id: pollId,
+			user_id: userId,
+		});
+		expect(mockSupabase.select).toHaveBeenCalledWith("response_id");
+		expect(mockSupabase.single).toHaveBeenCalled();
+		expect(result).toEqual({ response_id: expectedResponseId });
+	});
 });
-
-// describe.only(createPostPollResponse, () => {
-// 	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
-
-// 	beforeEach(() => {
-// 		vi.clearAllMocks();
-// 		mockSupabase = createMockSupabaseClient();
-// 		vi.mocked(createClient).mockReturnValue(mockSupabase);
-// 	});
-
-// 	it("handles answer submission with correct data", async () => {
-// 		const mockPoll = createMockPoll();
-
-// 		mockSupabase.single.mockResolvedValueOnce({
-// 			data: { response_id: 1 },
-// 			error: null,
-// 		});
-
-// 		const result = await createPostPollResponse({
-// 			poll: mockPoll,
-// 			userId: "123e4567-e89b-12d3-a456-426614174000",
-// 			selectedOptions: ["1", "2"],
-// 			selectedBet: 100,
-// 		});
-
-// 		expect(result.success).toBe(true);
-// 		expect(mockSupabase.from).toHaveBeenCalledWith("polls_responses");
-// 		expect(mockSupabase.from).toHaveBeenCalledWith("polls_options");
-// 		expect(mockSupabase.from).toHaveBeenCalledWith("polls_active_runs");
-// 	});
-
-// 	it("handles answer submission with wrong data", async () => {
-// 		const mockPoll = createMockPoll();
-
-// 		// Mock response for creating poll response with an error
-// 		mockSupabase.single.mockResolvedValueOnce({
-// 			data: null,
-// 			error: "Something went wrong",
-// 		});
-
-// 		// Use expect().rejects to test that the promise rejects with the expected error
-// 		await expect(
-// 			createPostPollResponse({
-// 				poll: mockPoll,
-// 				userId: "123e4567-e89b-12d3-a456-426614174000",
-// 				selectedOptions: ["1", "2"],
-// 				selectedBet: 100,
-// 			})
-// 		).rejects.toThrow("Failed to create poll response");
-// 	});
-// });
 
 // describe.skip(resetActiveRunByCategoryCode, () => {
 // 	let mockSupabase: ReturnType<typeof createMockSupabaseClient>;

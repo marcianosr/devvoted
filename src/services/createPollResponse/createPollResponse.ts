@@ -66,6 +66,20 @@ export const createPollResponseOptions = async (
 	}
 };
 
+/**
+ * Processes a user's poll response and updates their performance metrics accordingly.
+ *
+ * This function handles both correct and incorrect responses by:
+ * 1. Evaluating the response against the correct options
+ * 2. Updating user performance metrics (XP, streak, multipliers)
+ * 3. Calculating Knowledge Score based on accuracy, streak multiplier, and betting multiplier
+ * 4. Applying different reward/penalty logic based on response correctness
+ *
+ * For correct answers: Increases streak, applies multipliers, and awards XP based on bet size
+ * For incorrect answers: Resets streak, adjusts multipliers, and updates betting average
+ *
+ * @returns A BuildPollResult object containing success status, correctness, and performance changes
+ */
 export const createPostPollResponse = async ({
 	poll,
 	userId,
