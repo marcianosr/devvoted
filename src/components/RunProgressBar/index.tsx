@@ -28,17 +28,25 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 		? Number(userPerformance.devvoted_score).toFixed(2)
 		: "0.00";
 
+	// Get the new score from the poll result
 	const newScore = pollResult?.changes.devvotedScore
 		? Number(pollResult.changes.devvotedScore).toFixed(2)
 		: null;
 
+	// Get the previous score from the poll result
+	const previousScore = pollResult?.changes.previousDevvotedScore
+		? Number(pollResult.changes.previousDevvotedScore).toFixed(2)
+		: null;
+
+	// For displaying the score difference, we need to use the absolute value
 	const scoreDifference =
-		newScore && formattedScore
-			? (Number(newScore) - Number(formattedScore)).toFixed(2)
+		newScore && previousScore
+			? Math.abs(Number(newScore) - Number(previousScore)).toFixed(2)
 			: null;
 
-	const scoreIncreased = scoreDifference && Number(scoreDifference) > 0;
-	const scoreDecreased = scoreDifference && Number(scoreDifference) < 0;
+	// Determine if the score increased or decreased
+	const scoreIncreased = newScore && previousScore && Number(newScore) > Number(previousScore);
+	const scoreDecreased = newScore && previousScore && Number(newScore) < Number(previousScore);
 
 	return (
 		<aside>

@@ -9,8 +9,8 @@
  */
 
 import { db } from "@/database/db";
-import { pollResponsesTable } from "@/database/schema";
-import { count, sql } from "drizzle-orm";
+import { pollResponsesTable, pollsTable } from "@/database/schema";
+import { and, count, eq, sql } from "drizzle-orm";
 import { getBettingMultiplierForBet } from "./multipliers";
 
 type DevvotedScoreParams = {
@@ -36,17 +36,26 @@ export const calculateDevvotedScore = async ({
 	bettingAverage,
 }: DevvotedScoreParams): Promise<number> => {
 	try {
+		console.log(`Calculating DevVoted score for user ${userId} in category ${categoryCode}`);
+		console.log(`Current streak multiplier: ${currentStreakMultiplier}, Betting average: ${bettingAverage}`);
+
 		// Get total number of polls answered in this category
 		const totalPollsResult = await db
 			.select({ count: count() })
 			.from(pollResponsesTable)
+			.innerJoin(pollsTable, eq(pollResponsesTable.poll_id, pollsTable.id))
 			.where(
-				sql`${pollResponsesTable.user_id} = ${userId} AND category_code = ${categoryCode}`
+				and(
+					eq(pollResponsesTable.user_id, userId),
+					eq(pollsTable.category_code, categoryCode)
+				)
 			);
 
 		const totalPolls = totalPollsResult[0]?.count || 0;
+		console.log(`Total polls answered: ${totalPolls}`);
 
 		if (totalPolls === 0) {
+			console.log('No polls answered yet, returning 0');
 			return 0; // No polls answered yet
 		}
 
@@ -58,8 +67,9 @@ export const calculateDevvotedScore = async ({
       FROM polls_responses pr
       JOIN polls_response_options pro ON pr.response_id = pro.response_id
       JOIN polls_options po ON pro.option_id = po.id
+      JOIN polls p ON pr.poll_id = p.id
       WHERE pr.user_id = ${userId}
-        AND pr.category_code = ${categoryCode}
+        AND p.category_code = ${categoryCode}
         AND po.is_correct = true
         AND NOT EXISTS (
           -- Subquery to exclude responses where any incorrect option was selected
@@ -79,17 +89,22 @@ export const calculateDevvotedScore = async ({
 		// Calculate accuracy factor: (correct - incorrect) ÷ total_polls
 		// This can range from -1 to 1
 		const accuracyFactor = (correctCount - incorrectCount) / totalPolls;
+		console.log(`Correct answers: ${correctCount}, Incorrect answers: ${incorrectCount}`);
+		console.log(`Accuracy factor: ${accuracyFactor}`);
 
-		// Normalize accuracy to be between 0 and 1 (no negative scores)
-		const normalizedAccuracy = Math.max(0, accuracyFactor);
+		// Allow for negative accuracy factor to decrease the score when user answers incorrectly
+		// We'll use the raw accuracyFactor to allow score decreases
+		console.log(`Using accuracy factor: ${accuracyFactor}`);
 
 		// Get betting multiplier based on average betting percentage
 		const bettingMultiplier = getBettingMultiplierForBet(bettingAverage);
+		console.log(`Betting multiplier: ${bettingMultiplier}`);
 
 		// Calculate final devvoted score
 		// Devvoted Score = Accuracy × Streak Multiplier × Betting Multiplier
 		const devvotedScore =
-			normalizedAccuracy * currentStreakMultiplier * bettingMultiplier;
+			accuracyFactor * currentStreakMultiplier * bettingMultiplier;
+		console.log(`Final DevVoted score: ${devvotedScore} (${devvotedScore.toFixed(2)})`);
 
 		// Return the score rounded to 2 decimal places
 		return parseFloat(devvotedScore.toFixed(2));

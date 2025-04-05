@@ -15,7 +15,7 @@ export const handleWrongPollResponse = async ({
 	supabase: SupabaseClient;
 	userId: string;
 	categoryCode: string;
-}) => {
+}): Promise<number> => {
 	await resetActiveRunByCategoryCode({
 		supabase,
 		userId,
@@ -36,35 +36,26 @@ export const handleWrongPollResponse = async ({
 		)
 		.limit(1);
 
-	if (userPerformanceData.length > 0) {
-		const currentDevvotedScore =
-			Number(userPerformanceData[0].devvoted_score) || 0;
+	// Default to 0 if no performance data exists
+	const currentDevvotedScore = userPerformanceData.length > 0
+		? Number(userPerformanceData[0].devvoted_score) || 0
+		: 0;
 
-		// For wrong answers, slightly decrease the devvoted_score (minimum 0)
-		// This is a simplified calculation that can be replaced with a more complex algorithm later
-		const newDevvotedScore = Math.max(
-			0,
-			currentDevvotedScore - 0.5
-		).toFixed(2);
+	// For wrong answers, slightly decrease the devvoted_score (minimum 0)
+	// This is a simplified calculation that can be replaced with a more complex algorithm later
+	const newDevvotedScore = Math.max(0, currentDevvotedScore - 0.5);
+	console.log(`Decreasing DevVoted score from ${currentDevvotedScore} to ${newDevvotedScore}`);
 
-		await db
-			.update(pollUserPerformanceTable)
-			.set({
-				devvoted_score: newDevvotedScore,
-				updated_at: new Date(),
-			})
-			.where(
-				and(
-					eq(pollUserPerformanceTable.user_id, userId),
-					eq(pollUserPerformanceTable.category_code, categoryCode)
-				)
-			);
-	}
+	// We no longer update the devvoted_score here, as it will be updated in createPollResponse
+	// This prevents duplicate updates and ensures consistency
 
 	await decreaseAttemptsForUser({
 		supabase,
 		userId,
 	});
+
+	// Return the new decreased score
+	return newDevvotedScore;
 };
 
 const decreaseAttemptsForUser = async ({
@@ -79,15 +70,26 @@ const decreaseAttemptsForUser = async ({
 		.select("run_attempts")
 		.eq("id", userId)
 		.single();
-	if (error || !user?.run_attempts)
-		throw new Error(`Error fetching user attempts: ${error?.message}`);
 
-	const newAttempts = Math.max(user.run_attempts - 1, 0);
+	// Improved error handling
+	if (error) {
+		throw new Error(`Error fetching user attempts: ${error.message}`);
+	}
+
+	if (!user) {
+		throw new Error(`User not found with ID: ${userId}`);
+	}
+
+	// Default to 0 if run_attempts is null or undefined
+	const currentAttempts = user.run_attempts ?? 0;
+	const newAttempts = Math.max(currentAttempts - 1, 0);
+
 	await supabase
 		.from("users")
 		.update({ run_attempts: newAttempts })
 		.eq("id", userId);
 
-	if (newAttempts === 0)
+	if (newAttempts === 0) {
 		await resetActiveRunByAllCategories({ supabase, userId });
+	}
 };

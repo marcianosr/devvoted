@@ -32,7 +32,11 @@ const PollSubmission = ({
 		mutationFn: createPostPollResponse,
 		onSuccess: (data: BuildPollResult) => {
 			console.log("PollResponseResult", data);
+			// Invalidate both the poll data and the user performance data
 			queryClient.invalidateQueries({ queryKey: ["polls", poll.id] });
+			queryClient.invalidateQueries({ 
+				queryKey: ["userPerformance", user?.id, poll.category_code] 
+			});
 			setPollResult(data); // Update the context with the poll result
 		},
 		onError: (err: Error) => {

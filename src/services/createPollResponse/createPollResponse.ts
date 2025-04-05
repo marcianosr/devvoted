@@ -17,6 +17,7 @@ import { upsertScoresToPollUserPerformance } from "./upsertScoresToPollUserPerfo
 import { getStreakMultiplierIncreaseForBet } from "@/services/multipliers";
 import { evaluatePollResponse } from "./evaluatePollResponse";
 import { buildPollResult } from "./buildPollResult";
+import { calculateDevvotedScore } from "@/services/devvotedScore";
 
 // Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
 export const createPollResponse = async (
@@ -112,11 +113,16 @@ export const createPostPollResponse = async ({
 
 		if (hasIncorrectOption || !hasAllCorrectOptionsSelected) {
 			console.log("❌ Incorrect answer - Resetting streak");
-			await handleWrongPollResponse({
+			
+			// Handle the wrong poll response and get the new decreased DevVoted score
+			const newDevvotedScore = await handleWrongPollResponse({
 				supabase,
 				userId,
 				categoryCode: poll.category_code,
 			});
+			
+			console.log(`Previous DevVoted score: ${previousDevvotedScore}`);
+			console.log(`New decreased DevVoted score: ${newDevvotedScore}`);
 
 			const result = await buildPollResult({
 				status: "incorrect",
@@ -131,17 +137,17 @@ export const createPostPollResponse = async ({
 					xp: START_TEMPORARY_XP,
 					multiplier: Number(START_MULTIPLIER_INCREASE),
 					streak: 0,
-					devvotedScore: previousDevvotedScore,
+					devvotedScore: newDevvotedScore,
 					bettingAverage: newBettingAverage,
 				},
 			});
 
-			// ! Consider refactoring this into a single function call
+			// Update the user performance with the new DevVoted score and betting average
 			await upsertScoresToPollUserPerformance({
 				supabase,
 				user_id: userId,
 				category_code: poll.category_code,
-				devvoted_score: previousDevvotedScore.toFixed(2),
+				devvoted_score: newDevvotedScore.toFixed(2),
 				betting_average: Number(newBettingAverage).toFixed(1), // Ensure we store the calculated average
 			});
 
@@ -174,6 +180,20 @@ export const createPostPollResponse = async ({
 				calculatedXP: xpCalculation.totalXP, // Pass the calculated XP value
 			});
 
+			console.log(`Previous DevVoted score: ${previousDevvotedScore}`);
+			console.log(`Calculating new DevVoted score with multiplier: ${newMultiplier} and betting average: ${newBettingAverage}`);
+
+			// Calculate the new DevVoted score based on the formula:
+			// Knowledge Score = Accuracy × Streak Multiplier × Betting Multiplier
+			const newDevvotedScore = await calculateDevvotedScore({
+				userId,
+				categoryCode: poll.category_code,
+				currentStreakMultiplier: Number(newMultiplier),
+				bettingAverage: Number(newBettingAverage),
+			});
+			
+			console.log(`Calculated new DevVoted score: ${newDevvotedScore}`);
+
 			// Calculate and update the devvoted score
 			// The score should increase due to improved accuracy and potentially higher streak multiplier
 			const result = await buildPollResult({
@@ -189,9 +209,22 @@ export const createPostPollResponse = async ({
 					xp: newXP,
 					multiplier: Number(newMultiplier),
 					streak: newStreak,
-					devvotedScore: previousDevvotedScore,
+					devvotedScore: newDevvotedScore,
 					bettingAverage: newBettingAverage,
 				},
+			});
+
+			// Update the user performance data with the new DevVoted score
+			// Format the score as a string with 2 decimal places to match the database schema
+			const formattedDevvotedScore = newDevvotedScore.toFixed(2);
+			console.log('Updating DevVoted score to:', formattedDevvotedScore);
+			
+			await upsertScoresToPollUserPerformance({
+				supabase,
+				user_id: userId,
+				category_code: poll.category_code,
+				devvoted_score: formattedDevvotedScore,
+				betting_average: Number(newBettingAverage).toFixed(1),
 			});
 
 			return result;

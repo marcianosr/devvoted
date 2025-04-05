@@ -23,8 +23,23 @@ export const upsertScoresToPollUserPerformance = async ({
 		}
 	);
 
-	if (error)
+	// Fetch the updated data to log it
+	const { data } = await supabase
+		.from("polls_user_performance")
+		.select("*")
+		.eq("user_id", user_id)
+		.eq("category_code", category_code)
+		.single();
+
+	if (error) {
+		console.error(
+			`Error upserting poll user performance: ${error.message}`
+		);
 		throw new Error(
 			`Error inserting poll user performance: ${error.message}`
 		);
+	}
+
+	console.log("Successfully upserted poll user performance:");
+	console.log(data);
 };

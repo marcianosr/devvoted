@@ -9,7 +9,8 @@ export type BuildPollResult = {
 		newMultiplier: number;
 		previousStreak: number;
 		newStreak: number;
-		devvotedScore: number;
+		previousDevvotedScore: number;
+		devvotedScore: number; // New score
 		newBettingAverage: string;
 		previousBettingAverage: string;
 	};
@@ -46,7 +47,8 @@ export const buildPollResult = async ({
 		newMultiplier: newStats.multiplier,
 		previousStreak: previousStats.streak,
 		newStreak: newStats.streak,
-		devvotedScore: previousStats.devvotedScore,
+		previousDevvotedScore: previousStats.devvotedScore,
+		devvotedScore: newStats.devvotedScore,
 		newBettingAverage: newStats.bettingAverage,
 		previousBettingAverage: previousStats.bettingAverage,
 	},
