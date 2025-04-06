@@ -76,11 +76,11 @@ export const createPollResponseOptions = async (
  * 3. Calculating Knowledge Score based on accuracy, streak multiplier, and betting multiplier
  * 4. Applying different reward/penalty logic based on response correctness
  *
- * For correct answers: 
+ * For correct answers:
  *   - Single choice polls: Full points when correct
  *   - Multiple choice polls: Points proportional to correct answers selected
  *   - Increases streak, applies multipliers, and awards XP based on bet size
- * 
+ *
  * For incorrect answers: Resets streak, adjusts multipliers, and updates betting average
  *
  * @returns A BuildPollResult object containing success status, correctness, and performance changes
@@ -108,41 +108,52 @@ export const createPostPollResponse = async ({
 		);
 
 		const evaluationResult = await evaluatePollResponse({
-				supabase,
-				poll,
-				userId,
-				selectedOptions,
-			});
-			
-			const { 
-				hasIncorrectOption, 
-				hasAllCorrectOptionsSelected,
-				isSingleChoice,
-				correctnessScore 
-			} = evaluationResult;
+			supabase,
+			poll,
+			userId,
+			selectedOptions,
+		});
+
+		const {
+			hasIncorrectOption,
+			hasAllCorrectOptionsSelected,
+			isSingleChoice,
+			correctnessScore,
+			selectedCorrectOptionsCount,
+		} = evaluationResult;
 
 		// For multiple choice polls, we consider it partially correct if the correctnessScore is > 0
 		// For single choice polls, it's either fully correct or incorrect
-		const isFullyCorrect = (!hasIncorrectOption && hasAllCorrectOptionsSelected);
-		
-		// A response is partially correct if it has some correctness score but isn't fully correct
-		// This applies only to multiple choice polls
-		const isPartiallyCorrect = !isSingleChoice && correctnessScore > 0 && !isFullyCorrect;
-		
+		const isFullyCorrect =
+			!hasIncorrectOption && hasAllCorrectOptionsSelected;
+
+		// A response is partially correct if:
+		// 1. It's a multiple choice poll AND
+		// 2. Either the correctness score is > 0 OR the user selected at least one correct option
+		// 3. And it's not fully correct
+		const isPartiallyCorrect =
+			!isSingleChoice &&
+			(correctnessScore > 0 || selectedCorrectOptionsCount > 0) &&
+			!isFullyCorrect;
+
 		// Log the evaluation details for debugging
-		console.log(`Evaluation details: isSingleChoice=${isSingleChoice}, correctnessScore=${correctnessScore}, hasIncorrectOption=${hasIncorrectOption}, hasAllCorrectOptionsSelected=${hasAllCorrectOptionsSelected}`);
-		console.log(`Result: isFullyCorrect=${isFullyCorrect}, isPartiallyCorrect=${isPartiallyCorrect}`);
-		
+		console.log(
+			`Evaluation details: isSingleChoice=${isSingleChoice}, correctnessScore=${correctnessScore}, hasIncorrectOption=${hasIncorrectOption}, hasAllCorrectOptionsSelected=${hasAllCorrectOptionsSelected}, selectedCorrectOptionsCount=${selectedCorrectOptionsCount}`
+		);
+		console.log(
+			`Result: isFullyCorrect=${isFullyCorrect}, isPartiallyCorrect=${isPartiallyCorrect}`
+		);
+
 		if (!isFullyCorrect && !isPartiallyCorrect) {
 			console.log("❌ Incorrect answer - Resetting streak");
-			
+
 			// Handle the wrong poll response and get the new decreased DevVoted score
 			const newDevvotedScore = await handleWrongPollResponse({
 				supabase,
 				userId,
 				categoryCode: poll.category_code,
 			});
-			
+
 			console.log(`Previous DevVoted score: ${previousDevvotedScore}`);
 			console.log(`New decreased DevVoted score: ${newDevvotedScore}`);
 
@@ -177,11 +188,22 @@ export const createPostPollResponse = async ({
 		} else {
 			// Handle fully correct answers (for both single and multiple choice)
 			// or partially correct answers (for multiple choice only)
-			const isFullyCorrect = (!hasIncorrectOption && hasAllCorrectOptionsSelected);
-			const responseStatus = isFullyCorrect ? "correct" : "partially_correct";
-			
-			console.log(`${isFullyCorrect ? "✅ Fully correct" : "⚠️ Partially correct"} answer - Updating streak and XP`);
-			console.log(`Poll type: ${isSingleChoice ? "Single choice" : "Multiple choice"}, Correctness score: ${correctnessScore}`);
+			const isFullyCorrect =
+				!hasIncorrectOption && hasAllCorrectOptionsSelected;
+			const responseStatus = isFullyCorrect
+				? "correct"
+				: "partially_correct";
+
+			console.log(
+				`${
+					isFullyCorrect ? "✅ Fully correct" : "🤔 Partially correct"
+				} answer - Updating streak and XP`
+			);
+			console.log(
+				`Poll type: ${
+					isSingleChoice ? "Single choice" : "Multiple choice"
+				}, Correctness score: ${correctnessScore}`
+			);
 
 			// Get streak multiplier increase based on betting percentage
 			const multiplierIncrease =
@@ -194,7 +216,7 @@ export const createPostPollResponse = async ({
 
 			// Calculate XP based on the poll type and correctness
 			let xpCalculation;
-			
+
 			if (isSingleChoice || isFullyCorrect) {
 				// For single choice polls or fully correct multiple choice answers: full points
 				xpCalculation = calculateBetXP({
@@ -206,8 +228,12 @@ export const createPostPollResponse = async ({
 				// For partially correct multiple choice answers: proportional points
 				// Scale the bet percentage by the correctness score
 				const adjustedBetPercentage = selectedBet * correctnessScore;
-				console.log(`Adjusted bet percentage for partial correctness: ${adjustedBetPercentage.toFixed(1)}% (${selectedBet}% × ${correctnessScore.toFixed(2)})`);
-				
+				console.log(
+					`Adjusted bet percentage for partial correctness: ${adjustedBetPercentage.toFixed(
+						1
+					)}% (${selectedBet}% × ${correctnessScore.toFixed(2)})`
+				);
+
 				xpCalculation = calculateBetXP({
 					availableXP: previousXP,
 					betPercentage: adjustedBetPercentage,
@@ -226,7 +252,9 @@ export const createPostPollResponse = async ({
 			});
 
 			console.log(`Previous DevVoted score: ${previousDevvotedScore}`);
-			console.log(`Calculating new DevVoted score with multiplier: ${newMultiplier} and betting average: ${newBettingAverage}`);
+			console.log(
+				`Calculating new DevVoted score with multiplier: ${newMultiplier} and betting average: ${newBettingAverage}`
+			);
 
 			// Calculate the new DevVoted score based on the formula:
 			// Knowledge Score = Accuracy × Streak Multiplier × Betting Multiplier
@@ -236,7 +264,7 @@ export const createPostPollResponse = async ({
 				currentStreakMultiplier: Number(newMultiplier),
 				bettingAverage: Number(newBettingAverage),
 			});
-			
+
 			console.log(`Calculated new DevVoted score: ${newDevvotedScore}`);
 
 			// Calculate and update the devvoted score
@@ -262,8 +290,8 @@ export const createPostPollResponse = async ({
 			// Update the user performance data with the new DevVoted score
 			// Format the score as a string with 2 decimal places to match the database schema
 			const formattedDevvotedScore = newDevvotedScore.toFixed(2);
-			console.log('Updating DevVoted score to:', formattedDevvotedScore);
-			
+			console.log("Updating DevVoted score to:", formattedDevvotedScore);
+
 			await upsertScoresToPollUserPerformance({
 				supabase,
 				user_id: userId,

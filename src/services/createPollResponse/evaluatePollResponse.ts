@@ -30,76 +30,87 @@ export const evaluatePollResponse = async ({
 	userId,
 	selectedOptions,
 }: EvaluatePollResponseRequest): Promise<EvaluatePollResponseResult> => {
-	const response = await createPollResponse(supabase, poll.id, userId); // Creates columns: poll_id, user_id
-	await createPollResponseOptions(response.response_id, selectedOptions); // Creates columns: response_id, option_id
+	// Create the response in the database
+	const { response_id } = await createPollResponse(supabase, poll.id, userId);
+
+	// Create the response options in the database
+	await createPollResponseOptions(response_id, selectedOptions);
+
+	// Get the poll options
 	const pollOptions = await getPollOptions({
 		supabase,
 		pollId: poll.id,
-	}); // Creates columns: poll_id, option_id
-
-	// Determine if this is a single choice poll based on the poll's answer_type
-	const isSingleChoice = poll.answer_type === 'single';
-
-	// Find all correct options
-	const correctOptions = pollOptions.filter((opt) => opt.is_correct);
-	const totalCorrectOptionsCount = correctOptions.length;
-
-	// Check if any incorrect options were selected
-	const hasIncorrectOption = selectedOptions.some((selectedId) => {
-		const option = pollOptions.find((opt) => opt.id === Number(selectedId));
-		return option && !option.is_correct;
 	});
 
-	// Check if all correct options were selected
-	const hasAllCorrectOptionsSelected = correctOptions.every((correctOpt) =>
-		selectedOptions.includes(correctOpt.id.toString())
+	// Determine if this is a single choice poll
+	const isSingleChoice = poll.answer_type === "single";
+
+	// Extract option data for evaluation
+	const selectedOptionIds = selectedOptions.map((id) => Number(id));
+	const correctOptions = pollOptions.filter((opt) => opt.is_correct);
+	const correctOptionsCount = correctOptions.length;
+	const correctOptionIds = correctOptions.map((opt) => opt.id);
+
+	// Analyze selected options
+	const selectedCorrectOptionsCount = selectedOptionIds.filter((id) =>
+		correctOptionIds.includes(id)
+	).length;
+
+	const hasIncorrectOption = selectedOptionIds.some(
+		(id) => !correctOptionIds.includes(id)
 	);
 
-	// Count how many correct options were selected
-	const selectedCorrectOptionsCount = selectedOptions.reduce((count, selectedId) => {
-		const option = pollOptions.find((opt) => opt.id === Number(selectedId));
-		return option && option.is_correct ? count + 1 : count;
-	}, 0);
+	const hasAllCorrectOptionsSelected = correctOptionIds.every((id) =>
+		selectedOptionIds.includes(id)
+	);
 
-	// Calculate correctness score (0-1)
-	let correctnessScore = 0;
+	// Calculate correctness score using pure functions
+	const calculateSingleChoiceScore = () =>
+		!hasIncorrectOption && selectedCorrectOptionsCount > 0 ? 1 : 0;
 
-	if (isSingleChoice) {
-		// For single choice: it's either 100% correct or 0% correct
-		correctnessScore = (!hasIncorrectOption && hasAllCorrectOptionsSelected) ? 1 : 0;
-	} else {
-		// For multiple choice: calculate partial credit based on correct selections
-		if (totalCorrectOptionsCount > 0) {
-			// Base score is the proportion of correct options selected
-			const baseScore = selectedCorrectOptionsCount / totalCorrectOptionsCount;
-			
-			// If incorrect options were selected, apply a penalty
-			// but still give some credit for correct selections
-			if (hasIncorrectOption) {
-				// Calculate penalty based on proportion of incorrect selections
-				const incorrectSelections = selectedOptions.length - selectedCorrectOptionsCount;
-				const totalOptions = pollOptions.length;
-				
-				// Penalty factor: more incorrect selections = higher penalty
-				const penaltyFactor = incorrectSelections / totalOptions;
-				
-				// Apply penalty but ensure some credit for correct answers
-				correctnessScore = Math.max(0, baseScore - penaltyFactor);
-			} else {
-				// No incorrect options selected, full credit for correct selections
-				correctnessScore = baseScore;
-			}
-		}
-	}
+	const calculateMultipleChoiceScore = () => {
+		if (correctOptionsCount === 0) return 0;
+
+		// Base score is the proportion of correct options selected
+		const baseScore = selectedCorrectOptionsCount / correctOptionsCount;
+
+		// If no incorrect options were selected, return the base score
+		if (!hasIncorrectOption) return baseScore;
+
+		// Calculate penalty for incorrect selections
+		const incorrectSelections =
+			selectedOptionIds.length - selectedCorrectOptionsCount;
+
+		// Enhanced penalty calculation:
+		// 1. Base penalty factor from incorrect selections
+		const basePenaltyFactor = incorrectSelections / pollOptions.length;
+
+		// 2. Additional penalty for selecting a high percentage of all available options
+		// This discourages selecting all or most options to game the system
+		const selectionRatio = selectedOptionIds.length / pollOptions.length;
+		const selectionPenalty =
+			selectionRatio >= 0.5 ? Math.pow(selectionRatio, 2) : 0;
+
+		// 3. Combined penalty (capped to prevent negative scores)
+		const totalPenalty = Math.min(1, basePenaltyFactor + selectionPenalty);
+
+		// Apply penalty but ensure some credit for correct answers
+		return Math.max(0, baseScore - totalPenalty);
+	};
+
+	// Determine the score based on poll type
+	const correctnessScore = isSingleChoice
+		? calculateSingleChoiceScore()
+		: calculateMultipleChoiceScore();
 
 	return {
 		hasIncorrectOption,
 		hasAllCorrectOptionsSelected,
 		isSingleChoice,
 		correctnessScore,
-		correctOptionsCount: totalCorrectOptionsCount,
-		totalCorrectOptionsCount,
+		correctOptionsCount,
+		totalCorrectOptionsCount: correctOptionsCount,
 		selectedCorrectOptionsCount,
-		pollOptions
+		pollOptions,
 	};
 };
