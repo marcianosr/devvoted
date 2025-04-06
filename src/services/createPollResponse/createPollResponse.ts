@@ -76,7 +76,11 @@ export const createPollResponseOptions = async (
  * 3. Calculating Knowledge Score based on accuracy, streak multiplier, and betting multiplier
  * 4. Applying different reward/penalty logic based on response correctness
  *
- * For correct answers: Increases streak, applies multipliers, and awards XP based on bet size
+ * For correct answers: 
+ *   - Single choice polls: Full points when correct
+ *   - Multiple choice polls: Points proportional to correct answers selected
+ *   - Increases streak, applies multipliers, and awards XP based on bet size
+ * 
  * For incorrect answers: Resets streak, adjusts multipliers, and updates betting average
  *
  * @returns A BuildPollResult object containing success status, correctness, and performance changes
@@ -103,15 +107,33 @@ export const createPostPollResponse = async ({
 			selectedBet
 		);
 
-		const { hasIncorrectOption, hasAllCorrectOptionsSelected } =
-			await evaluatePollResponse({
+		const evaluationResult = await evaluatePollResponse({
 				supabase,
 				poll,
 				userId,
 				selectedOptions,
 			});
+			
+			const { 
+				hasIncorrectOption, 
+				hasAllCorrectOptionsSelected,
+				isSingleChoice,
+				correctnessScore 
+			} = evaluationResult;
 
-		if (hasIncorrectOption || !hasAllCorrectOptionsSelected) {
+		// For multiple choice polls, we consider it partially correct if the correctnessScore is > 0
+		// For single choice polls, it's either fully correct or incorrect
+		const isFullyCorrect = (!hasIncorrectOption && hasAllCorrectOptionsSelected);
+		
+		// A response is partially correct if it has some correctness score but isn't fully correct
+		// This applies only to multiple choice polls
+		const isPartiallyCorrect = !isSingleChoice && correctnessScore > 0 && !isFullyCorrect;
+		
+		// Log the evaluation details for debugging
+		console.log(`Evaluation details: isSingleChoice=${isSingleChoice}, correctnessScore=${correctnessScore}, hasIncorrectOption=${hasIncorrectOption}, hasAllCorrectOptionsSelected=${hasAllCorrectOptionsSelected}`);
+		console.log(`Result: isFullyCorrect=${isFullyCorrect}, isPartiallyCorrect=${isPartiallyCorrect}`);
+		
+		if (!isFullyCorrect && !isPartiallyCorrect) {
 			console.log("❌ Incorrect answer - Resetting streak");
 			
 			// Handle the wrong poll response and get the new decreased DevVoted score
@@ -153,7 +175,13 @@ export const createPostPollResponse = async ({
 
 			return result;
 		} else {
-			console.log("✅ Correct answer - Updating streak and XP");
+			// Handle fully correct answers (for both single and multiple choice)
+			// or partially correct answers (for multiple choice only)
+			const isFullyCorrect = (!hasIncorrectOption && hasAllCorrectOptionsSelected);
+			const responseStatus = isFullyCorrect ? "correct" : "partially_correct";
+			
+			console.log(`${isFullyCorrect ? "✅ Fully correct" : "⚠️ Partially correct"} answer - Updating streak and XP`);
+			console.log(`Poll type: ${isSingleChoice ? "Single choice" : "Multiple choice"}, Correctness score: ${correctnessScore}`);
 
 			// Get streak multiplier increase based on betting percentage
 			const multiplierIncrease =
@@ -164,11 +192,28 @@ export const createPostPollResponse = async ({
 				previousMultiplier + multiplierIncrease
 			).toFixed(1);
 
-			const xpCalculation = calculateBetXP({
-				availableXP: previousXP,
-				betPercentage: selectedBet,
-				streakMultiplier: Number(newMultiplier),
-			});
+			// Calculate XP based on the poll type and correctness
+			let xpCalculation;
+			
+			if (isSingleChoice || isFullyCorrect) {
+				// For single choice polls or fully correct multiple choice answers: full points
+				xpCalculation = calculateBetXP({
+					availableXP: previousXP,
+					betPercentage: selectedBet,
+					streakMultiplier: Number(newMultiplier),
+				});
+			} else {
+				// For partially correct multiple choice answers: proportional points
+				// Scale the bet percentage by the correctness score
+				const adjustedBetPercentage = selectedBet * correctnessScore;
+				console.log(`Adjusted bet percentage for partial correctness: ${adjustedBetPercentage.toFixed(1)}% (${selectedBet}% × ${correctnessScore.toFixed(2)})`);
+				
+				xpCalculation = calculateBetXP({
+					availableXP: previousXP,
+					betPercentage: adjustedBetPercentage,
+					streakMultiplier: Number(newMultiplier),
+				});
+			}
 
 			const newXP = previousXP + xpCalculation.totalXP;
 			const newStreak = previousStreak + 1;
@@ -197,7 +242,7 @@ export const createPostPollResponse = async ({
 			// Calculate and update the devvoted score
 			// The score should increase due to improved accuracy and potentially higher streak multiplier
 			const result = await buildPollResult({
-				status: "correct",
+				status: responseStatus,
 				previousStats: {
 					xp: previousXP,
 					multiplier: previousMultiplier,

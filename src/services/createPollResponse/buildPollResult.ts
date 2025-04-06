@@ -1,6 +1,7 @@
 export type BuildPollResult = {
 	success: boolean;
 	isCorrect: boolean;
+	isPartiallyCorrect?: boolean; // New field for multiple choice polls
 	changes: {
 		previousXP: number;
 		newXP: number;
@@ -21,7 +22,7 @@ export const buildPollResult = async ({
 	previousStats,
 	newStats,
 }: {
-	status: "correct" | "incorrect";
+	status: "correct" | "incorrect" | "partially_correct";
 	previousStats: {
 		xp: number;
 		multiplier: number;
@@ -39,6 +40,7 @@ export const buildPollResult = async ({
 }): Promise<BuildPollResult> => ({
 	success: true,
 	isCorrect: status === "correct",
+	isPartiallyCorrect: status === "partially_correct",
 	changes: {
 		previousXP: previousStats.xp,
 		newXP: newStats.xp,

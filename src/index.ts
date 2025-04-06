@@ -104,7 +104,7 @@ const polls: Omit<Poll, "id">[] = [
 		opening_time: new Date(),
 		closing_time: new Date(),
 		category_code: "css",
-		answer_type: "single",
+		answer_type: "multiple",
 	},
 	{
 		question:
@@ -116,7 +116,7 @@ const polls: Omit<Poll, "id">[] = [
 		opening_time: new Date(),
 		closing_time: new Date(),
 		category_code: "css",
-		answer_type: "single",
+		answer_type: "multiple",
 	},
 	{
 		question:
