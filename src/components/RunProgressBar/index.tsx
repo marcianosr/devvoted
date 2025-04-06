@@ -45,8 +45,13 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 			: null;
 
 	// Determine if the score increased or decreased
-	const scoreIncreased = newScore && previousScore && Number(newScore) > Number(previousScore);
-	const scoreDecreased = newScore && previousScore && Number(newScore) < Number(previousScore);
+	const scoreIncreased =
+		newScore && previousScore && Number(newScore) > Number(previousScore);
+	const scoreDecreased =
+		newScore && previousScore && Number(newScore) < Number(previousScore);
+
+	const streakChanged =
+		pollResult?.changes?.previousStreak !== pollResult?.changes?.newStreak;
 
 	return (
 		<aside>
@@ -141,15 +146,22 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 			<Text>
 				🔥 Current streak:{" "}
 				<b>
-					{activeRun?.current_streak ?? 0}{" "}
-					<PerformanceText
-						variant="upgraded"
-						condition={
-							Number(pollResult?.changes.newStreak) >
-							Number(pollResult?.changes.previousStreak)
-						}
-						text={`→ ${pollResult?.changes.newStreak}`}
-					/>
+					{streakChanged
+						? pollResult.changes.previousStreak
+						: activeRun?.current_streak ?? 0}
+
+					{streakChanged && (
+						<PerformanceText
+							variant={
+								Number(pollResult.changes.newStreak) >
+								Number(pollResult.changes.previousStreak)
+									? "upgraded"
+									: "downgraded"
+							}
+							condition={true}
+							text={` → ${pollResult.changes.newStreak}`}
+						/>
+					)}
 				</b>
 			</Text>
 			<Text>
