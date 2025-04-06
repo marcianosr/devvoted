@@ -4,7 +4,6 @@ import { CreatePostPollResponseRequest } from "@/services/api/createPostPollResp
 import { calculateBetXP } from "@/services/calculateXP";
 import {
 	START_MULTIPLIER_INCREASE,
-	START_TEMPORARY_XP,
 } from "@/services/constants";
 import { db } from "@/database/db";
 import { pollResponseOptionsTable } from "@/database/schema";
@@ -147,16 +146,19 @@ export const createPostPollResponse = async ({
 		if (!isFullyCorrect && !isPartiallyCorrect) {
 			console.log("❌ Incorrect answer - Resetting streak");
 
-			// Handle the wrong poll response and get the new decreased DevVoted score
-			const newDevvotedScore = await handleWrongPollResponse({
+			// Handle the wrong poll response and get the new decreased DevVoted score and new XP
+			const { newDevvotedScore, newXP } = await handleWrongPollResponse({
 				supabase,
 				userId,
 				categoryCode: poll.category_code,
+				selectedBet, // Pass the selected bet percentage
 			});
 
 			console.log(`Previous DevVoted score: ${previousDevvotedScore}`);
 			console.log(`New decreased DevVoted score: ${newDevvotedScore}`);
+			console.log(`New XP after deduction: ${newXP}`);
 
+			// Build the result object to return
 			const result = await buildPollResult({
 				status: "incorrect",
 				previousStats: {
@@ -167,11 +169,11 @@ export const createPostPollResponse = async ({
 					bettingAverage: previousBettingAverage,
 				},
 				newStats: {
-					xp: START_TEMPORARY_XP,
+					xp: newXP, // Use the new XP value after deduction
 					multiplier: Number(START_MULTIPLIER_INCREASE),
-					streak: 0,
+					streak: 0, // Reset streak
 					devvotedScore: newDevvotedScore,
-					bettingAverage: newBettingAverage,
+					bettingAverage: previousBettingAverage, // Betting average doesn't change for incorrect answers
 				},
 			});
 

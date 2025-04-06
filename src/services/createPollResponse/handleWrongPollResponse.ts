@@ -11,15 +11,18 @@ export const handleWrongPollResponse = async ({
 	supabase,
 	userId,
 	categoryCode,
+	selectedBet = 100, // Default to 100% if not provided
 }: {
 	supabase: SupabaseClient;
 	userId: string;
 	categoryCode: string;
-}): Promise<number> => {
-	await resetActiveRunByCategoryCode({
+	selectedBet?: number;
+}): Promise<{ newDevvotedScore: number; newXP: number }> => {
+	const { newXP } = await resetActiveRunByCategoryCode({
 		supabase,
 		userId,
 		categoryCode,
+		selectedBet,
 	});
 
 	// Update user performance metrics for wrong answers
@@ -54,8 +57,8 @@ export const handleWrongPollResponse = async ({
 		userId,
 	});
 
-	// Return the new decreased score
-	return newDevvotedScore;
+	// Return the new decreased score and new XP
+	return { newDevvotedScore, newXP };
 };
 
 const decreaseAttemptsForUser = async ({

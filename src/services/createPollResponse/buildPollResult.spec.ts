@@ -34,6 +34,8 @@ describe("buildPollResult", () => {
 		expect(result).toEqual<BuildPollResult>({
 			success: true,
 			isCorrect: true,
+			isPartiallyCorrect: false,
+
 			changes: {
 				previousXP: previousStats.xp,
 				newXP: newStats.xp,
@@ -79,6 +81,7 @@ describe("buildPollResult", () => {
 		expect(result).toEqual<BuildPollResult>({
 			success: true,
 			isCorrect: false,
+			isPartiallyCorrect: false,
 			changes: {
 				previousXP: previousStats.xp,
 				newXP: newStats.xp,

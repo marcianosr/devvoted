@@ -1,6 +1,6 @@
 import { ActiveRun } from "@/types/db";
 
-export const START_TEMPORARY_XP = 50;
+export const START_TEMPORARY_XP = 5;
 export const START_MULTIPLIER_INCREASE = "0.1"; // Decimal value for Postgres
 
 export const START_AMOUNT_ATTEMPTS = 3;
