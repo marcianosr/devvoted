@@ -17,13 +17,18 @@ const PollSubmission = ({
 	options,
 	user,
 	userSelectedOptions = [],
+	isFinalBoss = false,
+	challenge = null,
 }: PollSubmissionProps) => {
 	const isPollClosed = poll.status !== "open";
 	const hasResponded = userSelectedOptions.length > 0;
 	const [selectedOptions, setSelectedOptions] = useState<string[]>(
 		hasResponded ? userSelectedOptions : []
 	);
-	const [selectedBet, setSelectedBet] = useState<number>();
+	// For Final Boss challenges, automatically set bet to 100%
+	const [selectedBet, setSelectedBet] = useState<number | undefined>(
+		isFinalBoss ? 100 : undefined
+	);
 	const [error, setError] = useState<string | null>(null);
 	const { setPollResult } = usePollResult();
 
@@ -93,6 +98,8 @@ const PollSubmission = ({
 				<BettingOptions
 					onBetSelect={setSelectedBet}
 					selectedBet={selectedBet}
+					isFinalBoss={isFinalBoss}
+					challengeDescription={challenge?.description}
 				/>
 			)}
 			<div>

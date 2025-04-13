@@ -5,6 +5,7 @@ import { QueryProvider } from "@/providers/QueryProvider";
 import { PollResultProvider } from "@/app/context/PollResultContext";
 import "./globals.css";
 import classNames from "classnames";
+import { ChallengeProvider } from "@/app/context/ChallengeContext";
 
 const firaCode = Fira_Code({
 	variable: "--font-fira-sans",
@@ -33,8 +34,10 @@ export default function RootLayout({
 			>
 				<QueryProvider>
 					<PollResultProvider>
-						<Navbar />
-						<main>{children}</main>
+						<ChallengeProvider>
+							<Navbar />
+							<main>{children}</main>
+						</ChallengeProvider>
 					</PollResultProvider>
 				</QueryProvider>
 			</body>

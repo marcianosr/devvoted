@@ -1,4 +1,4 @@
-import { Poll, PollOption } from "@/types/db";
+import { Challenge, Poll, PollOption } from "@/types/db";
 import { User } from "@supabase/supabase-js";
 
 export type PollSubmissionProps = {
@@ -6,4 +6,6 @@ export type PollSubmissionProps = {
 	options: PollOption[];
 	user: User | null;
 	userSelectedOptions: string[];
+	isFinalBoss?: boolean;
+	challenge?: Challenge | null;
 };

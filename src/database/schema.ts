@@ -243,6 +243,42 @@ export const pollsActiveRunTable = pgTable("polls_active_runs", {
 	last_poll_at: timestamp("last_poll_at").defaultNow(),
 });
 
+/**
+ * Challenges Table
+ * Defines different types of Final Boss challenges
+ * - Stores challenge definitions independently from polls
+ * - Enables poll-agnostic challenge system
+ * - Supports different effect types for extensibility
+ */
+export const challengesTable = pgTable("challenges", {
+	id: serial("id").primaryKey(),
+	name: varchar("name", { length: 256 }).notNull(),
+	code: varchar("code", { length: 50 }).notNull().unique(),
+	description: text("description").notNull(),
+	effect_type: varchar("effect_type", { length: 50 }).notNull(),
+	created_at: timestamp("created_at").defaultNow(),
+});
+
+/**
+ * User Challenges Table
+ * Tracks user progress through challenges
+ * - Records which challenges a user has encountered
+ * - Tracks polls since last challenge to determine when to trigger next challenge
+ * - Stores completion status for achievements
+ */
+export const userChallengesTable = pgTable("user_challenges", {
+	id: serial("id").primaryKey(),
+	user_id: uuid("user_id")
+		.references(() => usersTable.id, { onDelete: "cascade" })
+		.notNull(),
+	challenge_id: integer("challenge_id")
+		.references(() => challengesTable.id, { onDelete: "cascade" })
+		.notNull(),
+	polls_since_last_challenge: integer("polls_since_last_challenge").notNull().default(0),
+	completed_at: timestamp("completed_at"),
+	created_at: timestamp("created_at").defaultNow(),
+});
+
 // === TYPE EXPORTS ===
 
 // Export inferred types from the schema
