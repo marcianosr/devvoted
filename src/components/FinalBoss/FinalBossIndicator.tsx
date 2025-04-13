@@ -4,6 +4,7 @@ import { useChallenge } from "@/app/context/ChallengeContext";
 import classNames from "classnames";
 import styles from "./FinalBossIndicator.module.css";
 import type { Challenge } from "@/types/db";
+import { useEffect } from "react";
 
 type FinalBossIndicatorProps = {
   className?: string;
@@ -11,8 +12,15 @@ type FinalBossIndicatorProps = {
 };
 
 export const FinalBossIndicator = ({ className, challenge }: FinalBossIndicatorProps) => {
-  // We can use both direct props or the context
-  const { activeChallenge } = useChallenge();
+  // Get access to the challenge context
+  const { activeChallenge, setActiveChallenge } = useChallenge();
+  
+  // Update the context when the challenge prop changes
+  useEffect(() => {
+    if (challenge) {
+      setActiveChallenge(challenge);
+    }
+  }, [challenge, setActiveChallenge]);
   
   // Use the challenge from props if provided, otherwise use from context
   const currentChallenge = challenge || activeChallenge;

@@ -9,7 +9,7 @@ import { getActiveRun } from "@/services/activeRun";
 import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
 import RunProgressBar from "@/components/RunProgressBar";
 import Link from "next/link";
-import { FinalBossIndicator, ChallengeUpdater } from "@/components/FinalBoss";
+import { FinalBossIndicator } from "@/components/FinalBoss";
 import { getChallengeForPoll } from "@/services/challenges/getChallengeForPoll";
 
 type Props = {
@@ -79,8 +79,6 @@ export default async function PollPage({ params }: Props) {
 
 	return (
 		<section className="container mx-auto py-8 grid grid-cols-1 md:grid-cols-[250px_1fr] gap-4">
-			{/* Update the challenge context on the client side */}
-			<ChallengeUpdater challenge={challenge} />
 			<RunProgressBar activeRun={activeRun} poll={poll} user={user} />
 			<section>
 				{challenge && <FinalBossIndicator challenge={challenge} />}
