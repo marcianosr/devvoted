@@ -7,6 +7,8 @@ import {
 	usersTable,
 	pollsActiveRunTable,
 	pollUserPerformanceTable,
+	challengesTable,
+	userChallengesTable,
 } from "@/database/schema";
 import { InferInsertModel, InferSelectModel } from "drizzle-orm/table";
 
@@ -43,3 +45,16 @@ export type InsertUserPerformance = InferInsertModel<
 export type UpdateUserPerformance = InferInsertModel<
 	typeof pollUserPerformanceTable
 >;
+
+// Challenge types
+export type Challenge = InferSelectModel<typeof challengesTable>;
+export type InsertChallenge = InferInsertModel<typeof challengesTable>;
+
+export type UserChallenge = InferSelectModel<typeof userChallengesTable>;
+export type InsertUserChallenge = InferInsertModel<typeof userChallengesTable>;
+export type UpdateUserChallenge = InferInsertModel<typeof userChallengesTable>;
+
+// Extended types for joined queries
+export type UserChallengeWithDetails = UserChallenge & {
+	challenge: Challenge;
+};

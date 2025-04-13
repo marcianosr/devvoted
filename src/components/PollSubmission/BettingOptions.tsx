@@ -5,6 +5,8 @@ import Text from "@/components/ui/Text/Text";
 type BettingOptionsProps = {
 	onBetSelect: (percentage: number) => void;
 	selectedBet?: number;
+	isFinalBoss?: boolean;
+	challengeDescription?: string;
 };
 
 const bettingOptions = [
@@ -19,23 +21,48 @@ const bettingOptions = [
 export const BettingOptions = ({
 	onBetSelect,
 	selectedBet,
+	isFinalBoss = false,
+	challengeDescription,
 }: BettingOptionsProps) => (
 	<section>
-		<Text>🎲 Place your bet based on your chosen answer(s)</Text>
-		<ul>
-			{bettingOptions.map(({ value, label }) => (
-				<li key={value}>
-					<input
-						type="radio"
-						name="betOption"
-						id={`bet-${value}`}
-						value={value}
-						checked={selectedBet === value}
-						onChange={() => onBetSelect(value)}
-					/>
-					<label htmlFor={`bet-${value}`}>{label}</label>
-				</li>
-			))}
-		</ul>
+		{isFinalBoss ? (
+			<>
+				<Text variant="error" weight="bold">
+					{challengeDescription || "You must bet 100% of your XP on this poll!"}
+				</Text>
+				<ul>
+					<li>
+						<input
+							type="radio"
+							name="betOption"
+							id="bet-100"
+							value={100}
+							checked={true}
+							readOnly
+						/>
+						<label htmlFor="bet-100" className="font-bold">100% - FINAL BOSS CHALLENGE</label>
+					</li>
+				</ul>
+			</>
+		) : (
+			<>
+				<Text>🎲 Place your bet based on your chosen answer(s)</Text>
+				<ul>
+					{bettingOptions.map(({ value, label }) => (
+						<li key={value}>
+							<input
+								type="radio"
+								name="betOption"
+								id={`bet-${value}`}
+								value={value}
+								checked={selectedBet === value}
+								onChange={() => onBetSelect(value)}
+							/>
+							<label htmlFor={`bet-${value}`}>{label}</label>
+						</li>
+					))}
+				</ul>
+			</>
+		)}
 	</section>
 );
