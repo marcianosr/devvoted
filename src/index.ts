@@ -6,7 +6,6 @@ import {
 } from "@/database/schema";
 import { db } from "@/database/db";
 import { Poll, PollOption, PollCategory, User } from "@/types/db";
-import { START_AMOUNT_ATTEMPTS } from "./services/constants";
 
 const DEV_UID = "f40d940b-9d3b-47f3-a73a-4dfba18b20c2";
 
@@ -19,7 +18,6 @@ const user: User = {
 	role: "admin" as const,
 	total_polls_submitted: 0,
 	active_config: null,
-	run_attempts: START_AMOUNT_ATTEMPTS,
 } as const;
 
 const categories: Omit<PollCategory, "id">[] = [

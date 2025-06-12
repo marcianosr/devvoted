@@ -3,7 +3,6 @@
 import { usePollResult } from "@/app/context/PollResultContext";
 import Text, { PerformanceText } from "@/components/ui/Text/Text";
 import { AuthenticatedUser } from "@/services/clientUser";
-import { START_AMOUNT_ATTEMPTS } from "@/services/constants";
 import { useUserPerformance } from "@/services/userPerformance";
 import { ActiveRun, Poll } from "@/types/db";
 
@@ -167,13 +166,6 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 			<Text>
 				⚙️ Playing with config:{" "}
 				<b>{user?.devvotedUser.active_config}</b>
-			</Text>
-			<Text>
-				🔄 Attempts:{" "}
-				<b>
-					{user?.devvotedUser.run_attempts}/{START_AMOUNT_ATTEMPTS}{" "}
-					left
-				</b>
 			</Text>
 		</aside>
 	);
