@@ -81,8 +81,7 @@ export default async function PollPage({ params }: Props) {
 					user={user}
 					userSelectedOptions={userSelectedOptions}
 				/>
-				{/* When XP bar is empty */}
-				{false && (
+				{user?.devvotedUser.run_attempts === 0 && (
 					<>
 						<Text>🔧 Run over!</Text>
 						<ButtonLink href="/config">Start a new run</ButtonLink>
