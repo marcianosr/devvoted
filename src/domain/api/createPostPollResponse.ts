@@ -1,5 +1,5 @@
 import { Poll } from "@/types/db";
-import { BuildPollResult } from "../createPollResponse/buildPollResult";
+import { BuildPollResult } from "../poll-result/buildPollResult";
 
 export type CreatePostPollResponseRequest = {
 	poll: Poll;

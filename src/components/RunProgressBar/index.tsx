@@ -2,9 +2,9 @@
 
 import { usePollResult } from "@/app/context/PollResultContext";
 import Text, { PerformanceText } from "@/components/ui/Text/Text";
-import { AuthenticatedUser } from "@/services/clientUser";
-import { START_AMOUNT_ATTEMPTS } from "@/services/constants";
-import { useUserPerformance } from "@/services/userPerformance";
+import { AuthenticatedUser } from "@/domain/user/clientUser";
+import { START_AMOUNT_ATTEMPTS } from "@/domain/constants";
+import { useUserPerformance } from "@/domain/user/userPerformance";
 import { ActiveRun, Poll } from "@/types/db";
 
 type RunProgressBarProps = {

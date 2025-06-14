@@ -6,7 +6,7 @@ import {
 } from "@/database/schema";
 import { db } from "@/database/db";
 import { Poll, PollOption, PollCategory, User } from "@/types/db";
-import { START_AMOUNT_ATTEMPTS } from "./services/constants";
+import { START_AMOUNT_ATTEMPTS } from "./domain/constants";
 
 const DEV_UID = "f40d940b-9d3b-47f3-a73a-4dfba18b20c2";
 

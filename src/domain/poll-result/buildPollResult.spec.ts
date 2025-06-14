@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
 	buildPollResult,
 	type BuildPollResult,
-} from "@/services/createPollResponse/buildPollResult";
+} from "@/domain/poll-result/buildPollResult";
 
 describe("buildPollResult", () => {
 	it("builds a correct poll result with proper changes", async () => {

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { createClient } from "@/app/supabase/client";
-import { getOrCreateUser } from "@/services/auth";
+import { getOrCreateUser } from "@/domain/user/auth";
 import { useState } from "react";
 import Image from "next/image";
 import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";

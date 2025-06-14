@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, fireEvent, waitFor } from "@testing-library/react";
 import PollSubmission from "./index";
-import * as pollsApi from "@/services/api/createPostPollResponse";
+import * as pollsApi from "@/domain/api/createPostPollResponse";
 import {
 	createMockPoll,
 	createMockUser,

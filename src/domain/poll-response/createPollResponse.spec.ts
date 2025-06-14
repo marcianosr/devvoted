@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createPollResponse } from "@/services/createPollResponse/createPollResponse";
+import { createPollResponse } from "@/domain/poll-response/createPollResponse";
 import { createClient } from "@/app/supabase/server";
 import { createMockSupabaseClient } from "@/test/supabase";
 

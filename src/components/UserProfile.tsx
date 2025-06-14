@@ -1,7 +1,7 @@
 "use client";
 
 import Text, { SmallText } from "@/components/ui/Text/Text";
-import { getClientUser } from "@/services/clientUser";
+import { getClientUser } from "@/domain/user/clientUser";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 

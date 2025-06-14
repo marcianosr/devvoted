@@ -8,9 +8,9 @@ import { ClosedPollMessage } from "@/components/PollSubmission/ClosedPollMessage
 import { PollOptions } from "@/components/PollSubmission/PollOptions";
 import { SubmitButton } from "@/components/PollSubmission/SubmitButton";
 import { BettingOptions } from "./BettingOptions";
-import { createPostPollResponse } from "@/services/api/createPostPollResponse";
+import { createPostPollResponse } from "@/domain/api/createPostPollResponse";
 import { usePollResult } from "@/app/context/PollResultContext";
-import { BuildPollResult } from "@/services/createPollResponse/buildPollResult";
+import { BuildPollResult } from "@/domain/poll-result/buildPollResult";
 
 const PollSubmission = ({
 	poll,
@@ -34,8 +34,8 @@ const PollSubmission = ({
 			console.log("PollResponseResult", data);
 			// Invalidate both the poll data and the user performance data
 			queryClient.invalidateQueries({ queryKey: ["polls", poll.id] });
-			queryClient.invalidateQueries({ 
-				queryKey: ["userPerformance", user?.id, poll.category_code] 
+			queryClient.invalidateQueries({
+				queryKey: ["userPerformance", user?.id, poll.category_code],
 			});
 			setPollResult(data); // Update the context with the poll result
 		},

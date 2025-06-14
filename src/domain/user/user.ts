@@ -1,6 +1,6 @@
 import { createClient } from "@/app/supabase/server";
 import { redirect } from "next/navigation";
-import { AuthenticatedUser } from "@/services/clientUser";
+import { AuthenticatedUser } from "@/domain/user/clientUser";
 
 export const getUser = async (): Promise<AuthenticatedUser | null> => {
 	const supabase = createClient();

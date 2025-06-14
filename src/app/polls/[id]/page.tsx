@@ -1,11 +1,11 @@
 import Text from "@/components/ui/Text/Text";
 import Title from "@/components/ui/Title/Title";
 import { Metadata } from "next";
-import { getPollWithOptions } from "@/services/polls";
+import { getPollWithOptions } from "@/domain/poll/polls";
 import PollQuestion from "@/components/PollQuestion";
-import { getUser } from "@/services/user";
+import { getUser } from "@/domain/user/user";
 import PollSubmission from "@/components/PollSubmission";
-import { getActiveRun } from "@/services/activeRun";
+import { getActiveRun } from "@/domain/run/activeRun";
 import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
 import RunProgressBar from "@/components/RunProgressBar";
 import Link from "next/link";

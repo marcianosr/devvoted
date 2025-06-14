@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import { getClientUser } from "@/services/clientUser";
+import { getClientUser } from "@/domain/user/clientUser";
 import Text from "@/components/ui/Text/Text";
 import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
 import styles from "./ConfigSelector.module.css";
 import Title from "@/components/ui/Title/Title";
-import { createPostRunRequest } from "@/services/api/createPostRunRequest";
+import { createPostRunRequest } from "@/domain/api/createPostRunRequest";
 
 type Config = {
 	name: string;

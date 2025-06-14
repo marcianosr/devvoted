@@ -1,7 +1,7 @@
-import { CreatePostPollResponseRequest } from "@/services/api/createPostPollResponse";
+import { CreatePostPollResponseRequest } from "@/domain/api/createPostPollResponse";
 import { NextResponse } from "next/server";
 
-import { createPostPollResponse } from "@/services/createPollResponse/createPollResponse";
+import { createPostPollResponse } from "@/domain/poll-response/createPollResponse";
 
 export async function POST(request: Request) {
 	try {

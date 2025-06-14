@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import {
 	resetActiveRunByAllCategories,
 	resetActiveRunByCategoryCode,
-} from "@/services/resetRun";
+} from "@/domain/run/resetRun";
 import { pollUserPerformanceTable } from "@/database/schema";
 import { db } from "@/database/db";
 import { SupabaseClient } from "@supabase/supabase-js";
@@ -40,14 +40,17 @@ export const handleWrongPollResponse = async ({
 		.limit(1);
 
 	// Default to 0 if no performance data exists
-	const currentDevvotedScore = userPerformanceData.length > 0
-		? Number(userPerformanceData[0].devvoted_score) || 0
-		: 0;
+	const currentDevvotedScore =
+		userPerformanceData.length > 0
+			? Number(userPerformanceData[0].devvoted_score) || 0
+			: 0;
 
 	// For wrong answers, slightly decrease the devvoted_score (minimum 0)
 	// This is a simplified calculation that can be replaced with a more complex algorithm later
 	const newDevvotedScore = Math.max(0, currentDevvotedScore - 0.5);
-	console.log(`Decreasing DevVoted score from ${currentDevvotedScore} to ${newDevvotedScore}`);
+	console.log(
+		`Decreasing DevVoted score from ${currentDevvotedScore} to ${newDevvotedScore}`
+	);
 
 	// We no longer update the devvoted_score here, as it will be updated in createPollResponse
 	// This prevents duplicate updates and ensures consistency

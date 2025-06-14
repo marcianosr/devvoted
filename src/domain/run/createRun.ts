@@ -1,7 +1,7 @@
 import { createClient } from "@/app/supabase/server";
-import { CreatePostRunRequest } from "@/services/api/createPostRunRequest";
+import { CreatePostRunRequest } from "@/domain/api/createPostRunRequest";
 import { InsertActiveRun, PollCategory } from "@/types/db";
-import { START_AMOUNT_ATTEMPTS, startRunSettings } from "./constants";
+import { START_AMOUNT_ATTEMPTS, startRunSettings } from "../constants";
 
 export const createRun = async ({
 	userId,

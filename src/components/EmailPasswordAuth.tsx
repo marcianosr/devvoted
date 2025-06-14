@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/app/supabase/client";
-import { getOrCreateUser } from "@/services/auth";
+import { getOrCreateUser } from "@/domain/user/auth";
 
 const DEV_EMAIL = "dev@devvoted.com";
 const DEV_PASSWORD = "devvoted123";

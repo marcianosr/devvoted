@@ -1,4 +1,4 @@
-import { AuthenticatedUser } from "@/services/clientUser";
+import { AuthenticatedUser } from "@/domain/user/clientUser";
 import type { Poll, PollOption, User as DevvotedUser } from "@/types/db";
 import type { User } from "@supabase/supabase-js";
 type DeepPartial<T> = T extends Date

@@ -1,22 +1,20 @@
 import { createClient } from "@/app/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { CreatePostPollResponseRequest } from "@/services/api/createPostPollResponse";
-import { calculateBetXP } from "@/services/calculateXP";
-import {
-	START_MULTIPLIER_INCREASE,
-} from "@/services/constants";
+import { CreatePostPollResponseRequest } from "@/domain/api/createPostPollResponse";
+import { calculateBetXP } from "@/domain/score-calculation/calculateXP";
+import { START_MULTIPLIER_INCREASE } from "@/domain/constants";
 import { db } from "@/database/db";
 import { pollResponseOptionsTable } from "@/database/schema";
-import { getRunDataByCategoryCode } from "./runDataByCategory";
+import { getRunDataByCategoryCode } from "../run/runDataByCategory";
 import { getBettingAverage } from "./calculateBettingAverage";
 import { handleWrongPollResponse } from "./handleWrongPollResponse";
 import { handleCorrectPollResponse } from "./handleCorrectPollResponse";
-import { getUserPerformanceData } from "./getUserPerformanceData";
-import { upsertScoresToPollUserPerformance } from "./upsertScoresToPollUserPerformance";
-import { getStreakMultiplierIncreaseForBet } from "@/services/multipliers";
+import { getUserPerformanceData } from "../user/getUserPerformanceData";
+import { upsertScoresToPollUserPerformance } from "../user/upsertScoresToPollUserPerformance";
+import { getStreakMultiplierIncreaseForBet } from "@/domain/score-calculation/multipliers";
 import { evaluatePollResponse } from "./evaluatePollResponse";
-import { buildPollResult } from "./buildPollResult";
-import { calculateDevvotedScore } from "@/services/devvotedScore";
+import { buildPollResult } from "../poll-result/buildPollResult";
+import { calculateDevvotedScore } from "@/domain/devvotedScore";
 
 // Not sure where to put this file, as it is inserting data triggerd by /api/submit-response
 export const createPollResponse = async (

@@ -1,9 +1,9 @@
 import { pollUserPerformanceTable } from "@/database/schema";
-import { calculateBetXP } from "../calculateXP";
+import { calculateBetXP } from "../score-calculation/calculateXP";
 import {
 	getRunDataByCategoryCode,
 	updateActiveRunByCategoryCode,
-} from "./runDataByCategory";
+} from "../run/runDataByCategory";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/database/db";
 import {
@@ -11,7 +11,7 @@ import {
 	DEFAULT_MULTIPLIER,
 	MIN_STREAK_MULTIPLIER,
 	MAX_STREAK_MULTIPLIER,
-} from "../multipliers";
+} from "../score-calculation/multipliers";
 
 type CorrectPollResponseParams = {
 	selectedBet: number;

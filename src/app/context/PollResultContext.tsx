@@ -1,6 +1,6 @@
 "use client";
 
-import { PollResponseResult } from "@/services/api/createPostPollResponse";
+import { PollResponseResult } from "@/domain/api/createPostPollResponse";
 import { createContext, useContext, useState, ReactNode } from "react";
 
 type PollResultContextType = {

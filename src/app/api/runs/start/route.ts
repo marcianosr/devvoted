@@ -1,5 +1,5 @@
-import { CreatePostRunRequest } from "@/services/api/createPostRunRequest";
-import { createRun } from "@/services/createRun";
+import { CreatePostRunRequest } from "@/domain/api/createPostRunRequest";
+import { createRun } from "@/domain/run/createRun";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {

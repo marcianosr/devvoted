@@ -4,8 +4,8 @@ import { handleCorrectPollResponse } from "./handleCorrectPollResponse";
 import {
 	getRunDataByCategoryCode,
 	updateActiveRunByCategoryCode,
-} from "./runDataByCategory";
-import { calculateBetXP } from "../calculateXP";
+} from "../run/runDataByCategory";
+import { calculateBetXP } from "../score-calculation/calculateXP";
 
 vi.mock("./runDataByCategory", () => ({
 	getRunDataByCategoryCode: vi.fn(),

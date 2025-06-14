@@ -2,7 +2,7 @@ import {
 	START_AMOUNT_ATTEMPTS,
 	START_MULTIPLIER_INCREASE,
 	START_TEMPORARY_XP,
-} from "@/services/constants";
+} from "@/domain/constants";
 import {
 	boolean,
 	decimal,
