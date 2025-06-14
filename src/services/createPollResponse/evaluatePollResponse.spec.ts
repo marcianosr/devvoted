@@ -34,7 +34,6 @@ describe("evaluatePollResponse", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 
-		// Setup default mocks
 		(
 			createPollResponse as unknown as ReturnType<typeof vi.fn>
 		).mockResolvedValue({ response_id: mockResponseId });
@@ -102,7 +101,7 @@ describe("evaluatePollResponse", () => {
 		});
 	});
 
-	describe("Multiple choice polls", () => {
+	describe("multiple choice polls", () => {
 		const mockMultipleChoicePoll: Poll = {
 			id: 1,
 			question: "Test Question",
@@ -113,7 +112,7 @@ describe("evaluatePollResponse", () => {
 			closing_time: new Date(),
 		} as Poll;
 
-		it("should return fully correct result when all correct options are selected", async () => {
+		it("returns the correct result when all correct options are selected", async () => {
 			const selectedOptions = ["1", "2"]; // Both correct options
 
 			const result = await evaluatePollResponse({
@@ -135,7 +134,7 @@ describe("evaluatePollResponse", () => {
 			});
 		});
 
-		it("should return partially correct result when some correct options are selected", async () => {
+		it("returns the correct result when some correct options are selected", async () => {
 			const selectedOptions = ["1"]; // Only one of the two correct options
 
 			const result = await evaluatePollResponse({
@@ -157,7 +156,7 @@ describe("evaluatePollResponse", () => {
 			});
 		});
 
-		it("should return partially correct result with penalty when correct and incorrect options are selected", async () => {
+		it("returns the correct result when correct and incorrect options are selected", async () => {
 			const selectedOptions = ["1", "3"]; // One correct and one incorrect
 
 			const result = await evaluatePollResponse({
@@ -179,7 +178,7 @@ describe("evaluatePollResponse", () => {
 			expect(result.totalCorrectOptionsCount).toBe(2);
 		});
 
-		it("should return incorrect result when only incorrect options are selected", async () => {
+		it("returns the correct result when only incorrect options are selected", async () => {
 			const selectedOptions = ["3", "4"]; // Both incorrect options
 
 			const result = await evaluatePollResponse({

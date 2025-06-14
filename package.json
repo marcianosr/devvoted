@@ -4,7 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "next dev",
+		"dev": "next dev --port 3005",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
@@ -47,6 +47,7 @@
 		"@typescript-eslint/eslint-plugin": "^8.27.0",
 		"@typescript-eslint/parser": "^8.27.0",
 		"@vitejs/plugin-react": "^4.3.4",
+		"@vitest/coverage-v8": "3.0.9",
 		"drizzle-kit": "^0.30.5",
 		"eslint": "^9.22.0",
 		"eslint-config-next": "15.2.3",

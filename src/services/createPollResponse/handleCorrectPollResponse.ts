@@ -6,14 +6,14 @@ import {
 } from "./runDataByCategory";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/database/db";
-import { 
-	getStreakMultiplierIncreaseForBet, 
+import {
+	getStreakMultiplierIncreaseForBet,
 	DEFAULT_MULTIPLIER,
 	MIN_STREAK_MULTIPLIER,
-	MAX_STREAK_MULTIPLIER
+	MAX_STREAK_MULTIPLIER,
 } from "../multipliers";
 
-type HandleCorrectPollResponseParams = {
+type CorrectPollResponseParams = {
 	selectedBet: number;
 	userId: string;
 	categoryCode: string;
@@ -25,29 +25,33 @@ export const handleCorrectPollResponse = async ({
 	userId,
 	categoryCode,
 	calculatedXP,
-}: HandleCorrectPollResponseParams) => {
+}: CorrectPollResponseParams) => {
 	const previousData = await getRunDataByCategoryCode(userId, categoryCode);
-	
+
 	// If no previous data exists, start with the default multiplier
-	const currentMultiplier = Number(previousData?.streak_multiplier) || DEFAULT_MULTIPLIER;
-	
+	const currentMultiplier =
+		Number(previousData?.streak_multiplier) || DEFAULT_MULTIPLIER;
+
 	// Get streak multiplier increase based on betting percentage
 	const multiplierIncrease = getStreakMultiplierIncreaseForBet(selectedBet);
-	
+
 	// Calculate new multiplier with the dynamic increase
 	// This accumulates over time as the user answers correctly in this category
 	let newMultiplierValue = currentMultiplier + multiplierIncrease;
-	
+
 	// Apply min/max constraints
-	newMultiplierValue = Math.max(MIN_STREAK_MULTIPLIER, Math.min(MAX_STREAK_MULTIPLIER, newMultiplierValue));
-	
+	newMultiplierValue = Math.max(
+		MIN_STREAK_MULTIPLIER,
+		Math.min(MAX_STREAK_MULTIPLIER, newMultiplierValue)
+	);
+
 	const newMultiplier = newMultiplierValue.toFixed(1);
 
 	const currentXP = previousData?.temporary_xp ?? 0;
-	
+
 	// Use pre-calculated XP if provided, otherwise calculate it here
 	let totalXPToAdd: number;
-	
+
 	if (calculatedXP !== undefined) {
 		// Use the pre-calculated XP value
 		totalXPToAdd = calculatedXP;

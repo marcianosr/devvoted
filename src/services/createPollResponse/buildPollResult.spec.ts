@@ -6,7 +6,6 @@ import {
 
 describe("buildPollResult", () => {
 	it("builds a correct poll result with proper changes", async () => {
-		// Arrange
 		const status = "correct";
 		const previousStats = {
 			xp: 100,
@@ -23,14 +22,12 @@ describe("buildPollResult", () => {
 			bettingAverage: "45",
 		};
 
-		// Act
 		const result = await buildPollResult({
 			status,
 			previousStats,
 			newStats,
 		});
 
-		// Assert
 		expect(result).toEqual<BuildPollResult>({
 			success: true,
 			isCorrect: true,
@@ -53,7 +50,6 @@ describe("buildPollResult", () => {
 	});
 
 	it("builds an incorrect poll result with proper changes", async () => {
-		// Arrange
 		const status = "incorrect";
 		const previousStats = {
 			xp: 100,
@@ -70,14 +66,12 @@ describe("buildPollResult", () => {
 			bettingAverage: "38", // Slight decrease
 		};
 
-		// Act
 		const result = await buildPollResult({
 			status,
 			previousStats,
 			newStats,
 		});
 
-		// Assert
 		expect(result).toEqual<BuildPollResult>({
 			success: true,
 			isCorrect: false,
@@ -99,7 +93,6 @@ describe("buildPollResult", () => {
 	});
 
 	it("builds a correct poll result with proper changes", async () => {
-		// Arrange
 		const status = "correct";
 		const previousStats = {
 			xp: 250,
@@ -116,14 +109,12 @@ describe("buildPollResult", () => {
 			bettingAverage: "65",
 		};
 
-		// Act
 		const result = await buildPollResult({
 			status,
 			previousStats,
 			newStats,
 		});
 
-		// Assert
 		expect(result.changes.xpGain).toBe(150); // 400 - 250
 		expect(result.changes.xpGain).toBe(newStats.xp - previousStats.xp);
 	});
