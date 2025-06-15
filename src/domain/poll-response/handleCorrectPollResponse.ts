@@ -94,8 +94,6 @@ export const handleCorrectPollResponse = async ({
 	if (userPerformanceData.length > 0) {
 		const currentBestMultiplier =
 			Number(userPerformanceData[0].best_multiplier) || 0;
-		const currentDevvotedScore =
-			Number(userPerformanceData[0].devvoted_score) || 0;
 
 		// Only update best_multiplier if new value is higher
 		const bestMultiplier =
@@ -103,18 +101,10 @@ export const handleCorrectPollResponse = async ({
 				? newMultiplier
 				: userPerformanceData[0].best_multiplier;
 
-		// Calculate a "fake" devvoted_score for now - increases with each correct answer
-		// This is a simplified calculation that can be replaced with a more complex algorithm later
-		const newDevvotedScore = (
-			currentDevvotedScore +
-			totalXPToAdd * 0.1
-		).toFixed(2);
-
 		await db
 			.update(pollUserPerformanceTable)
 			.set({
 				best_multiplier: bestMultiplier,
-				devvoted_score: newDevvotedScore,
 				updated_at: new Date(),
 			})
 			.where(

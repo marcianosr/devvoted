@@ -10,8 +10,6 @@ export type BuildPollResult = {
 		newMultiplier: number;
 		previousStreak: number;
 		newStreak: number;
-		previousDevvotedScore: number;
-		devvotedScore: number; // New score
 		newBettingAverage: string;
 		previousBettingAverage: string;
 	};
@@ -27,14 +25,12 @@ export const buildPollResult = async ({
 		xp: number;
 		multiplier: number;
 		streak: number;
-		devvotedScore: number;
 		bettingAverage: string;
 	};
 	newStats: {
 		xp: number;
 		multiplier: number;
 		streak: number;
-		devvotedScore: number;
 		bettingAverage: string;
 	};
 }): Promise<BuildPollResult> => ({
@@ -49,8 +45,6 @@ export const buildPollResult = async ({
 		newMultiplier: newStats.multiplier,
 		previousStreak: previousStats.streak,
 		newStreak: newStats.streak,
-		previousDevvotedScore: previousStats.devvotedScore,
-		devvotedScore: newStats.devvotedScore,
 		newBettingAverage: newStats.bettingAverage,
 		previousBettingAverage: previousStats.bettingAverage,
 	},

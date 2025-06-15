@@ -66,10 +66,6 @@ describe(RunProgressBar, () => {
 		expect(screen.getByText(/Current streak:/)).toHaveTextContent(
 			`Current streak: ${mockActiveRun.current_streak}`
 		);
-
-		expect(screen.getByText(/DevVoted Score:/)).toHaveTextContent(
-			"DevVoted Score: 10.50"
-		);
 	});
 
 	it.skip("shows an upgrade diff between before answering and after", async () => {
@@ -110,7 +106,6 @@ describe(RunProgressBar, () => {
 					newXP: 150,
 					newMultiplier: "0.7",
 					xpGain: 50,
-					devvotedScore: 12.0,
 				},
 			},
 		});
@@ -142,37 +137,6 @@ describe(RunProgressBar, () => {
 		// expect(screen.getByText(/Streak Multiplier:/)).toHaveTextContent(
 		// 	`Streak Multiplier: ${initialActiveRun.streak_multiplier}× → ${updatedActiveRun.streak_multiplier}×`
 		// );
-
-		expect(screen.getByText(/DevVoted Score:/)).toHaveTextContent(
-			`DevVoted Score: 10.50 🔼 (+1.50)`
-		);
-	});
-
-	it.skip("shows decreased score when devvotedScore decreases", async () => {
-		// Mock a decrease in devvoted_score
-		(usePollResult as Mock).mockReturnValue({
-			pollResult: {
-				changes: {
-					newStreak: 0,
-					newXP: 100,
-					newMultiplier: "0.0",
-					xpGain: 0,
-					devvotedScore: 9.5,
-				},
-			},
-		});
-
-		render(
-			<RunProgressBar
-				activeRun={mockActiveRun}
-				poll={mockPoll}
-				user={mockUser}
-			/>
-		);
-
-		expect(screen.getByText(/DevVoted Score:/)).toHaveTextContent(
-			`DevVoted Score: 10.50 🔽 (-1.00)`
-		);
 	});
 
 	it("shows upgraded progress when a user submitted a poll", async () => {

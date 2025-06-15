@@ -15,40 +15,12 @@ type RunProgressBarProps = {
 
 const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 	const { pollResult } = usePollResult();
-	const { data: userPerformance, isLoading } = useUserPerformance(
+	const { data: userPerformance } = useUserPerformance(
 		user?.id,
 		poll.category_code
 	);
 
-	console.log("userPerformance", userPerformance);
-
 	const bettingAverage = userPerformance?.betting_average ?? 0;
-
-	const formattedScore = userPerformance?.devvoted_score
-		? Number(userPerformance.devvoted_score).toFixed(2)
-		: "0.00";
-
-	// Get the new score from the poll result
-	const newScore = pollResult?.changes.devvotedScore
-		? Number(pollResult.changes.devvotedScore).toFixed(2)
-		: null;
-
-	// Get the previous score from the poll result
-	const previousScore = pollResult?.changes.previousDevvotedScore
-		? Number(pollResult.changes.previousDevvotedScore).toFixed(2)
-		: null;
-
-	// For displaying the score difference, we need to use the absolute value
-	const scoreDifference =
-		newScore && previousScore
-			? Math.abs(Number(newScore) - Number(previousScore)).toFixed(2)
-			: null;
-
-	// Determine if the score increased or decreased
-	const scoreIncreased =
-		newScore && previousScore && Number(newScore) > Number(previousScore);
-	const scoreDecreased =
-		newScore && previousScore && Number(newScore) < Number(previousScore);
 
 	const streakChanged =
 		pollResult?.changes?.previousStreak !== pollResult?.changes?.newStreak;
@@ -57,19 +29,6 @@ const RunProgressBar = ({ activeRun, poll, user }: RunProgressBarProps) => {
 		<aside>
 			{poll.answer_type}
 			<Text>📜 Category: {poll.category_code}</Text>
-			<Text>
-				📊 DevVoted Score: {isLoading ? "Loading..." : formattedScore}{" "}
-				<PerformanceText
-					variant="upgraded"
-					condition={!!scoreIncreased}
-					text={`🔼 (+${scoreDifference})`}
-				/>
-				<PerformanceText
-					variant="downgraded"
-					condition={!!scoreDecreased}
-					text={`🔽 (-${scoreDifference})`}
-				/>
-			</Text>
 			<Text>
 				🕒 Status:{" "}
 				<b>

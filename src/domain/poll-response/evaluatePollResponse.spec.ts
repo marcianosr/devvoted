@@ -46,7 +46,7 @@ describe("evaluatePollResponse", () => {
 	});
 
 	describe("Single choice polls", () => {
-		const mockSingleChoicePoll: Poll = {
+		const mockSingleChoicePoll = {
 			id: 1,
 			question: "Test Question",
 			status: "open",
