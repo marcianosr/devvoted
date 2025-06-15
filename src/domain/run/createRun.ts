@@ -1,7 +1,7 @@
 import { createClient } from "@/app/supabase/server";
 import { CreatePostRunRequest } from "@/domain/api/createPostRunRequest";
 import { InsertActiveRun, PollCategory } from "@/types/db";
-import { START_AMOUNT_ATTEMPTS, startRunSettings } from "../constants";
+import { startRunSettings } from "../constants";
 
 export const createRun = async ({
 	userId,
@@ -49,7 +49,6 @@ const updateUserConfig = async (userId: string, configId: string) => {
 		.from("users")
 		.update({
 			active_config: configId,
-			run_attempts: START_AMOUNT_ATTEMPTS,
 		})
 		.eq("id", userId)
 		.single();

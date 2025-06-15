@@ -68,7 +68,6 @@ export const createMockUser = (
 			email: "toad@mushroom-kingdom.com",
 			role: "user",
 			total_polls_submitted: 20,
-			run_attempts: 3,
 			active_config: "default",
 			photo_url: null,
 		},

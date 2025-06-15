@@ -1,5 +1,4 @@
 import {
-	START_AMOUNT_ATTEMPTS,
 	START_MULTIPLIER_INCREASE,
 	START_TEMPORARY_XP,
 } from "@/domain/constants";
@@ -81,9 +80,6 @@ export const usersTable = pgTable("users", {
 		.notNull()
 		.default(0),
 	active_config: varchar("active_config", { length: 256 }), // Current active game configuration/deck
-	run_attempts: integer("run_attempts")
-		.notNull()
-		.default(START_AMOUNT_ATTEMPTS),
 });
 
 /**
