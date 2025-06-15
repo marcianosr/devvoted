@@ -1,10 +1,8 @@
 import { describe, it, expect, vi, Mock } from "vitest";
-import { screen, render, act } from "@testing-library/react";
+import { screen, act } from "@testing-library/react";
+import { renderWithProviders } from "@/test/utils";
 import RunProgressBar from "./RunProgressBar";
-import {
-	PollResultProvider,
-	usePollResult,
-} from "@/app/context/PollResultContext";
+import { usePollResult } from "@/app/context/PollResultContext";
 import { createMockPoll, createMockUser } from "@/test/factories";
 import { ActiveRun } from "@/types/db";
 
@@ -41,7 +39,7 @@ describe(RunProgressBar, () => {
 	(usePollResult as Mock).mockReturnValue({ pollResult: null });
 
 	it("renders basic run information correctly", () => {
-		render(
+		renderWithProviders(
 			<RunProgressBar
 				activeRun={mockActiveRun}
 				poll={mockPoll}
@@ -81,7 +79,7 @@ describe(RunProgressBar, () => {
 			streak_multiplier: "0.7",
 		});
 
-		const { rerender } = render(
+		const { rerender } = renderWithProviders(
 			<RunProgressBar
 				activeRun={initialActiveRun}
 				poll={mockPoll}
@@ -113,15 +111,11 @@ describe(RunProgressBar, () => {
 		// Simulate a poll submission and rerender with new progress
 		await act(async () => {
 			rerender(
-				<PollResultProvider>
-					{" "}
-					{/* Ensure context persists */}
-					<RunProgressBar
-						activeRun={updatedActiveRun}
-						poll={mockPoll}
-						user={mockUser}
-					/>
-				</PollResultProvider>
+				<RunProgressBar
+					activeRun={updatedActiveRun}
+					poll={mockPoll}
+					user={mockUser}
+				/>
 			);
 		});
 
@@ -146,7 +140,7 @@ describe(RunProgressBar, () => {
 			streak_multiplier: "0.7", // Multiplier increased
 		});
 
-		const { rerender } = render(
+		const { rerender } = renderWithProviders(
 			<RunProgressBar
 				activeRun={mockActiveRun}
 				poll={mockPoll}
@@ -156,13 +150,11 @@ describe(RunProgressBar, () => {
 
 		await act(async () => {
 			rerender(
-				<PollResultProvider>
-					<RunProgressBar
-						activeRun={updatedActiveRun}
-						poll={mockPoll}
-						user={mockUser}
-					/>
-				</PollResultProvider>
+				<RunProgressBar
+					activeRun={updatedActiveRun}
+					poll={mockPoll}
+					user={mockUser}
+				/>
 			);
 		});
 

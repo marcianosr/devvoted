@@ -7,7 +7,7 @@ import {
 } from "../run/runDataByCategory";
 import { calculateBetXP } from "../score-calculation/calculateXP";
 
-vi.mock("./runDataByCategory", () => ({
+vi.mock("../run/runDataByCategory", () => ({
 	getRunDataByCategoryCode: vi.fn(),
 	updateActiveRunByCategoryCode: vi.fn(),
 }));
@@ -25,14 +25,14 @@ vi.mock("@/database/db", () => ({
 	},
 }));
 
-vi.mock("@/services/calculateXP", () => ({
+vi.mock("../score-calculation/calculateXP", () => ({
 	calculateBetXP: vi.fn().mockReturnValue({
 		betXP: 50,
 		totalXP: 50,
 	}),
 }));
 
-vi.mock("@/services/multipliers", () => ({
+vi.mock("../score-calculation/multipliers", () => ({
 	DEFAULT_MULTIPLIER: 0.1,
 	MIN_STREAK_MULTIPLIER: 0.1,
 	MAX_STREAK_MULTIPLIER: 5.0,
@@ -56,7 +56,7 @@ describe("handleCorrectPollResponse", () => {
 	});
 
 	it("updates active run with correct values when user has no previous data", async () => {
-		(getRunDataByCategoryCode as Mock).mockResolvedValue(null);
+		vi.mocked(getRunDataByCategoryCode).mockResolvedValue(null);
 		(updateActiveRunByCategoryCode as Mock).mockResolvedValue(undefined);
 
 		await handleCorrectPollResponse({
@@ -162,7 +162,7 @@ describe("handleCorrectPollResponse", () => {
 	});
 
 	it("handles database errors gracefully", async () => {
-		(getRunDataByCategoryCode as Mock).mockRejectedValue(
+		vi.mocked(getRunDataByCategoryCode).mockRejectedValue(
 			new Error("Database error")
 		);
 

@@ -14,7 +14,7 @@ vi.mock("./createPollResponse", () => ({
 	createPollResponseOptions: vi.fn(),
 }));
 
-vi.mock("./getPollOptions", () => ({
+vi.mock("../poll/options/getPollOptions", () => ({
 	getPollOptions: vi.fn(),
 }));
 
@@ -40,9 +40,7 @@ describe("evaluatePollResponse", () => {
 		(
 			createPollResponseOptions as unknown as ReturnType<typeof vi.fn>
 		).mockResolvedValue(undefined);
-		(
-			getPollOptions as unknown as ReturnType<typeof vi.fn>
-		).mockResolvedValue(mockPollOptions);
+		vi.mocked(getPollOptions).mockResolvedValue(mockPollOptions);
 	});
 
 	describe("Single choice polls", () => {
