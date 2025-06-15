@@ -11,6 +11,7 @@ import { BettingOptions } from "./BettingOptions";
 import { createPostPollResponse } from "@/domain/api/createPostPollResponse";
 import { usePollResult } from "@/app/context/PollResultContext";
 import { BuildPollResult } from "@/domain/poll-result/buildPollResult";
+import Shop from "@/domain/shop/components/Shop";
 
 const PollSubmission = ({
 	poll,
@@ -25,6 +26,7 @@ const PollSubmission = ({
 	);
 	const [selectedBet, setSelectedBet] = useState<number>();
 	const [error, setError] = useState<string | null>(null);
+	const [showShop, setShowShop] = useState<boolean>(false);
 	const { setPollResult } = usePollResult();
 
 	const queryClient = useQueryClient();
@@ -38,6 +40,7 @@ const PollSubmission = ({
 				queryKey: ["userPerformance", user?.id, poll.category_code],
 			});
 			setPollResult(data); // Update the context with the poll result
+			setShowShop(true); // Show the shop after successful submission
 		},
 		onError: (err: Error) => {
 			setError(err.message);
@@ -125,6 +128,9 @@ const PollSubmission = ({
 					onSubmit={handleSubmit}
 				/>
 			)}
+
+			{/* Show the shop when showShop is true */}
+			{showShop && <Shop onClose={() => setShowShop(false)} />}
 		</div>
 	);
 };
