@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Text from "@/components/ui/Text/Text";
 import { PollSubmissionProps } from "@/domain/poll/submission/types";
 import { ClosedPollMessage } from "@/domain/poll/submission/components/ClosedPollMessage";
-import { PollOptions } from "@/domain/poll/submission/components/PollOptions";
+import { PollOptions } from "@/domain/poll/options/components/PollOptions";
 import { SubmitButton } from "@/domain/poll/submission/components/SubmitButton";
 import { BettingOptions } from "./BettingOptions";
 import { createPostPollResponse } from "@/domain/api/createPostPollResponse";
