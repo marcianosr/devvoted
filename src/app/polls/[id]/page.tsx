@@ -2,12 +2,12 @@ import Text from "@/components/ui/Text/Text";
 import Title from "@/components/ui/Title/Title";
 import { Metadata } from "next";
 import { getPollWithOptions } from "@/domain/poll/polls";
-import PollQuestion from "@/components/PollQuestion";
+import PollQuestion from "@/domain/poll/components/PollQuestion";
 import { getUser } from "@/domain/user/user";
-import PollSubmission from "@/components/PollSubmission";
+import PollSubmission from "@/domain/poll/submission/components/PollSubmission";
 import { getActiveRun } from "@/domain/run/activeRun";
 import ButtonLink from "@/components/ui/ButtonLink/ButtonLink";
-import RunProgressBar from "@/components/RunProgressBar";
+import RunProgressBar from "@/domain/run/components/RunProgressBar";
 import Link from "next/link";
 
 type Props = {

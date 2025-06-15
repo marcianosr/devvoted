@@ -4,7 +4,7 @@ import {
 	createPollResponse,
 	createPollResponseOptions,
 } from "./createPollResponse";
-import { getPollOptions } from "../poll/getPollOptions";
+import { getPollOptions } from "../poll/options/getPollOptions";
 
 type EvaluatePollResponseRequest = {
 	supabase: SupabaseClient;

@@ -2,7 +2,7 @@ import Text from "@/components/ui/Text/Text";
 import Title from "@/components/ui/Title/Title";
 import { Metadata } from "next";
 import { getPoll } from "@/domain/poll/polls";
-import PollQuestion from "@/components/PollQuestion";
+import PollQuestion from "@/domain/poll/components/PollQuestion";
 
 type Props = {
 	params: { id: string };

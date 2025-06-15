@@ -1,7 +1,7 @@
 "use client";
 
 import { PollOption as PollOptionType } from "@/types/db";
-import { PollOption } from "@/components/PollSubmission/PollOption";
+import { PollOption } from "@/domain/poll/submission/components/PollOption";
 
 type Props = {
 	options: PollOptionType[];

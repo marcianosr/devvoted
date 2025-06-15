@@ -1,6 +1,6 @@
 import { createClient } from "@/app/supabase/client";
 import { createClient as createServerClient } from "@/app/supabase/server";
-import Auth from "@/components/Auth";
+import Auth from "@/domain/user/components/Auth";
 import LogoutButton from "@/components/Logout";
 import { PollWithDetails } from "@/types/db";
 

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, Mock } from "vitest";
 import { screen, render, act } from "@testing-library/react";
-import RunProgressBar from "./index";
+import RunProgressBar from "./RunProgressBar";
 import {
 	PollResultProvider,
 	usePollResult,

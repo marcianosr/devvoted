@@ -1,4 +1,4 @@
-import ConfigSelector from "@/components/ConfigSelector";
+import ConfigSelector from "@/domain/config-selector/components/ConfigSelector";
 import { getUser } from "@/domain/user/user";
 import { redirect } from "next/navigation";
 

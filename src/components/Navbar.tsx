@@ -1,5 +1,5 @@
 import Link from "@/components/ui/Link";
-import UserProfile from "@/components/UserProfile";
+import UserProfile from "@/domain/user/components/UserProfile";
 
 const Navbar = () => {
 	return (

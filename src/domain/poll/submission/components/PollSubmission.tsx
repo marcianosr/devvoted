@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Text from "@/components/ui/Text/Text";
-import { PollSubmissionProps } from "@/components/PollSubmission/types";
-import { ClosedPollMessage } from "@/components/PollSubmission/ClosedPollMessage";
-import { PollOptions } from "@/components/PollSubmission/PollOptions";
-import { SubmitButton } from "@/components/PollSubmission/SubmitButton";
+import { PollSubmissionProps } from "@/domain/poll/submission/types";
+import { ClosedPollMessage } from "@/domain/poll/submission/components/ClosedPollMessage";
+import { PollOptions } from "@/domain/poll/submission/components/PollOptions";
+import { SubmitButton } from "@/domain/poll/submission/components/SubmitButton";
 import { BettingOptions } from "./BettingOptions";
 import { createPostPollResponse } from "@/domain/api/createPostPollResponse";
 import { usePollResult } from "@/app/context/PollResultContext";

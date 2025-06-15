@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { getPollsAnsweredCount } from "./calculateBettingAverage";
+import { getPollsAnsweredCount } from "../score-calculation/calculateBettingAverage";
 
 vi.mock("./calculateBettingAverage", () => {
 	return {
