@@ -51,6 +51,8 @@ export const pollStatus = pgEnum("status", [
 	"archived",
 ]);
 
+export const runStatus = pgEnum("run_status", ["finished", "active"]);
+
 /**
  * Poll answer type to determine if a poll accepts single or multiple answers
  * - single: Only one answer can be selected
@@ -192,9 +194,8 @@ export const pollUserPerformanceTable = pgTable(
 		category_code: varchar("category_code", { length: 50 })
 			.references(() => pollCategoriesTable.code)
 			.notNull(),
-		devvoted_score: decimal("devvoted_score", { precision: 10, scale: 2 })
-			.notNull()
-			.default("0.0"),
+		cumulative_xp: integer("cumulative_xp").notNull().default(0),
+		best_xp: integer("best_xp").notNull().default(0),
 		best_streak: integer("best_streak").notNull().default(0),
 		best_multiplier: decimal("best_multiplier", { precision: 3, scale: 1 })
 			.notNull()
@@ -237,6 +238,7 @@ export const pollsActiveRunTable = pgTable("polls_active_runs", {
 
 	started_at: timestamp("started_at").defaultNow(),
 	last_poll_at: timestamp("last_poll_at").defaultNow(),
+	run_status: runStatus("run_status").notNull().default("active"),
 });
 
 // === TYPE EXPORTS ===

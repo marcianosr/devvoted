@@ -27,6 +27,7 @@ const insertActiveRun = async (userId: string, categories: PollCategory[]) => {
 			user_id: userId,
 			category_code: category.code,
 			started_at: new Date(),
+			status: "active",
 			...startRunSettings,
 		})
 	);

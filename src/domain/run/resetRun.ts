@@ -1,4 +1,4 @@
-import { START_TEMPORARY_XP, START_MULTIPLIER_INCREASE } from "../constants";
+import { GAME_OVER_XP, START_MULTIPLIER_INCREASE } from "../constants";
 import { SupabaseClient } from "@supabase/supabase-js";
 
 export const resetActiveRunByAllCategories = async ({
@@ -8,9 +8,11 @@ export const resetActiveRunByAllCategories = async ({
 	supabase: SupabaseClient;
 	userId: string;
 }) => {
-	const { error: pollsActiveRunError } = await supabase
+	const { data, error: pollsActiveRunError } = await supabase
 		.from("polls_active_runs")
-		.delete()
+		.update({
+			status: "finished",
+		})
 		.eq("user_id", userId);
 
 	if (pollsActiveRunError)
@@ -27,7 +29,7 @@ export const resetActiveRunByAllCategories = async ({
 	if (userError)
 		throw new Error(`Error resetting active run: ${userError.message}`);
 
-	return { success: true };
+	return { success: true, current_run: data };
 };
 
 export const resetActiveRunByCategoryCode = async ({
@@ -53,12 +55,12 @@ export const resetActiveRunByCategoryCode = async ({
 		throw new Error(`Error fetching active run: ${fetchError.message}`);
 
 	// Calculate how much XP to deduct based on the bet percentage
-	const currentXP = currentRun?.temporary_xp || START_TEMPORARY_XP;
+	const currentXP = currentRun?.temporary_xp || GAME_OVER_XP;
 	const xpToDeduct = Math.floor((currentXP * selectedBet) / 100);
 
 	// Calculate the new XP value after the deduction
 	// Ensure it doesn't go below the starting value
-	const newXP = Math.max(START_TEMPORARY_XP, currentXP - xpToDeduct);
+	const newXP = Math.max(GAME_OVER_XP, currentXP - xpToDeduct);
 
 	// Update the run with the new XP value and reset other metrics
 	const { error } = await supabase
@@ -68,6 +70,7 @@ export const resetActiveRunByCategoryCode = async ({
 			current_streak: 0,
 			streak_multiplier: START_MULTIPLIER_INCREASE,
 			last_poll_at: new Date(),
+			status: "completed",
 		})
 		.eq("category_code", categoryCode)
 		.eq("user_id", userId);

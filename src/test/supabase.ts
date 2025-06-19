@@ -49,6 +49,7 @@ export const createMockActiveRunsTable = (
 		started_at: new Date(),
 		streak_multiplier: "1.0",
 		temporary_xp: 10,
+		run_status: "active",
 	}
 ) => ({
 	...createMockSupabaseQuery(),

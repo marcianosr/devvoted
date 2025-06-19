@@ -12,6 +12,7 @@ export const getActiveRun = async (
 		.select("*")
 		.eq("category_code", categoryCode)
 		.eq("user_id", userId)
+		.eq("run_status", "active")
 		.limit(1)
 		.maybeSingle();
 
